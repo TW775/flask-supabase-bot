@@ -315,7 +315,17 @@ def admin():
         # 过滤日期匹配的记录
         filtered_records = []
         for record in records:
-            if not query_date or (record["time"].startswith(query_date) if isinstance(record["time"], str) else record["time"].strftime("%Y-%m-%d") == query_date:
+            # 将时间值转换为日期字符串
+            time_value = record['time']
+            if isinstance(time_value, str):
+                # 如果是字符串，提取前10个字符 (YYYY-MM-DD)
+                record_date = time_value[:10]
+            else:
+                # 如果是datetime对象，格式化为字符串
+                record_date = time_value.strftime("%Y-%m-%d")
+
+            # 应用日期筛选
+            if not query_date or record_date == query_date:
                 filtered_records.append(record)
 
         if not filtered_records:
