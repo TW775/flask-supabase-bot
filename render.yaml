@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: code-dispenser
+    runtime: python
+    pythonVersion: 3.12
+    buildCommand: ""
+    startCommand: python app.py
+    envVars:
+      - key: FLASK_ENV
+        value: production
