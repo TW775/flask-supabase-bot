@@ -1,10 +1,9 @@
 services:
   - type: web
     name: code-dispenser
-    runtime: python
-    pythonVersion: 3.12
+    env: python
     buildCommand: ""
-    startCommand: python app.py
+    startCommand: "gunicorn app:app"
     envVars:
-      - key: FLASK_ENV
-        value: production
+      - key: PYTHON_VERSION
+        value: 3.10
