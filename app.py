@@ -4,10 +4,13 @@ import json, os, time
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from supabase import create_client, Client
-import dotenv
+from dotenv import load_dotenv  # 修正导入方式
 
 # 加载环境变量
-load_dotenv()
+load_dotenv()  # 直接调用函数
+
+print("当前目录内容:", os.listdir())
+print(".env 文件存在?", os.path.exists('.env'))
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default-secret-key")
