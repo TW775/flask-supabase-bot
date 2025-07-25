@@ -17,6 +17,16 @@ app.config['UPLOAD_FOLDER'] = '.'
 MAX_TIMES = 3
 INTERVAL_SECONDS = 6 * 3600
 
+# 在创建 Supabase 客户端之前添加
+print(f"环境变量检查:")
+print(f"SUPABASE_URL: {SUPABASE_URL}")
+print(f"SUPABASE_KEY: {SUPABASE_KEY and '*****' + SUPABASE_KEY[-4:] if SUPABASE_KEY else '未设置'}")
+print(f"FLASK_SECRET_KEY: {app.secret_key and '*****' + app.secret_key[-4:]}")
+print(f"ADMIN_PASSWORD: {ADMIN_PASSWORD and '*****' + ADMIN_PASSWORD[-4:]}")
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    print("致命错误: SUPABASE_URL 或 SUPABASE_KEY 未设置!")
+    exit(1)
 # 初始化 Supabase 客户端
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
@@ -205,6 +215,177 @@ def admin():
     query_date = request.args.get("date", "")
     query_id = request.args.get("uid", "").strip()
 
+    # 构建管理后台 HTML
+    result_html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>管理后台</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {{ font-family: 'Segoe UI', sans-serif; background-color: #f5f7fa; padding: 20px; margin: 0; }}
+            .header {{ background-color: #2e89ff; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }}
+            .card {{ background: white; padding: 20px; margin: 20px auto; border-radius: 10px; max-width: 800px; box-shadow: 0 0 8px rgba(0,0,0,0.05); }}
+            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
+            th, td {{ border: 1px solid #ccc; padding: 8px; text-align: left; }}
+            th {{ background: #f0f0f0; }}
+            h2 {{ margin-top: 30px; color: #333; }}
+            input[type="file"] {{ margin: 10px 0; }}
+            button {{ padding: 8px 20px; background-color: #2e89ff; color: white; border: none; border-radius: 6px; cursor: pointer; }}
+            button:hover {{ background-color: #256edb; }}
+            a.logout {{ color: white; text-decoration: none; font-size: 14px; }}
+        </style>
+        <script>
+            async function markPhone(phone) {{
+                const res = await fetch("/mark", {{
+                    method: "POST",
+                    headers: {{"Content-Type": "application/x-www-form-urlencoded"}},
+                    body: `phone=${{phone}}`
+                }});
+                if (res.ok) location.reload();
+            }}
+        </script>
+    </head>
+    <body>
+    <div class="header">
+        <div><strong>📊 管理后台</strong></div>
+        <div><a href="/logout" class="logout">🚪 退出</a></div>
+    </div>
+
+    <div class="card">
+        <a href="/export_marked" target="_blank">
+            <button>📥 导出所有已标记为已领的手机号</button>
+        </a>
+    </div>
+    """
+
+    # 黑名单预览部分
+    result_html += f"""
+    <div class="card">
+        <p>共有 <strong>{blacklist_count()}</strong> 个手机号已被拉黑。</p>
+        <div id="blacklist-preview">
+            <ul style="font-size: 13px; margin-top: 5px; display: none;" id="blacklist-items">
+                {''.join(f'<li>{p}</li>' for p in blacklist_preview(10))}
+            </ul>
+            <button onclick="toggleBlacklist()" style="margin-top: 5px;">🔽 展开预览</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleBlacklist() {{
+            const list = document.getElementById("blacklist-items");
+            const btn = event.target;
+            if (list.style.display === "none") {{
+                list.style.display = "block";
+                btn.innerText = "🔼 收起预览";
+            }} else {{
+                list.style.display = "none";
+                btn.innerText = "🔽 展开预览";
+            }}
+        }}
+    </script>
+    """
+
+    # 查询表单
+    result_html += f"""
+    <div class="card">
+        <form method="GET" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label for="date">📆 上传日期：</label>
+                <input type="date" name="date" value="{query_date}">
+            </div>
+            <div>
+                <label for="uid">🔍 用户 ID：</label>
+                <input type="text" name="uid" placeholder="请输入用户 ID" value="{query_id}">
+            </div>
+            <div>
+                <button type="submit">查找</button>
+            </div>
+        </form>
+
+        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+    """
+
+    # 显示上传记录
+    for uid, records in logs.items():
+        # 应用查询筛选
+        if query_id and uid != query_id:
+            continue
+
+        # 过滤日期匹配的记录
+        filtered_records = []
+        for record in records:
+            if not query_date or (record["time"].startswith(query_date) if isinstance(record["time"], str) else record["time"].strftime("%Y-%m-%d") == query_date:
+                filtered_records.append(record)
+
+        if not filtered_records:
+            continue
+
+        result_html += f"""
+        <h2>用户 ID: {uid}</h2>
+        <form method="POST" action="/reset_status" style="margin-bottom:10px;">
+            <input type="hidden" name="uid" value="{uid}">
+            <button type="submit" onclick="return confirm('确认重置此用户的领取记录？')">🔄 重置领取记录</button>
+        </form>
+        """
+
+        result_html += "<table><tr><th>手机号</th><th>上传时间</th><th>状态</th><th>操作</th></tr>"
+        for record in filtered_records:
+            phone = record['phone']
+            time_str = record['time'].strftime("%Y-%m-%d %H:%M:%S") if hasattr(record['time'], 'strftime') else record['time']
+            is_marked = marks.get(phone, False)
+            status = "✅ 已领" if is_marked else "❌ 未标记"
+            btn_text = "取消标记" if is_marked else "标记已领"
+            result_html += f"""
+            <tr>
+                <td>{phone}</td>
+                <td>{time_str}</td>
+                <td id='status-{phone}'>{status}</td>
+                <td><button onclick="markPhone('{phone}')">{btn_text}</button></td>
+            </tr>
+            """
+        result_html += "</table>"
+
+    result_html += "</div></div>"  # 结束滚动区域和上传记录卡片
+
+    # 文件上传区域
+    result_html += """
+    <div class="card">
+        <h2>📤 上传新手机号库 (phones.txt)</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="phones" accept=".txt" required><br>
+            <button type="submit" name="upload_type" value="phones">上传手机号</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>📤 上传新白名单 (id_list.txt)</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="idlist" accept=".txt" required><br>
+            <button type="submit" name="upload_type" value="idlist">上传白名单</button>
+        </form>
+    </div>
+
+    </body>
+    </html>
+    """
+
+    # 处理上传文件请求
+    if request.method == "POST":
+        ftype = request.form.get("upload_type")
+        if ftype == "phones" and "phones" in request.files:
+            file = request.files["phones"]
+            path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename("phones.txt"))
+            file.save(path)
+            process_phones(path)
+        elif ftype == "idlist" and "idlist" in request.files:
+            file = request.files["idlist"]
+            path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename("id_list.txt"))
+            file.save(path)
+            process_id_list(path)
+        return redirect(url_for("admin"))
+
+    return result_html
     # 管理后台页面 HTML 代码保持不变...
 
     # 处理上传文件请求
