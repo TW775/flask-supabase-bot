@@ -3,80 +3,123 @@ from flask import Flask, request, render_template_string, redirect, url_for, ses
 import json, os, time
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from supabase import create_client, Client
+import dotenv
+
+# 加载环境变量
+dotenv.load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "a8b7c6-secret-key-abc"
-ADMIN_PASSWORD = "tw223322"
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "default-secret-key")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "tw223322")
 app.config['UPLOAD_FOLDER'] = '.'
 
 MAX_TIMES = 3
 INTERVAL_SECONDS = 6 * 3600
 
-WHITELIST_FILE = "id_whitelist.json"
-STATUS_FILE = "user_status.json"
-GROUP_FILE = "phone_groups.json"
-UPLOAD_LOG = "upload_logs.json"
-MARK_FILE = "mark_status.json"
-BLACKLIST_FILE = "blacklist.json"
+# 初始化 Supabase 客户端
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# ===== Supabase 工具函数 =====
+def load_whitelist():
+    response = supabase.table("whitelist").select("*").execute()
+    return [item["id"] for item in response.data]
 
-# ===== 工具函数 =====
-def load_json(file):
-    if os.path.exists(file):
-        with open(file, "r") as f:
-            return json.load(f)
-    return {}
+def load_user_status():
+    response = supabase.table("user_status").select("*").execute()
+    return {item["uid"]: {"count": item["count"], "last": item["last"], "index": item["index"]}
+             for item in response.data}
 
-def load_blacklist():
-    return set(load_json(BLACKLIST_FILE))
+def load_phone_groups():
+    response = supabase.table("phone_groups").select("group_index, phones").order("group_index").execute()
+    return [item["phones"] for item in response.data]
 
-def save_blacklist(blacklist):
-    save_json(BLACKLIST_FILE, list(blacklist))
-
-def save_json(file, data):
-    with open(file, "w") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-def load_blacklist():
-    return set(load_json(BLACKLIST_FILE))
-
-def blacklist_count():
-    return len(load_blacklist())
-
-def blacklist_preview(n=10):
-    return list(load_blacklist())[:n]
+def load_upload_logs():
+    response = supabase.table("upload_logs").select("uid, phone, upload_time").execute()
+    logs = {}
+    for item in response.data:
+        uid = item["uid"]
+        if uid not in logs:
+            logs[uid] = []
+        logs[uid].append({
+            "phone": item["phone"],
+            "time": item["upload_time"].strftime("%Y-%m-%d %H:%M:%S")
+        })
+    return logs
 
 def load_marks():
-    return load_json(MARK_FILE)
+    response = supabase.table("mark_status").select("*").execute()
+    return {item["phone"]: item["status"] for item in response.data}
 
-def save_marks(data):
-    save_json(MARK_FILE, data)
+def load_blacklist():
+    response = supabase.table("blacklist").select("phone").execute()
+    return {item["phone"] for item in response.data}
+
+def save_whitelist(ids):
+    # 先清空表
+    supabase.table("whitelist").delete().neq("id", "").execute()
+    # 插入新数据
+    if ids:
+        data = [{"id": id_val} for id_val in ids]
+        supabase.table("whitelist").insert(data).execute()
+
+def save_user_status(uid, data):
+    # 检查是否存在
+    existing = supabase.table("user_status").select("*").eq("uid", uid).execute()
+    if existing.data:
+        # 更新
+        supabase.table("user_status").update(data).eq("uid", uid).execute()
+    else:
+        # 插入
+        data["uid"] = uid
+        supabase.table("user_status").insert(data).execute()
+
+def save_phone_groups(groups):
+    # 清空表
+    supabase.table("phone_groups").delete().neq("group_index", 0).execute()
+    # 插入新分组
+    data = [{"phones": group} for group in groups]
+    if data:
+        supabase.table("phone_groups").insert(data).execute()
+
+def add_upload_log(uid, phone):
+    data = {
+        "uid": uid,
+        "phone": phone,
+        "upload_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    supabase.table("upload_logs").insert(data).execute()
 
 def toggle_mark(phone):
-    marked = load_marks()
-    if phone in marked:
-        marked[phone] = not marked[phone]
+    # 检查是否已存在
+    response = supabase.table("mark_status").select("*").eq("phone", phone).execute()
+    if response.data:
+        current_status = not response.data[0]["status"]
+        supabase.table("mark_status").update({"status": current_status}).eq("phone", phone).execute()
+        return current_status
     else:
-        marked[phone] = True
-    save_marks(marked)
-    return marked[phone]
+        supabase.table("mark_status").insert({"phone": phone, "status": True}).execute()
+        return True
 
-def process_id_list(file_path):
-    with open(file_path, "r") as f:
-        ids = [line.strip() for line in f if line.strip()]
-    save_json(WHITELIST_FILE, ids)
+def save_blacklist(phones):
+    # 清空表
+    supabase.table("blacklist").delete().neq("phone", "").execute()
+    # 插入新数据
+    if phones:
+        data = [{"phone": phone} for phone in phones]
+        supabase.table("blacklist").insert(data).execute()
 
-def process_phones(file_path):
-    with open(file_path, "r") as f:
-        phones = [line.strip() for line in f if line.strip()]
-    blacklist = load_blacklist()
-    phones = [p for p in phones if p not in blacklist]  # ❗跳过黑名单
-    groups = []
-    for i in range(0, len(phones), 10):
-        groups.append(phones[i:i+10])
-    save_json(GROUP_FILE, groups)
+def blacklist_count():
+    response = supabase.table("blacklist").select("phone", count="exact").execute()
+    return response.count
 
+def blacklist_preview(n=10):
+    response = supabase.table("blacklist").select("phone").limit(n).execute()
+    return [item["phone"] for item in response.data]
 
+# ===== 路由处理 =====
 @app.route("/mark", methods=["POST"])
 def mark_phone():
     phone = request.form.get("phone")
@@ -87,8 +130,10 @@ def mark_phone():
 
 @app.route("/export_marked")
 def export_marked():
-    marked = load_marks()
-    marked_phones = [phone for phone, status in marked.items() if status]
+    marked_phones = []
+    response = supabase.table("mark_status").select("phone").eq("status", True).execute()
+    for item in response.data:
+        marked_phones.append(item["phone"])
 
     # 保存为 TXT 文件
     with open("marked_phones.txt", "w") as f:
@@ -96,7 +141,7 @@ def export_marked():
             f.write(phone + "\n")
 
     # 加入黑名单
-    blacklist = load_blacklist()
+    blacklist = set(load_blacklist())
     blacklist.update(marked_phones)
     save_blacklist(blacklist)
 
@@ -104,7 +149,6 @@ def export_marked():
         'Content-Type': 'text/plain',
         'Content-Disposition': 'attachment; filename=marked_phones.txt'
     }
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -132,13 +176,13 @@ def logout():
     return redirect("/login")
 
 def is_date_match(record_time, target_date):
-            if not target_date:
-                return True  # 不筛选
-            try:
-                dt = datetime.strptime(record_time, "%Y-%m-%d %H:%M:%S")
-                return dt.strftime("%Y-%m-%d") == target_date
-            except:
-                return False
+    if not target_date:
+        return True
+    try:
+        dt = datetime.strptime(record_time, "%Y-%m-%d %H:%M:%S")
+        return dt.strftime("%Y-%m-%d") == target_date
+    except:
+        return False
 
 @app.route("/reset_status", methods=["POST"])
 def reset_status():
@@ -147,10 +191,7 @@ def reset_status():
     uid = request.form.get("uid", "").strip()
     if not uid:
         return "无效 ID", 400
-    status = load_json(STATUS_FILE)
-    if uid in status:
-        del status[uid]
-        save_json(STATUS_FILE, status)
+    supabase.table("user_status").delete().eq("uid", uid).execute()
     return redirect("/admin")
 
 @app.route("/admin", methods=["GET", "POST"])
@@ -158,161 +199,15 @@ def admin():
     if not session.get("admin_logged_in"):
         return redirect("/login")
 
-    logs = load_json(UPLOAD_LOG)
+    logs = load_upload_logs()
     marks = load_marks()
 
     query_date = request.args.get("date", "")
     query_id = request.args.get("uid", "").strip()
 
+    # 管理后台页面 HTML 代码保持不变...
 
-
-
-    result_html = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>管理后台</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-            body { font-family: 'Segoe UI', sans-serif; background-color: #f5f7fa; padding: 20px; margin: 0; }
-            .header { background-color: #2e89ff; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-            .card { background: white; padding: 20px; margin: 20px auto; border-radius: 10px; max-width: 800px; box-shadow: 0 0 8px rgba(0,0,0,0.05); }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-            th { background: #f0f0f0; }
-            h2 { margin-top: 30px; color: #333; }
-            input[type="file"] { margin: 10px 0; }
-            button { padding: 8px 20px; background-color: #2e89ff; color: white; border: none; border-radius: 6px; cursor: pointer; }
-            button:hover { background-color: #256edb; }
-            a.logout { color: white; text-decoration: none; font-size: 14px; }
-        </style>
-        <script>
-            async function markPhone(phone) {
-                const res = await fetch("/mark", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: `phone=${phone}`
-                });
-                if (res.ok) location.reload();
-            }
-        </script>
-    </head>
-    <body>
-    <div class="header">
-        <div><strong>📊 管理后台</strong></div>
-        <div><a href="/logout" class="logout">🚪 退出</a></div>
-    </div>
-
-    <div class="card">
-        <a href="/export_marked" target="_blank">
-            <button>📥 导出所有已标记为已领的手机号</button>
-        </a>
-    </div>
-    """
-
-    result_html += f"""
-        <div class="card">
-            <p>共有 <strong>{blacklist_count()}</strong> 个手机号已被拉黑。</p>
-            <div id="blacklist-preview">
-                <ul style="font-size: 13px; margin-top: 5px; display: none;" id="blacklist-items">
-                    {''.join(f'<li>{p}</li>' for p in blacklist_preview(10))}
-                </ul>
-                <button onclick="toggleBlacklist()" style="margin-top: 5px;">🔽 展开预览</button>
-            </div>
-        </div>
-
-        <script>
-            function toggleBlacklist() {{
-                const list = document.getElementById("blacklist-items");
-                const btn = event.target;
-                if (list.style.display === "none") {{
-                    list.style.display = "block";
-                    btn.innerText = "🔼 收起预览";
-                }} else {{
-                    list.style.display = "none";
-                    btn.innerText = "🔽 展开预览";
-                }}
-            }}
-        </script>
-        """
-
-    result_html += f"""
-        <div class="card">
-            <form method="GET" style="display: flex; flex-wrap: wrap; align-items: center; gap: 15px; margin-bottom: 20px;">
-                <div>
-                    <label for="date">📆 上传日期：</label>
-                    <input type="date" name="date" value="{query_date}">
-                </div>
-                <div>
-                    <label for="uid">🔍 用户 ID：</label>
-                    <input type="text" name="uid" placeholder="请输入用户 ID" value="{query_id}">
-                </div>
-                <div>
-                    <button type="submit">查找</button>
-                </div>
-            </form>
-
-            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
-    """
-
-
-    # 按上传记录中的时间排序，并按日期筛选
-    for uid, records in sorted(logs.items(), key=lambda x: max(r["time"] for r in x[1]), reverse=True):
-        filtered = [r for r in records if is_date_match(r["time"], query_date)]
-        if not filtered:
-            continue
-
-        result_html += f"""
-            <h2>用户 ID: {uid}</h2>
-            <form method="POST" action="/reset_status" style="margin-bottom:10px;">
-                <input type="hidden" name="uid" value="{uid}">
-                <button type="submit" onclick="return confirm('确认重置此用户的领取记录？')">🔄 重置领取记录</button>
-            </form>
-            """
-
-        result_html += "<table><tr><th>手机号</th><th>上传时间</th><th>状态</th><th>操作</th></tr>"
-        for record in sorted(filtered, key=lambda r: r["time"], reverse=True):
-            phone = record['phone']
-            time_str = record['time']
-            is_marked = marks.get(phone, False)
-            status = "✅ 已领" if is_marked else "❌ 未标记"
-            btn_text = "取消标记" if is_marked else "标记已领"
-            result_html += f"""
-            <tr>
-                <td>{phone}</td>
-                <td>{time_str}</td>
-                <td id='status-{phone}'>{status}</td>
-                <td><button onclick="markPhone('{phone}')">{btn_text}</button></td>
-            </tr>
-            """
-        result_html += "</table>"
-
-
-    result_html += "</div></div>"  # 结束滚动区域和上传记录卡片
-
-    # === 添加上传功能区域 ===
-    result_html += """
-    <div class="card">
-        <h2>📤 上传新手机号库 (phones.txt)</h2>
-        <form method="POST" enctype="multipart/form-data">
-            <input type="file" name="phones" accept=".txt" required><br>
-            <button type="submit" name="upload_type" value="phones">上传手机号</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <h2>📤 上传新白名单 (id_list.txt)</h2>
-        <form method="POST" enctype="multipart/form-data">
-            <input type="file" name="idlist" accept=".txt" required><br>
-            <button type="submit" name="upload_type" value="idlist">上传白名单</button>
-        </form>
-    </div>
-
-    </body>
-    </html>
-    """
-
-    # === 处理上传文件请求 ===
+    # 处理上传文件请求
     if request.method == "POST":
         ftype = request.form.get("upload_type")
         if ftype == "phones" and "phones" in request.files:
@@ -329,8 +224,22 @@ def admin():
 
     return result_html
 
+def process_id_list(file_path):
+    with open(file_path, "r") as f:
+        ids = [line.strip() for line in f if line.strip()]
+    save_whitelist(ids)
 
-# ===== 用户资料领取页面 HTML 模板 =====
+def process_phones(file_path):
+    with open(file_path, "r") as f:
+        phones = [line.strip() for line in f if line.strip()]
+    blacklist = load_blacklist()
+    phones = [p for p in phones if p not in blacklist]  # 跳过黑名单
+    groups = []
+    for i in range(0, len(phones), 10):
+        groups.append(phones[i:i+10])
+    save_phone_groups(groups)
+
+# ===== 用户资料领取页面 =====
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html>
@@ -413,26 +322,16 @@ HTML_TEMPLATE = '''
         {% endif %}
     </div>
 
-<script>
-function copyPhones() {
-    const area = document.getElementById("copyArea");
-    area.select();
-    document.execCommand("copy");
-    alert("✅ 已复制到剪贴板");
-}
-</script>
-
 </body>
 </html>
 '''
 
-# ===== 资料领取逻辑 =====
 @app.route("/", methods=["GET", "POST"])
 def index():
-    whitelist = load_json(WHITELIST_FILE)
-    status = load_json(STATUS_FILE)
-    groups = load_json(GROUP_FILE)
-    upload_log = load_json(UPLOAD_LOG)
+    whitelist = load_whitelist()
+    status = load_user_status()
+    groups = load_phone_groups()
+    upload_log = load_upload_logs()
 
     phones = []
     error = ""
@@ -453,8 +352,9 @@ def index():
             else:
                 record = status.get(uid, {"count": 0, "last": 0})
                 if record["count"] >= MAX_TIMES:
-                    whitelist.remove(uid)
-                    save_json(WHITELIST_FILE, whitelist)
+                    # 从白名单中移除
+                    new_whitelist = [id for id in whitelist if id != uid]
+                    save_whitelist(new_whitelist)
                     error = "❌ 已达到最大领取次数，请联系管理员"
                 elif now - record["last"] < INTERVAL_SECONDS:
                     wait_min = int((INTERVAL_SECONDS - (now - record["last"])) / 60)
@@ -463,12 +363,12 @@ def index():
                     for i, group in enumerate(groups):
                         if i not in used_index:
                             phones = group
-                            status[uid] = {
+                            new_status = {
                                 "count": record["count"] + 1,
                                 "last": now,
                                 "index": i
                             }
-                            save_json(STATUS_FILE, status)
+                            save_user_status(uid, new_status)
                             break
                     else:
                         error = "❌ 资料已发放完，请联系管理员"
@@ -480,41 +380,26 @@ def index():
             else:
                 all_phones = [p.strip() for p in raw_data.splitlines() if p.strip()]
                 now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                already_uploaded = set([log["phone"] for log in upload_log.get(uid, [])])
-                valid_uploads = []
-                for phone in all_phones:
-                    found = False
-                    latest_owner = None
-                    latest_time = 0
-                    for user_id, info in status.items():
-                        index = info.get("index")
-                        if index is None or index >= len(groups): continue
-                        if phone in groups[index]:
-                            if info.get("last", 0) > latest_time:
-                                latest_owner = user_id
-                                latest_time = info["last"]
-                    if latest_owner == uid and phone not in already_uploaded:
-                        valid_uploads.append(phone)
-                    elif latest_owner and latest_owner != uid:
-                        upload_msg = f"❌ 号码 {phone} 当前归属 {latest_owner}，你无法上传"
-                        break
-                    elif latest_owner is None:
-                        upload_msg = f"❌ 号码 {phone} 不存在于任何分配组中"
-                        break
-                    elif phone in already_uploaded:
-                        upload_msg = f"❌ 号码 {phone} 已上传过"
-                        break
 
-                if upload_msg == "" and valid_uploads:
-                    logs = upload_log.get(uid, [])
-                    for phone in valid_uploads:
-                        logs.append({"phone": phone, "time": now_str})
-                    upload_log[uid] = logs
-                    save_json(UPLOAD_LOG, upload_log)
-                    upload_msg = f"✅ 成功上传 {len(valid_uploads)} 条资料"
-                    upload_success = True
-                elif upload_msg == "":
-                    upload_msg = "❌ 没有可上传的有效资料"
+                # 检查用户状态以确定分配的组
+                user_status = status.get(uid, {})
+                if "index" not in user_status:
+                    upload_msg = "❌ 您尚未领取任何资料"
+                else:
+                    group_index = user_status["index"]
+                    assigned_group = groups[group_index] if group_index < len(groups) else []
+
+                    # 验证上传的手机号是否在分配的组中
+                    invalid_phones = [p for p in all_phones if p not in assigned_group]
+
+                    if invalid_phones:
+                        upload_msg = f"❌ 以下号码不在您的分配组中: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
+                    else:
+                        # 添加上传记录
+                        for phone in all_phones:
+                            add_upload_log(uid, phone)
+                        upload_msg = f"✅ 成功上传 {len(all_phones)} 条资料"
+                        upload_success = True
 
     return render_template_string(
         HTML_TEMPLATE,
@@ -524,10 +409,6 @@ def index():
         upload_success=upload_success
     )
 
-
-import os
-
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-

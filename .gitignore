@@ -1,0 +1,10 @@
+# 忽略所有环境文件
+.env
+*.env
+
+# 忽略 Python 缓存
+__pycache__/
+*.pyc
+
+# 忽略运行时生成的文件
+marked_phones.txt

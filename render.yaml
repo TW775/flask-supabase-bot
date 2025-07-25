@@ -1,9 +1,15 @@
 services:
   - type: web
     name: code-dispenser
-    env: python
-    buildCommand: ""
-    startCommand: "gunicorn app:app"
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.10
+      - key: FLASK_SECRET_KEY
+        value: your-secret-key
+      - key: ADMIN_PASSWORD
+        value: your-admin-password
+      - key: SUPABASE_URL
+        value: your-supabase-url
+      - key: SUPABASE_KEY
+        value: your-supabase-key

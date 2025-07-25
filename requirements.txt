@@ -1,4 +1,4 @@
 flask
-pytz
-openpyxl
-gunicorn
+python-dotenv
+supabase
+werkzeug
