@@ -5,9 +5,14 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from supabase import create_client, Client
 from dotenv import load_dotenv  # 修正导入方式
+from pathlib import Path
 
-# 加载环境变量
-load_dotenv()  # 直接调用函数
+# 获取当前脚本所在的目录
+BASE_DIR = Path(__file__).resolve().parent
+
+# 使用绝对路径加载 .env 文件
+env_path = BASE_DIR / '.env'
+load_dotenv(dotenv_path=env_path)
 
 print("当前目录内容:", os.listdir())
 print(".env 文件存在?", os.path.exists('.env'))
