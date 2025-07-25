@@ -17,19 +17,21 @@ app.config['UPLOAD_FOLDER'] = '.'
 MAX_TIMES = 3
 INTERVAL_SECONDS = 6 * 3600
 
-# 在创建 Supabase 客户端之前添加
+# 初始化 Supabase 客户端
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+# 环境变量检查
 print(f"环境变量检查:")
 print(f"SUPABASE_URL: {SUPABASE_URL}")
 print(f"SUPABASE_KEY: {SUPABASE_KEY and '*****' + SUPABASE_KEY[-4:] if SUPABASE_KEY else '未设置'}")
 print(f"FLASK_SECRET_KEY: {app.secret_key and '*****' + app.secret_key[-4:]}")
-print(f"ADMIN_PASSWORD: {ADMIN_PASSWORD and '*****' + ADMIN_PASSWORD[-4:]}")
+print(f"ADMIN_PASSWORD: {ADMIN_PASSWORD and '*****' + ADMIN_PASSWORD[-4]}")
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     print("致命错误: SUPABASE_URL 或 SUPABASE_KEY 未设置!")
     exit(1)
-# 初始化 Supabase 客户端
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ===== Supabase 工具函数 =====
@@ -53,9 +55,17 @@ def load_upload_logs():
         uid = item["uid"]
         if uid not in logs:
             logs[uid] = []
+
+        # 确保时间值是字符串
+        time_value = item["upload_time"]
+        if isinstance(time_value, datetime):
+            time_str = time_value.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            time_str = str(time_value)
+
         logs[uid].append({
             "phone": item["phone"],
-            "time": item["upload_time"].strftime("%Y-%m-%d %H:%M:%S")
+            "time": time_str
         })
     return logs
 
@@ -342,7 +352,8 @@ def admin():
         result_html += "<table><tr><th>手机号</th><th>上传时间</th><th>状态</th><th>操作</th></tr>"
         for record in filtered_records:
             phone = record['phone']
-            time_str = record['time'].strftime("%Y-%m-%d %H:%M:%S") if hasattr(record['time'], 'strftime') else record['time']
+            # 确保时间字符串正确显示
+            time_str = record['time'] if isinstance(record['time'], str) else record['time'].strftime("%Y-%m-%d %H:%M:%S")
             is_marked = marks.get(phone, False)
             status = "✅ 已领" if is_marked else "❌ 未标记"
             btn_text = "取消标记" if is_marked else "标记已领"
@@ -380,25 +391,7 @@ def admin():
     </html>
     """
 
-    # 处理上传文件请求
-    if request.method == "POST":
-        ftype = request.form.get("upload_type")
-        if ftype == "phones" and "phones" in request.files:
-            file = request.files["phones"]
-            path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename("phones.txt"))
-            file.save(path)
-            process_phones(path)
-        elif ftype == "idlist" and "idlist" in request.files:
-            file = request.files["idlist"]
-            path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename("id_list.txt"))
-            file.save(path)
-            process_id_list(path)
-        return redirect(url_for("admin"))
-
-    return result_html
-    # 管理后台页面 HTML 代码保持不变...
-
-    # 处理上传文件请求
+    # 处理上传文件请求（只保留一份）
     if request.method == "POST":
         ftype = request.form.get("upload_type")
         if ftype == "phones" and "phones" in request.files:
