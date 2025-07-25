@@ -7,7 +7,7 @@ from supabase import create_client, Client
 import dotenv
 
 # 加载环境变量
-dotenv.load_dotenv()
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default-secret-key")
