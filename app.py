@@ -4,7 +4,7 @@ import json, os, time
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from supabase import create_client, Client
-from dotenv import load_dotenv  # 修正导入方式
+
 
 
 # 本地开发时加载 .env，Render 上无影响
