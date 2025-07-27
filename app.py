@@ -8,7 +8,7 @@ from dotenv import load_dotenv  # 修正导入方式
 
 
 # Render 平台专用路径
-SECRETS_PATH = '/etc/secrets/.env'
+SECRETS_PATH = '/etc/secrets/env'
 
 # 尝试从 Render 的 Secret Files 路径加载 .env
 if os.path.exists(SECRETS_PATH):
