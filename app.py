@@ -5,17 +5,19 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from supabase import create_client, Client
 from dotenv import load_dotenv  # 修正导入方式
-from pathlib import Path
 
-# 获取当前脚本所在的目录
-BASE_DIR = Path(__file__).resolve().parent
 
-# 使用绝对路径加载 .env 文件
-env_path = BASE_DIR / '.env'
-load_dotenv(dotenv_path=env_path)
+# Render 平台专用路径
+SECRETS_PATH = '/etc/secrets/.env'
 
-print("当前目录内容:", os.listdir())
-print(".env 文件存在?", os.path.exists('.env'))
+# 尝试从 Render 的 Secret Files 路径加载 .env
+if os.path.exists(SECRETS_PATH):
+    load_dotenv(dotenv_path=SECRETS_PATH)
+    print(f"✅ 已从 Render Secret Files 加载环境变量: {SECRETS_PATH}")
+else:
+    # 开发环境回退到本地 .env
+    load_dotenv()  # 加载当前目录的 .env 文件
+    print("⚠️ 使用本地 .env 文件 (Render Secret Files 未找到)")
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default-secret-key")
