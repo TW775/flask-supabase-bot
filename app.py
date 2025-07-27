@@ -7,9 +7,7 @@ from supabase import create_client, Client
 
 
 
-# 本地开发时加载 .env，Render 上无影响
-load_dotenv()
-
+# ✅ Render 专用配置（不使用 .env 文件）
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default-secret-key")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "tw223322")
