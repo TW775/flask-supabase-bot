@@ -254,7 +254,7 @@ def admin():
         <style>
             body {{
                 font-family: 'Segoe UI', sans-serif;
-                background: linear-gradient(135deg, #eef2f3, #dfe9f3);
+                background: linear-gradient(135deg, #d6c6f4, #f2e7ff);
                 margin: 0;
                 padding: 0;
             }}
@@ -264,7 +264,7 @@ def admin():
                 padding: 20px;
             }}
             .header {{
-                background-color: #2e89ff;
+                background: linear-gradient(to right, #6a11cb, #2575fc);
                 color: white;
                 padding: 20px;
                 border-radius: 0 0 10px 10px;
@@ -291,12 +291,12 @@ def admin():
                 text-align: left;
             }}
             th {{
-                background-color: #f8f8f8;
+                background-color: #ede4f7;
                 font-weight: 600;
             }}
             button {{
                 padding: 8px 16px;
-                background-color: #2e89ff;
+                background: linear-gradient(to right, #7b2ff7, #f107a3);
                 color: white;
                 border: none;
                 border-radius: 6px;
@@ -304,11 +304,11 @@ def admin():
                 transition: background 0.3s ease;
             }}
             button:hover {{
-                background-color: #1a6fe0;
+                background: linear-gradient(to right, #6a11cb, #ff6ec4);
             }}
             input[type="file"], input[type="text"], input[type="date"] {{
                 padding: 8px;
-                border: 1px solid #ccc;
+                border: 1px solid #bfa9d6;
                 border-radius: 6px;
                 margin-right: 10px;
             }}
@@ -319,7 +319,7 @@ def admin():
             }}
             h2 {{
                 margin-top: 0;
-                color: #333;
+                color: #5e2e91;
             }}
         </style>
 
@@ -513,17 +513,68 @@ HTML_TEMPLATE = '''
     <title>资料领取</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family:sans-serif;background:#f0f2f5;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:30px; }
-        .card { background:white;padding:30px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.1);width:90%;max-width:500px;margin-bottom:30px; }
-        input, textarea { padding:10px;width:90%;margin:10px 0;font-size:16px;border:1px solid #ccc;border-radius:8px; }
-        button { padding:12px 24px;background:#2e89ff;color:white;border:none;border-radius:8px;font-size:16px;cursor:pointer; }
-        button:hover { background:#1a6fe0; }
-        .error { color:red;margin-top:10px; }
-        .success { color:green;margin-top:10px; }
-        ul { list-style:none;padding:0;margin-top:10px;text-align:left; }
-        li { padding:5px 0;border-bottom:1px dashed #ddd; }
-        textarea { height:80px; resize: vertical; }
+        body {
+            font-family: sans-serif;
+            background: linear-gradient(to bottom right, #d6c6f4, #f2e7ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 30px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.2);
+            width: 90%;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+        input, textarea {
+            padding: 10px;
+            width: 90%;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #bfa9d6;
+            border-radius: 8px;
+        }
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(to right, #7b2ff7, #f107a3);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: linear-gradient(to right, #6a11cb, #ff6ec4);
+        }
+        .error {
+            color: #d9534f;
+            margin-top: 10px;
+        }
+        .success {
+            color: #5cb85c;
+            margin-top: 10px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            text-align: left;
+        }
+        li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
     </style>
+
 </head>
 <!-- ✅ 弹窗结构 -->
 <div id="popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:999;">
@@ -558,29 +609,29 @@ HTML_TEMPLATE = '''
 <body>
 
     <div class="card">
-        <h2>📥 资料领取</h2>
+        <h2>📥 领取手机号</h2>
         <form method="POST">
             <input type="hidden" name="action" value="get">
             <input name="userid" placeholder="请输入您的 ID" required><br>
-            <button type="submit">领取资料</button>
+            <button type="submit">点击领取</button>
         </form>
 
 
         {% if error %}
             <div class="error">{{ error }}</div>
         {% elif phones %}
-            <div class="success">✅ 领取成功，点击查看资料：</div>
-            <button onclick="showPopup()">📋 查看资料</button>
+            <div class="success">✅ 领取成功！！</div>
+            <button onclick="showPopup()">📋 查看</button>
         {% endif %}
     </div>
 
     <div class="card">
-        <h2>📤 上传领取成功的资料</h2>
+        <h2>📤 上传已成功号码</h2>
         <form method="POST" action="/">
             <input type="hidden" name="action" value="upload">
             <input name="userid" placeholder="请输入您的 ID" required><br>
-            <textarea name="phones" placeholder="粘贴你领取的手机号，每行一个" required></textarea><br>
-            <button type="submit">上传资料</button>
+            <textarea name="phones" placeholder="粘贴手机号，必须是您本人领取的" required></textarea><br>
+            <button type="submit">上传</button>
         </form>
 
         {% if upload_msg %}
@@ -667,7 +718,7 @@ def index():
                         # 添加上传记录
                         for phone in all_phones:
                             add_upload_log(uid, phone)
-                        upload_msg = f"✅ 成功上传 {len(all_phones)} 条资料"
+                        upload_msg = f"✅ 成功上传 {len(all_phones)} 条，将在24小时内审核成功后发放奖励至云顶app"
                         upload_success = True
 
     return render_template_string(
