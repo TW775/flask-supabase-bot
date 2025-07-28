@@ -253,14 +253,14 @@ def admin():
             a.logout {{ color: white; text-decoration: none; font-size: 14px; }}
         </style>
         <script>
-            async function markPhone(phone) {{
-                const res = await fetch("/mark", {{
+            async function markPhone(phone) {
+                const res = await fetch("/mark", {
                     method: "POST",
-                    headers: {{"Content-Type": "application/x-www-form-urlencoded"}},
-                    body: `phone=${{phone}}`
-                }});
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: `phone=${phone}`
+                });
                 if (res.ok) location.reload();
-            }}
+            }
         </script>
     </head>
     <body>
