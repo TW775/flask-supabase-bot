@@ -176,8 +176,13 @@ def blacklist_count():
     return response.count
 
 def blacklist_preview(n=10):
-    response = supabase.table("blacklist").select("phone").limit(n).execute()
-    return [item["phone"] for item in response.data]
+    try:
+        response = supabase.table("blacklist").select("phone").limit(n).execute()
+        return [row["phone"] for row in response.data]
+    except Exception as e:
+        print("blacklist_preview 预览失败：", e)
+        return ["⚠️ 数据读取失败"]
+
 
 # ===== 路由处理 =====
 @app.route("/mark", methods=["POST"])
