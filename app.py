@@ -4,7 +4,7 @@ import json, os, time
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from supabase import create_client, Client
-
+from flask import jsonify
 
 
 # ✅ Render 专用配置（不使用 .env 文件）
@@ -175,7 +175,8 @@ def mark_phone():
     if not phone:
         return "No phone", 400
     new_status = toggle_mark(phone)
-    return "✅ 已标记" if new_status else "❌ 已取消"
+    return jsonify({"status": new_status})  # 👈 返回 JSON 状态
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -256,12 +257,24 @@ def admin():
             async function markPhone(phone) {
                 const res = await fetch("/mark", {
                     method: "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: `phone=${phone}`
                 });
-                if (res.ok) location.reload();
+
+                if (res.ok) {
+                    const data = await res.json();
+                    const isMarked = data.status === "已领";
+
+                    // 更新状态文字
+                    document.getElementById(`status-${phone}`).innerText = isMarked ? "✅ 已领" : "❌ 未标记";
+
+                    // 更新按钮文字
+                    const btn = document.querySelector(`button[onclick="markPhone('${phone}')"]`);
+                    if (btn) btn.innerText = isMarked ? "取消标记" : "标记已领";
+                }
             }
         </script>
+
     </head>
     <body>
     <div class="header">
