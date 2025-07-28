@@ -530,7 +530,10 @@ HTML_TEMPLATE = '''
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
+            width: 95%;
+            margin-top: 0px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
@@ -699,8 +702,8 @@ HTML_TEMPLATE = '''
         <span class="title">自助加人任务</span>
       </div>
       <div class="right">
-        <button class="btn" onclick="showRules()">📜 任务规则</button>
-        <a href="https://ydpc28.cc" target="_blank"><button class="btn">🚀 进入云顶</button></a>
+        <button class="btn" onclick="showRules()">规则</button>
+        <a href="https://ydpc28.cc" target="_blank"><button class="btn">进入云顶</button></a>
       </div>
     </div>
     <div class="card">
