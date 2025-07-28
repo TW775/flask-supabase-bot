@@ -111,7 +111,7 @@ def save_user_status(uid, data):
 
 def save_phone_groups(groups):
     # 清空表
-    supabase.table("phone_groups").delete().neq("group_id", 0).execute()
+    supabase.table("phone_groups").delete().execute()
     # 插入新分组
     data = [{"group_id": idx, "phones": group} for idx, group in enumerate(groups)]
     if data:
