@@ -253,7 +253,7 @@ def admin():
             button:hover {{ background-color: #256edb; }}
             a.logout {{ color: white; text-decoration: none; font-size: 14px; }}
         </style>
-        result_html += """
+
         <script>
             async function markPhone(phone) {
                 const res = await fetch("/mark", {
@@ -271,8 +271,6 @@ def admin():
                 }
             }
         </script>
-        """
-
 
     </head>
     <body>
