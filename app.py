@@ -524,21 +524,24 @@ HTML_TEMPLATE = '''
             padding: 30px;
         }
         .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100vw; /* ⬅️ 填满整个屏幕宽度 */
+            height: 60px;
             background: linear-gradient(to right, #6a11cb, #2575fc);
             color: white;
-            padding: 12px 24px;
+            padding: 0 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 95%;
-            margin-top: 0px;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
             z-index: 999;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            box-sizing: border-box; /* ⬅️ 防止 padding 导致超宽 */
         }
+
 
         .top-bar .logo {
             font-size: 24px;
@@ -646,7 +649,7 @@ HTML_TEMPLATE = '''
 {% endif %}{% endfor %}</pre>
     <div style="text-align:right; margin-top:10px;">
       <button onclick="copyPopupText()">📋 复制</button>
-      <button onclick="closePopup()" style="margin-left:10px;">❌ 关闭</button>
+      <button onclick="closePopupById()" style="margin-left:10px;">❌ 关闭</button>
     </div>
   </div>
 </div>
@@ -689,7 +692,7 @@ HTML_TEMPLATE = '''
       3. 他成功加到管理旺旺号后，你在下方上传至后台待审核发放奖励<br>
         （成功一位奖励58多加多得，24小时内审核自动上云顶账单）
     </p>
-    <button onclick="closePopup('popup-rules')">关闭</button>
+    <button onclick="closePopupById('popup-rules')">关闭</button>
   </div>
 </div>
 
@@ -704,6 +707,7 @@ HTML_TEMPLATE = '''
         <a href="https://ydpc28.cc" target="_blank"><button class="btn">进入云顶</button></a>
       </div>
     </div>
+    <div style="height: 80px;"></div>  <!-- ⬅️ 跟顶部高度一致或略高 -->
     <div class="card">
         <h2>📥 领取手机号</h2>
         <form method="POST">
