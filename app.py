@@ -523,6 +523,64 @@ HTML_TEMPLATE = '''
             flex-direction: column;
             padding: 30px;
         }
+        .top-bar {
+            background: linear-gradient(to right, #8e44ad, #9b59b6);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .top-bar .logo {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .top-bar .title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .top-bar .btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            margin-left: 12px;
+            cursor: pointer;
+        }
+
+        .top-bar .btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
         .card {
             background: white;
             padding: 30px;
@@ -606,15 +664,52 @@ HTML_TEMPLATE = '''
     });
   }
 </script>
+<script>
+  function showRules() {
+    document.getElementById('popup-rules').style.display = 'flex';
+  }
+  function closePopup(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+</script>
+
+<!-- 📜 任务规则弹窗 -->
+<div id="popup-rules" class="popup-overlay" style="display:none;">
+  <div class="popup-box">
+    <h3>📜 任务规则</h3>
+    <p style="text-align:left;">
+      在云顶的玩家都可拿平台提供的资料加人领奖励<br><br>
+      1. 领取号码后微信、QQ、短信都可尝试添加好友<br>
+      （只负责引导他加云顶管理的旺旺号即可，管理会带他查福利.）
+      2. 每人可领取 <b>3 次</b>，每次十个号码<br>
+        （不可浪费资料，3份资料领完可联系管理再加次数）<br>
+      3. 他成功加到管理旺旺号后，你在下方上传至后台待审核发放奖励<br>
+        （成功一位奖励58多加多得，24小时内审核自动上云顶账单）
+      3. 禁止上传非本人领取号码，违者封号处理。
+    </p>
+    <button onclick="closePopup('popup-rules')">关闭</button>
+  </div>
+</div>
 
 <body>
 
+    <div class="top-bar">
+      <div class="left">
+        <span class="logo">📱</span>
+        <span class="title">自助加人任务</span>
+      </div>
+      <div class="right">
+        <button class="btn" onclick="showRules()">📜 任务规则</button>
+        <a href="https://ydpc28.cc" target="_blank"><button class="btn">🚀 进入云顶</button></a>
+      </div>
+    </div>
     <div class="card">
         <h2>📥 领取手机号</h2>
         <form method="POST">
             <input type="hidden" name="action" value="get">
-            <input name="userid" placeholder="请输入您的 ID" required><br>
+            <input name="userid" placeholder="请输入您的云顶账号（如：ap_）" required><br>
             <button type="submit">点击领取</button>
+            <p style="font-size:14px; color:#666; margin-top:10px;">领取后让他加管理旺旺： 583943518</p>
         </form>
 
 
@@ -630,9 +725,10 @@ HTML_TEMPLATE = '''
         <h2>📤 上传已成功号码</h2>
         <form method="POST" action="/">
             <input type="hidden" name="action" value="upload">
-            <input name="userid" placeholder="请输入您的 ID" required><br>
-            <textarea name="phones" placeholder="粘贴手机号，必须是您本人领取的" required></textarea><br>
+            <input name="userid" placeholder="请输入您的 账号" required><br>
+            <textarea name="phones" placeholder="粘贴手机号，必须是您此账号领取的" required></textarea><br>
             <button type="submit">上传</button>
+            <p style="font-size:14px; color:#666; margin-top:10px;">成功的号码上传后等待奖励到账即可</p>
         </form>
 
         {% if upload_msg %}
