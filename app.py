@@ -118,7 +118,7 @@ def save_phone_groups(groups):
 
 def add_upload_log(uid, phone):
     data = {
-        "uid": uid,
+        "user_id": uid,
         "phone": phone,
         "upload_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
