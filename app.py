@@ -511,7 +511,7 @@ HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html>
 <head>
-    <title>云顶加微信任务</title>
+    <title>云顶加人领奖</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
@@ -524,7 +524,7 @@ HTML_TEMPLATE = '''
             padding: 30px;
         }
         .top-bar {
-            background: linear-gradient(to right, #8e44ad, #9b59b6);
+            background: linear-gradient(to right, #6a11cb, #2575fc);
             color: white;
             padding: 12px 24px;
             display: flex;
@@ -641,11 +641,11 @@ HTML_TEMPLATE = '''
 <!-- ✅ 弹窗结构 -->
 <div id="popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:999;">
   <div style="background:white; max-width:400px; margin:100px auto; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.3); position:relative;">
-    <h3 style="color:green;">✅ 以下是你的资料</h3>
+    <h3 style="color:green;">✅ 以下是您的号码</h3>
     <pre id="popup-content" style="font-size:16px; white-space:pre-wrap; max-height:300px; overflow-y:auto;">{% for phone in phones %}{{ phone }}{% if not loop.last %}
 {% endif %}{% endfor %}</pre>
     <div style="text-align:right; margin-top:10px;">
-      <button onclick="copyPopupText()">📋 一键复制</button>
+      <button onclick="copyPopupText()">📋 复制</button>
       <button onclick="closePopup()" style="margin-left:10px;">❌ 关闭</button>
     </div>
   </div>
@@ -663,7 +663,7 @@ HTML_TEMPLATE = '''
   function copyPopupText() {
     const content = document.getElementById("popup-content").innerText;
     navigator.clipboard.writeText(content).then(() => {
-      alert("✅ 已复制到剪贴板");
+      alert("✅ 已复制");
     });
   }
 </script>
@@ -681,14 +681,13 @@ HTML_TEMPLATE = '''
   <div class="popup-box">
     <h3>📜 任务规则</h3>
     <p style="text-align:left;">
-      在云顶的玩家都可拿平台提供的资料加人领奖励<br><br>
+      云顶的玩家都可领平台提供的号码加人领奖励<br><br>
       1. 领取号码后微信、QQ、短信都可尝试添加好友<br>
-      （只负责引导他加云顶管理的旺旺号即可，管理会带他查福利.）
+      （只负责引导他加云顶管理的旺旺号即可，管理会带他查福利.）<br>
       2. 每人可领取 <b>3 次</b>，每次十个号码<br>
         （不可浪费资料，3份资料领完可联系管理再加次数）<br>
       3. 他成功加到管理旺旺号后，你在下方上传至后台待审核发放奖励<br>
         （成功一位奖励58多加多得，24小时内审核自动上云顶账单）
-      3. 禁止上传非本人领取号码，违者封号处理。
     </p>
     <button onclick="closePopup('popup-rules')">关闭</button>
   </div>
@@ -698,8 +697,7 @@ HTML_TEMPLATE = '''
 
     <div class="top-bar">
       <div class="left">
-        <span class="logo">📱</span>
-        <span class="title">自助加人任务</span>
+        <span class="title">📱加人领奖</span>
       </div>
       <div class="right">
         <button class="btn" onclick="showRules()">规则</button>
@@ -710,16 +708,16 @@ HTML_TEMPLATE = '''
         <h2>📥 领取手机号</h2>
         <form method="POST">
             <input type="hidden" name="action" value="get">
-            <input name="userid" placeholder="请输入您的云顶账号（如：ap_）" required><br>
+            <input name="userid" placeholder="请输入（如：ap_）您的云顶账号" required><br>
             <button type="submit">点击领取</button>
-            <p style="font-size:14px; color:#666; margin-top:10px;">领取后让他加管理旺旺： 583943518</p>
+            <p style="font-size:14px; color:#666; margin-top:10px;">联系让他加管理旺旺： 583943518</p>
         </form>
 
 
         {% if error %}
             <div class="error">{{ error }}</div>
         {% elif phones %}
-            <div class="success">✅ 领取成功！！</div>
+            <div class="success">✅ 成功！！</div>
             <button onclick="showPopup()">📋 查看</button>
         {% endif %}
     </div>
@@ -729,9 +727,9 @@ HTML_TEMPLATE = '''
         <form method="POST" action="/">
             <input type="hidden" name="action" value="upload">
             <input name="userid" placeholder="请输入您的 账号" required><br>
-            <textarea name="phones" placeholder="粘贴手机号，必须是您此账号领取的" required></textarea><br>
+            <textarea name="phones" placeholder="粘贴手机号！必须是您此账号领取的" required></textarea><br>
             <button type="submit">上传</button>
-            <p style="font-size:14px; color:#666; margin-top:10px;">成功的号码上传后等待奖励到账即可</p>
+            <p style="font-size:14px; color:#666; margin-top:10px;">成功的号码上传后等待奖励到账即可<br>未成功假提交将被拉黑</p>
         </form>
 
         {% if upload_msg %}
