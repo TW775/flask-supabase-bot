@@ -234,7 +234,7 @@ def admin():
     query_id = request.args.get("uid", "").strip()
 
     # 构建管理后台 HTML
-    result_html = f"""
+    result_html = """
     <!DOCTYPE html>
     <html>
     <head>
@@ -255,21 +255,21 @@ def admin():
         </style>
 
         <script>
-            async function markPhone(phone) {
-                const res = await fetch("/mark", {
+            async function markPhone(phone) {{
+                const res = await fetch("/mark", {{
                     method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `phone=${phone}`
-                });
+                    headers: {{ "Content-Type": "application/x-www-form-urlencoded" }},
+                    body: `phone=${{phone}}`
+                }});
 
-                if (res.ok) {
+                if (res.ok) {{
                     const data = await res.json();
                     const isMarked = data.status === "已领";
-                    document.getElementById(`status-${phone}`).innerText = isMarked ? "✅ 已领" : "❌ 未标记";
-                    const btn = document.querySelector(`button[onclick="markPhone('${phone}')"]`);
+                    document.getElementById(`status-${{phone}}`).innerText = isMarked ? "✅ 已领" : "❌ 未标记";
+                    const btn = document.querySelector(`button[onclick="markPhone('${{phone}}')"]`);
                     if (btn) btn.innerText = isMarked ? "取消标记" : "标记已领";
-                }
-            }
+                }}
+            }}
         </script>
 
     </head>
@@ -279,6 +279,7 @@ def admin():
         <div><a href="/logout" class="logout">🚪 退出</a></div>
     </div>
     """
+
 
     # 黑名单预览部分
     result_html += f"""
