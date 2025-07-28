@@ -130,10 +130,19 @@ def toggle_mark(phone):
     if response.data:
         current_status = not response.data[0]["status"]
         supabase.table("mark_status").update({"status": current_status}).eq("phone", phone).execute()
-        return current_status
     else:
+        current_status = True
         supabase.table("mark_status").insert({"phone": phone, "status": True}).execute()
-        return True
+
+    # ✅ 自动加入黑名单
+    if current_status:
+        # 已标记为“已领”，加入 blacklist（避免重复）
+        existing = supabase.table("blacklist").select("phone").eq("phone", phone).execute()
+        if not existing.data:
+            supabase.table("blacklist").insert({"phone": phone}).execute()
+
+    return current_status
+
 
 def save_blacklist(phones):
     # 清空表
@@ -159,28 +168,6 @@ def mark_phone():
         return "No phone", 400
     new_status = toggle_mark(phone)
     return "✅ 已标记" if new_status else "❌ 已取消"
-
-@app.route("/export_marked")
-def export_marked():
-    marked_phones = []
-    response = supabase.table("mark_status").select("phone").eq("status", True).execute()
-    for item in response.data:
-        marked_phones.append(item["phone"])
-
-    # 保存为 TXT 文件
-    with open("marked_phones.txt", "w") as f:
-        for phone in marked_phones:
-            f.write(phone + "\n")
-
-    # 加入黑名单
-    blacklist = set(load_blacklist())
-    blacklist.update(marked_phones)
-    save_blacklist(blacklist)
-
-    return "\n".join(marked_phones), 200, {
-        'Content-Type': 'text/plain',
-        'Content-Disposition': 'attachment; filename=marked_phones.txt'
-    }
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -272,12 +259,6 @@ def admin():
     <div class="header">
         <div><strong>📊 管理后台</strong></div>
         <div><a href="/logout" class="logout">🚪 退出</a></div>
-    </div>
-
-    <div class="card">
-        <a href="/export_marked" target="_blank">
-            <button>📥 导出所有已标记为已领的手机号</button>
-        </a>
     </div>
     """
 
