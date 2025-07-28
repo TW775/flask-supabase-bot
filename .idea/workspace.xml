@@ -3,21 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e939dadf-3def-4e20-839d-bd266d7a4ebe" name="默认更改列表" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blacklist.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/codes.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/convert_id_txt.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_phone_groups.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/id_list.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/id_whitelist.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mark_status.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/marked_phones.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/phone_groups.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/phones.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/render.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/render.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload_logs.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/user_status.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +39,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1753354436821</updated>
-      <workItem from="1753354437911" duration="30274000" />
+      <workItem from="1753354437911" duration="58077000" />
     </task>
     <servers />
   </component>
