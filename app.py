@@ -5,6 +5,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from supabase import create_client, Client
 from flask import jsonify
+import pytz
 
 
 # ✅ Render 专用配置（不使用 .env 文件）
@@ -59,7 +60,7 @@ def load_upload_logs():
     logs = {}
     try:
         response = supabase.table("upload_logs").select("user_id, phone, upload_time").execute()
-        for item in response.data:
+        for item in sorted(response.data, key=lambda x: x.get("upload_time", ""), reverse=True):
             uid = item.get("user_id")  # ← 注意字段名要改成 Supabase 中真实存在的
             if uid not in logs:
                 logs[uid] = []
@@ -117,12 +118,22 @@ def save_phone_groups(groups):
             supabase.table("phone_groups").insert(data).execute()
 
 def add_upload_log(uid, phone):
+    # 检查是否已经上传过
+    existing = supabase.table("upload_logs").select("phone").eq("uid", uid).eq("phone", phone).execute()
+    if existing.data:
+        print(f"已存在记录: {uid} - {phone}，跳过上传")
+        return False  # 返回 False 表示重复
+
+    tz = pytz.timezone("Asia/Shanghai")
+    china_time = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
+
     data = {
-        "user_id": uid,
+        "uid": uid,
         "phone": phone,
-        "upload_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "upload_time": china_time
     }
     supabase.table("upload_logs").insert(data).execute()
+    return True  # 插入成功
 
 def toggle_mark(phone):
     # 读取当前状态
