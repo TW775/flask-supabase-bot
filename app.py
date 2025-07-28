@@ -234,24 +234,82 @@ def admin():
     query_id = request.args.get("uid", "").strip()
 
     # 构建管理后台 HTML
-    result_html = """
+    result_html = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>管理后台</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
-            body {{ font-family: 'Segoe UI', sans-serif; background-color: #f5f7fa; padding: 20px; margin: 0; }}
-            .header {{ background-color: #2e89ff; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }}
-            .card {{ background: white; padding: 20px; margin: 20px auto; border-radius: 10px; max-width: 800px; box-shadow: 0 0 8px rgba(0,0,0,0.05); }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
-            th, td {{ border: 1px solid #ccc; padding: 8px; text-align: left; }}
-            th {{ background: #f0f0f0; }}
-            h2 {{ margin-top: 30px; color: #333; }}
-            input[type="file"] {{ margin: 10px 0; }}
-            button {{ padding: 8px 20px; background-color: #2e89ff; color: white; border: none; border-radius: 6px; cursor: pointer; }}
-            button:hover {{ background-color: #256edb; }}
-            a.logout {{ color: white; text-decoration: none; font-size: 14px; }}
+            body {{
+                font-family: 'Segoe UI', sans-serif;
+                background: linear-gradient(135deg, #eef2f3, #dfe9f3);
+                margin: 0;
+                padding: 0;
+            }}
+            .container {{
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 20px;
+            }}
+            .header {{
+                background-color: #2e89ff;
+                color: white;
+                padding: 20px;
+                border-radius: 0 0 10px 10px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }}
+            .card {{
+                background: white;
+                padding: 20px;
+                margin: 30px 0;
+                border-radius: 10px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            }}
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }}
+            th, td {{
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: left;
+            }}
+            th {{
+                background-color: #f8f8f8;
+                font-weight: 600;
+            }}
+            button {{
+                padding: 8px 16px;
+                background-color: #2e89ff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }}
+            button:hover {{
+                background-color: #1a6fe0;
+            }}
+            input[type="file"], input[type="text"], input[type="date"] {{
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                margin-right: 10px;
+            }}
+            a.logout {{
+                color: white;
+                text-decoration: none;
+                font-size: 14px;
+            }}
+            h2 {{
+                margin-top: 0;
+                color: #333;
+            }}
         </style>
 
         <script>
@@ -271,14 +329,15 @@ def admin():
                 }}
             }}
         </script>
-
     </head>
     <body>
-    <div class="header">
-        <div><strong>📊 管理后台</strong></div>
-        <div><a href="/logout" class="logout">🚪 退出</a></div>
-    </div>
+        <div class="header">
+            <div><strong>📊 管理后台</strong></div>
+            <div><a href="/logout" class="logout">🚪 退出</a></div>
+        </div>
+        <div class="container">
     """
+
 
 
     # 黑名单预览部分
