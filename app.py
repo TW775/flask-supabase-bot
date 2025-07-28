@@ -128,7 +128,7 @@ def add_upload_log(uid, phone):
     china_time = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
 
     data = {
-        "uid": uid,
+        "user_id": uid,
         "phone": phone,
         "upload_time": china_time
     }
