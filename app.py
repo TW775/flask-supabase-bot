@@ -9,6 +9,7 @@ from supabase import create_client, Client
 
 # ✅ Render 专用配置（不使用 .env 文件）
 app = Flask(__name__)
+app.config["DEBUG"] = True  # 添加这一行
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default-secret-key")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "tw223322")
 app.config['UPLOAD_FOLDER'] = '.'
