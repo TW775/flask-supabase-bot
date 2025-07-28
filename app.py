@@ -44,7 +44,7 @@ def load_user_status():
              for item in response.data}
 
 def load_phone_groups():
-    response = supabase.table("phone_groups").select("group_index, phones").order("group_index").execute()
+    response = supabase.table("phone_groups").select("group_id, phones").order("group_id").execute()
     return [item["phones"] for item in response.data]
 
 def load_upload_logs():
@@ -97,11 +97,11 @@ def save_user_status(uid, data):
 
 def save_phone_groups(groups):
     # 清空表
-    supabase.table("phone_groups").delete().neq("group_index", 0).execute()
+    supabase.table("phone_groups").delete().neq("group_id", 0).execute()
     # 插入新分组
-    data = [{"phones": group} for group in groups]
+    data = [{"group_id": idx, "phones": group} for idx, group in enumerate(groups)]
     if data:
-        supabase.table("phone_groups").insert(data).execute()
+            supabase.table("phone_groups").insert(data).execute()
 
 def add_upload_log(uid, phone):
     data = {
@@ -509,8 +509,11 @@ HTML_TEMPLATE = '''
 </html>
 '''
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST", "HEAD"])
 def index():
+    if request.method == "HEAD":
+            return "", 200
+
     whitelist = load_whitelist()
     status = load_user_status()
     groups = load_phone_groups()
