@@ -125,27 +125,31 @@ def add_upload_log(uid, phone):
     supabase.table("upload_logs").insert(data).execute()
 
 def toggle_mark(phone):
-    # 查询当前状态
+    # 读取当前状态
     response = supabase.table("mark_status").select("*").eq("phone", phone).execute()
-    current = response.data[0] if response.data else None
+    data = response.data
+
+    # 默认未标记
+    current_status = "未领"
+    if data:
+        current_status = data[0]["status"]
 
     # 切换状态
-    current_status = "已领" if not current or current["status"] != "已领" else "未领"
+    new_status = "已领" if current_status == "未领" else "未领"
 
-    # 更新 mark_status 表
-    if current:
-        supabase.table("mark_status").update({"status": current_status}).eq("phone", phone).execute()
+    # 写入 mark_status 表
+    if data:
+        supabase.table("mark_status").update({"status": new_status}).eq("phone", phone).execute()
     else:
-        supabase.table("mark_status").insert({"phone": phone, "status": current_status}).execute()
+        supabase.table("mark_status").insert({"phone": phone, "status": new_status}).execute()
 
-    # 👇 同步黑名单表
-    if current_status == "已领":
+    # 黑名单操作
+    if new_status == "已领":
         supabase.table("blacklist").insert({"phone": phone}).execute()
     else:
-        supabase.table("blacklist").delete().eq("phone", phone).execute()  # 从黑名单移除
+        supabase.table("blacklist").delete().eq("phone", phone).execute()
 
-    return current_status
-
+    return new_status
 
 
 def save_blacklist(phones):
