@@ -48,25 +48,30 @@ def load_phone_groups():
     return [item["phones"] for item in response.data]
 
 def load_upload_logs():
-    response = supabase.table("upload_logs").select("uid, phone, time").execute()
     logs = {}
-    for item in response.data:
-        uid = item["uid"]
-        if uid not in logs:
-            logs[uid] = []
+    try:
+        response = supabase.table("upload_logs").select("user_id, phone, upload_time").execute()
+        for item in response.data:
+            uid = item.get("user_id")  # ← 注意字段名要改成 Supabase 中真实存在的
+            if uid not in logs:
+                logs[uid] = []
 
-        # 确保时间值是字符串
-        time_value = item["upload_time"]
-        if isinstance(time_value, datetime):
-            time_str = time_value.strftime("%Y-%m-%d %H:%M:%S")
-        else:
-            time_str = str(time_value)
+            # 获取上传时间，处理为字符串格式
+            time_value = item.get("upload_time")
+            if isinstance(time_value, datetime):
+                time_str = time_value.strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                time_str = str(time_value)
 
-        logs[uid].append({
-            "phone": item["phone"],
-            "time": time_str
-        })
+            logs[uid].append({
+                "phone": item.get("phone"),
+                "time": time_str
+            })
+    except Exception as e:
+        print(f"❌ 加载上传记录失败: {e}")
+
     return logs
+
 
 def load_marks():
     response = supabase.table("mark_status").select("*").execute()
