@@ -253,6 +253,7 @@ def admin():
             button:hover {{ background-color: #256edb; }}
             a.logout {{ color: white; text-decoration: none; font-size: 14px; }}
         </style>
+        result_html += """
         <script>
             async function markPhone(phone) {
                 const res = await fetch("/mark", {
@@ -264,16 +265,14 @@ def admin():
                 if (res.ok) {
                     const data = await res.json();
                     const isMarked = data.status === "已领";
-
-                    // 更新状态文字
                     document.getElementById(`status-${phone}`).innerText = isMarked ? "✅ 已领" : "❌ 未标记";
-
-                    // 更新按钮文字
                     const btn = document.querySelector(`button[onclick="markPhone('${phone}')"]`);
                     if (btn) btn.innerText = isMarked ? "取消标记" : "标记已领";
                 }
             }
         </script>
+        """
+
 
     </head>
     <body>
