@@ -649,7 +649,7 @@ HTML_TEMPLATE = '''
 {% endif %}{% endfor %}</pre>
     <div style="text-align:right; margin-top:10px;">
       <button onclick="copyPopupText()">📋 复制</button>
-      <button onclick="closePopupById()" style="margin-left:10px;">❌ 关闭</button>
+      <button onclick="closePopup()" style="margin-left:10px;">❌ 关闭</button>
     </div>
   </div>
 </div>
@@ -663,6 +663,14 @@ HTML_TEMPLATE = '''
     document.getElementById("popup").style.display = "none";
   }
 
+  function showRules() {
+    document.getElementById('popup-rules').style.display = 'flex';
+  }
+
+  function closeRulesPopup() {
+    document.getElementById('popup-rules').style.display = 'none';
+  }
+
   function copyPopupText() {
     const content = document.getElementById("popup-content").innerText;
     navigator.clipboard.writeText(content).then(() => {
@@ -670,14 +678,7 @@ HTML_TEMPLATE = '''
     });
   }
 </script>
-<script>
-  function showRules() {
-    document.getElementById('popup-rules').style.display = 'flex';
-  }
-  function closePopup(id) {
-    document.getElementById(id).style.display = 'none';
-  }
-</script>
+
 
 <!-- 📜 任务规则弹窗 -->
 <div id="popup-rules" class="popup-overlay" style="display:none;">
@@ -692,7 +693,7 @@ HTML_TEMPLATE = '''
       3. 他成功加到管理旺旺号后，你在下方上传至后台待审核发放奖励<br>
         （成功一位奖励58多加多得，24小时内审核自动上云顶账单）
     </p>
-    <button onclick="closePopupById('popup-rules')">关闭</button>
+    <button onclick="closeRulesPopup()">关闭</button>
   </div>
 </div>
 
