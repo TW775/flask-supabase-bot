@@ -119,7 +119,7 @@ def save_phone_groups(groups):
 
 def add_upload_log(uid, phone):
     # 检查是否已经上传过
-    existing = supabase.table("upload_logs").select("phone").eq("uid", uid).eq("phone", phone).execute()
+    existing = supabase.table("upload_logs").select("phone").eq("user_id", uid).eq("phone", phone).execute()
     if existing.data:
         print(f"已存在记录: {uid} - {phone}，跳过上传")
         return False  # 返回 False 表示重复
