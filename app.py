@@ -48,7 +48,7 @@ def load_phone_groups():
     return [item["phones"] for item in response.data]
 
 def load_upload_logs():
-    response = supabase.table("upload_logs").select("uid, phone, upload_time").execute()
+    response = supabase.table("upload_logs").select("uid, phone, time").execute()
     logs = {}
     for item in response.data:
         uid = item["uid"]
