@@ -436,7 +436,8 @@ def admin():
             phone = record['phone']
             # 确保时间字符串正确显示
             time_str = record['time'] if isinstance(record['time'], str) else record['time'].strftime("%Y-%m-%d %H:%M:%S")
-            is_marked = marks.get(phone, False)
+            mark_status = marks.get(phone, "未领")
+            is_marked = mark_status == "已领"
             status = "✅ 已领" if is_marked else "❌ 未标记"
             btn_text = "取消标记" if is_marked else "标记已领"
             result_html += f"""
@@ -510,7 +511,7 @@ HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html>
 <head>
-    <title>资料领取</title>
+    <title>云顶加微信任务</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
