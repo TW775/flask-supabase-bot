@@ -44,7 +44,7 @@ def load_user_status():
              for item in response.data}
 
 def load_phone_groups():
-    response = supabase.table("phone_groups").select("group_id, phones").order("group_id").execute()
+    response = supabase.table("phone_groups").select("group_id, phone").order("group_id").execute()
     return [item["phones"] for item in response.data]
 
 def load_upload_logs():
