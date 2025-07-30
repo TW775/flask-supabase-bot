@@ -185,6 +185,76 @@ def blacklist_preview(n=10):
 
 
 # ===== 路由处理 =====
+
+@app.route("/ping")
+def ping_page():
+    return """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>唤醒中 · 云顶资料站</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                background: linear-gradient(to bottom right, #d6c6f4, #f2e7ff);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                font-family: sans-serif;
+                margin: 0;
+            }
+            .card {
+                background: white;
+                padding: 40px;
+                border-radius: 16px;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                max-width: 400px;
+            }
+            .card h2 {
+                color: #6a11cb;
+            }
+            .spinner {
+                border: 6px solid #f3f3f3;
+                border-top: 6px solid #7b2ff7;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+                margin: 20px auto;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h2>📄 排队领取中</h2>
+            <div class="spinner"></div>
+            <p>请不要退出，0~20 秒自动进入领取中心...</p>
+        </div>
+
+        <script>
+            async function checkReady() {
+                try {
+                    const res = await fetch("/", { method: "HEAD" });
+                    if (res.ok) {
+                        window.location.href = "/";
+                    }
+                } catch (e) {
+                    // 请求失败，说明还没准备好
+                }
+                setTimeout(checkReady, 2000); // 每2秒重试一次
+            }
+            checkReady();
+        </script>
+    </body>
+    </html>
+    """
+
 @app.route("/mark", methods=["POST"])
 def mark_phone():
     phone = request.form.get("phone")
@@ -703,11 +773,6 @@ HTML_TEMPLATE = '''
 </div>
 
 <body>
-<div style="text-align:center; color:red; margin:20px;">
-  🚀  正在排队领取，请等待约0~20秒不要退出...
-  <br>
-  <img src="https://i.gifer.com/ZZ5H.gif" alt="进入中..." width="40" style="margin-top:10px;">
-</div>
 
     <div class="top-bar">
       <div class="left">
