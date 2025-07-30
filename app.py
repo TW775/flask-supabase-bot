@@ -392,8 +392,8 @@ def admin():
                 <input type="date" name="date" value="{query_date}">
             </div>
             <div>
-                <label for="uid">🔍 用户 ID：</label>
-                <input type="text" name="uid" placeholder="请输入用户 ID" value="{query_id}">
+                <label for="uid">🔍 用户 账号：</label>
+                <input type="text" name="uid" placeholder="请输入用户 账号" value="{query_id}">
             </div>
             <div>
                 <button type="submit">查找</button>
@@ -710,7 +710,7 @@ HTML_TEMPLATE = '''
       </div>
       <div class="right">
         <button class="btn" onclick="showRules()">规则</button>
-        <a href="https://ydpc28.cc" target="_blank"><button class="btn">进入云顶</button></a>
+        <a href="https://m.ydpc28.cc" target="_blank"><button class="btn">进入云顶</button></a>
       </div>
     </div>
     <div style="height: 80px;"></div>  <!-- ⬅️ 跟顶部高度一致或略高 -->
@@ -720,9 +720,21 @@ HTML_TEMPLATE = '''
             <input type="hidden" name="action" value="get">
             <input name="userid" placeholder="请输入（如：ap_）您的云顶账号" required><br>
             <button type="submit">点击领取</button>
-            <p style="font-size:14px; color:#666; margin-top:10px;">联系让他加管理旺旺： 583943518</p>
+            <p style="font-size:14px; color:#666; margin-top:10px;">
+  联系让他加管理旺旺： 
+  <span id="wangwang" style="user-select: all;">497332360</span>
+  <button onclick="copyText()" style="margin-left:5px;">复制</button>
+</p>
         </form>
 
+<script>
+  function copyText() {
+    const text = document.getElementById("wangwang").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert("已复制旺旺号：" + text);
+    });
+  }
+</script>
 
         {% if error %}
             <div class="error">{{ error }}</div>
