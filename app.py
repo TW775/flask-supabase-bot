@@ -793,7 +793,7 @@ HTML_TEMPLATE = '''
             <p style="font-size:14px; color:#666; margin-top:10px;">
   联系让他加管理旺旺： 
   <span id="wangwang" style="user-select: all;">497332360</span>
-  <button onclick="copyText()" style="margin-left:5px;">复制</button>
+  <button onclick="copyText()" type="button" style="margin-left:5px;">复制</button>
 </p>
         </form>
 
@@ -802,6 +802,8 @@ HTML_TEMPLATE = '''
     const text = document.getElementById("wangwang").innerText;
     navigator.clipboard.writeText(text).then(() => {
       alert("已复制旺旺号：" + text);
+    }).catch(() => {
+      alert("复制失败，请长按旺旺号手动复制");
     });
   }
 </script>
