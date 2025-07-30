@@ -703,6 +703,11 @@ HTML_TEMPLATE = '''
 </div>
 
 <body>
+<div style="text-align:center; color:red; margin:20px;">
+  🚀  正在排队领取，请等待约0~20秒不要退出...
+  <br>
+  <img src="https://i.gifer.com/ZZ5H.gif" alt="进入中..." width="40" style="margin-top:10px;">
+</div>
 
     <div class="top-bar">
       <div class="left">
