@@ -3,3 +3,4 @@ python-dotenv
 supabase
 werkzeug
 pytz
+gunicorn
