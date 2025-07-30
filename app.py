@@ -801,13 +801,39 @@ HTML_TEMPLATE = '''
 <script>
   function copyWangwang() {
     const text = "497332360";
-    navigator.clipboard.writeText(text).then(() => {
-      alert("✅ 已复制旺旺号：" + text);
-    }).catch(() => {
+
+    // 优先使用 clipboard API（现代浏览器）
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert("✅ 已复制旺旺号：" + text);
+      }).catch(() => {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const input = document.createElement("input");
+    input.value = text;
+    input.style.position = "fixed";  // 避免滚动跳动
+    input.style.opacity = 0;
+    document.body.appendChild(input);
+    input.focus();
+    input.select();
+
+    try {
+      const success = document.execCommand("copy");
+      alert(success ? "✅ 已复制旺旺号：" + text : "❌ 复制失败，请长按手动复制");
+    } catch (err) {
       alert("❌ 复制失败，请长按手动复制");
-    });
+    }
+
+    document.body.removeChild(input);
   }
 </script>
+
 
         {% if error %}
             <div class="error">{{ error }}</div>
