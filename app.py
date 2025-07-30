@@ -792,18 +792,19 @@ HTML_TEMPLATE = '''
             <button type="submit">点击领取</button>
             <p style="font-size:14px; color:#666; margin-top:10px;">
   联系让他加管理旺旺： 
-  <span id="wangwang" style="user-select: all;">497332360</span>
-  <button onclick="copyText()" type="button" style="margin-left:5px;">复制</button>
+  <span id="wangwang" onclick="copyWangwang()" style="color:#007aff; text-decoration:underline; cursor:pointer;">
+    497332360（点击复制）
+  </span>
 </p>
         </form>
 
 <script>
-  function copyText() {
-    const text = document.getElementById("wangwang").innerText;
+  function copyWangwang() {
+    const text = "497332360";
     navigator.clipboard.writeText(text).then(() => {
-      alert("已复制旺旺号：" + text);
+      alert("✅ 已复制旺旺号：" + text);
     }).catch(() => {
-      alert("复制失败，请长按旺旺号手动复制");
+      alert("❌ 复制失败，请长按手动复制");
     });
   }
 </script>
