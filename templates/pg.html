@@ -5,94 +5,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>云顶官方PG试玩</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: "Helvetica Neue", sans-serif;
-      background: linear-gradient(to right, #3b0764, #1e3a8a);
-      color: #fff;
-      padding: 0;
-    }
-    header {
-      background: linear-gradient(to right, #7e22ce, #2563eb);
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-      margin-bottom: 20px;
-    }
-    header .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #fff;
-    }
-    header .logo img {
-      width: 30px;
-      height: 30px;
-    }
-    header a {
-      color: #facc15;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    h1 {
-      text-align: center;
-      margin: 10px 0 10px;
-      color: #facc15;
-    }
-    .search-box {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 30px;
-    }
-    .search-box input {
-      padding: 8px;
-      width: 300px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-    }
-    .game-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 16px;
-      padding: 0 20px 40px;
-    }
-    .game-card {
-      background: #2d3748;
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      transition: transform 0.2s ease;
-    }
-    .game-card:hover {
-      transform: scale(1.05);
-      background-color: #4b5563;
-    }
-    .game-card img {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-      margin-bottom: 8px;
-      border-radius: 10px;
-    }
-    .game-card a {
-      display: block;
-      color: #facc15;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    
-      .bottom-tab-bar {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: "Helvetica Neue", sans-serif;
+    background: linear-gradient(to right, #3b0764, #1e3a8a);
+    color: #fff;
+    padding: 0;
+  }
+
+  header {
+    background: linear-gradient(to right, #7e22ce, #2563eb);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    margin-bottom: 20px;
+  }
+
+  header .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  header .logo img {
+    width: 30px;
+    height: 30px;
+  }
+
+  header a {
+    color: #facc15;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 10px 0 10px;
+    color: #facc15;
+  }
+
+  .search-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
+  .search-box input {
+    padding: 8px;
+    width: 300px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+  }
+
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 16px;
+    padding: 0 20px 40px;
+  }
+
+  /* 让 .game-card 是链接但外观看不出 a 的默认样式 */
+  .game-card {
+    display: block;
+    text-decoration: none;
+    color: #facc15;
+    background: #2d3748;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+    -webkit-tap-highlight-color: transparent; /* 手机点击不出现阴影 */
+  }
+
+  /* 悬浮浮动保留 */
+  .game-card:hover {
+    transform: scale(1.05);
+    background-color: #4b5563;
+  }
+
+  /* 图片大小不变 */
+  .game-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    border-radius: 10px;
+  }
+
+  /* 游戏标题样式 */
+  .game-card .title {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .game-card a {
+    display: block;
+    color: #facc15;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .bottom-tab-bar {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -141,13 +167,13 @@
     color: #a855f7;
     font-weight: bold;
   }
+</style>
 
-  </style>
 </head>
 <body>
   <header>
     <div class="logo">
-      <img src="file:///D:/Desktop/%E5%9B%BE%E6%A0%87%E5%A4%B4%E5%83%8F/%E4%BA%91logo%E6%96%B0.webp" alt="logo">
+      <img src="/static/icons/logo.png" alt="logo">
       云顶官方PG试玩
     </div>
     <a href="https://m.ydpc28.cc" target="_blank">进入云顶 ➤</a>
@@ -155,486 +181,392 @@
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="搜索游戏名称..." onkeyup="filterGames()">
   </div>
-  <div class="game-grid" id="gameGrid">
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a1.png" alt="夏威夷探奇">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240114?groupId=90429" target="_blank">夏威夷探奇</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a2.png" alt="麻将糊了1">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/246639?groupId=90429" target="_blank">麻将糊了1</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a3.png" alt="麻将糊了2">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240106?groupId=90429" target="_blank">麻将糊了2</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a4.jpg" alt="点石成金">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240253?groupId=90429" target="_blank">点石成金</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a5.jpg" alt="金钱兔">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240133?groupId=90429" target="_blank">金钱兔</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a6.jpg" alt="电音派对">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240257?groupId=90429" target="_blank">电音派对</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a7.png" alt="维京纪元">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240192?groupId=90429" target="_blank">维京纪元</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a8.png" alt="夜醉佳人">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240204?groupId=90429" target="_blank">夜醉佳人</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a9.png" alt="图腾奇迹">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240159?groupId=90429" target="_blank">图腾奇迹</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a11.png" alt="黄金摇钱树">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240203?groupId=90429" target="_blank">黄金摇钱树</a>
-    </div>
-
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a13.png" alt="赏金大对决">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240184?groupId=90429" target="_blank">赏金大对决</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a14.png" alt="百鬼夜行">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240206?groupId=90429" target="_blank">百鬼夜行</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a15.png" alt="疯狂过山车">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240187?groupId=90429" target="_blank">疯狂过山车</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a16.png" alt="美猴王传奇">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240232?groupId=90429" target="_blank">美猴王传奇</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a17.png" alt="珀尔修斯传奇">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240178?groupId=90429" target="_blank">珀尔修斯传奇</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a18.png" alt="美洲野牛">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240235?groupId=90429" target="_blank">美洲野牛</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a19.png" alt="极速赢家">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240176?groupId=90429" target="_blank">极速赢家</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a20.png" alt="绝地大逃杀">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240209?groupId=90429" target="_blank">绝地大逃杀</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a21.png" alt="电玩金猪">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240185?groupId=90429" target="_blank">电玩金猪</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a22.png" alt="韩宫御宴">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240213?groupId=90429" target="_blank">韩宫御宴</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a23.png" alt="发财鱼虾蟹">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240180?groupId=90429" target="_blank">发财鱼虾蟹</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a24.png" alt="斗鸡">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240208?groupId=90429" target="_blank">斗鸡</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a25.png" alt="蝶恋花">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240210?groupId=90429" target="_blank">蝶恋花</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a26.png" alt="日月星辰">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240214?groupId=90429" target="_blank">日月星辰</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a27.png" alt="神鹰宝石">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240215?groupId=90429" target="_blank">神鹰宝石</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a28.png" alt="探秘埃及">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240238?groupId=90429" target="_blank">探秘埃及</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a29.png" alt="超市大血拼">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240242?groupId=90429" target="_blank">超市大血拼</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a31.png" alt="人鱼公主">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240270?groupId=90429" target="_blank">人鱼公主</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a32.png" alt="恐龙帝国">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240245?groupId=90429" target="_blank">恐龙帝国</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a34.png" alt="太阳神">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240269?groupId=90429" target="_blank">太阳神</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a35.png" alt="霹雳神偷">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240230?groupId=90429" target="_blank">霹雳神偷</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a36.png" alt="麒麟送宝">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240231?groupId=90429" target="_blank">麒麟送宝</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a37.png" alt="亡灵大道">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240274?groupId=90429" target="_blank">亡灵大道</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a38.png" alt="糖心风暴">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240276?groupId=90429" target="_blank">糖心风暴</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a39.png" alt="宝石传奇">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240227?groupId=90429" target="_blank">宝石传奇</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a40.png" alt="招财猫">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/599210?groupId=91189" target="_blank">招财猫</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a41.png" alt="金玉满堂">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240264?groupId=90429" target="_blank">金玉满堂</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a42.png" alt="赏金女王">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240260?groupId=90429" target="_blank">赏金女王</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a43.png" alt="古德拉女爵">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240135?groupId=90429" target="_blank">古德拉女爵</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a44.png" alt="艳后之谜">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/256201?groupId=90379" target="_blank">艳后之谜</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a45.png" alt="水上泰神奇">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240243?groupId=90429" target="_blank">水上泰神奇</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a46.png" alt="欢乐嘉年华">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240275?groupId=90429" target="_blank">欢乐嘉年华</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a47.png" alt="寻宝黄金城">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240265?groupId=90429" target="_blank">寻宝黄金城</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a48.png" alt="阿拉丁神灯">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/256498?groupId=90394" target="_blank">阿拉丁神灯</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a49.png" alt="火树赢花">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240261?groupId=90429" target="_blank">火树赢花</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a50.png" alt="澳门壕梦">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240104?groupId=90429" target="_blank">澳门壕梦</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a51.png" alt="凤凰传奇">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240104?groupId=90429" target="_blank">凤凰传奇</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a52.png" alt="福运象财神">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240109?groupId=90429" target="_blank">福运象财神</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a53.png" alt="埃及探秘宝典">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240238?groupId=90429" target="_blank">埃及探秘宝典</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a54.png" alt="比基尼天堂">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240238?groupId=90429" target="_blank">比基尼天堂</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a55.png" alt="赢财神">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240108?groupId=90429" target="_blank">赢财神</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a56.png" alt="糖果连连爆">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240112?groupId=90429" target="_blank">糖果连连爆</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a57.png" alt="宝藏征途">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240126?groupId=90429" target="_blank">宝藏征途</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a58.png" alt="亲爱的">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240207?groupId=90429" target="_blank">亲爱的</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/a59.png" alt="鼠鼠福福">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240122?groupId=90429" target="_blank">鼠鼠福福</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/61.png" alt="寻龙探宝">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240137?groupId=90429" target="_blank">寻龙探宝</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/62.png" alt="横财来啦">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240222?groupId=90429" target="_blank">横财来啦</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/63.png" alt="麻辣火锅">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/256057?groupId=90352" target="_blank">麻辣火锅</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/64.png" alt="鱼跃龍门">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240199?groupId=90429" target="_blank">鱼跃龍门</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/65.png" alt="万胜狂欢夜">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240172?groupId=90429" target="_blank">万胜狂欢夜</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/66.png" alt="摇钱树">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240203?groupId=90429" target="_blank">摇钱树</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/67.png" alt="后羿射日">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240177?groupId=90429" target="_blank">后羿射日</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/69.png" alt="抓抓乐">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/246636?groupId=90429" target="_blank">抓抓乐</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/70.png" alt="逆袭小红帽">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/246636?groupId=90429" target="_blank">逆袭小红帽</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/72.png" alt="宝石侠">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240126?groupId=90429" target="_blank">宝石侠</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/73.png" alt="舞狮进宝">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240171?groupId=90429" target="_blank">舞狮进宝</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/74.png" alt="龍虎">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240171?groupId=90429" target="_blank">龍虎</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/75.png" alt="嘻哈熊猫">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240179?groupId=90429" target="_blank">嘻哈熊猫</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/76.png" alt="宝石侠大宝剑">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240168?groupId=90429" target="_blank">宝石侠大宝剑</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/77.png" alt="金猪报财">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/576314?groupId=90350" target="_blank">金猪报财</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/78.png" alt="埃及寻宝">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/577369?groupId=90390" target="_blank">埃及寻宝</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/79.png" alt="皇上吉祥">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240163?groupId=90429" target="_blank">皇上吉祥</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/80.png" alt="象财神">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240164?groupId=90429" target="_blank">象财神</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/82.png" alt="双囍临门">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240155?groupId=90429" target="_blank">双囍临门</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/83.png" alt="冰雪大冲关">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240147?groupId=90429" target="_blank">冰雪大冲关</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/84.png" alt="嘻游记">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/256117?groupId=90357" target="_blank">嘻游记</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/85.png" alt="赏金船长">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240145?groupId=90429" target="_blank">赏金船长</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/86.png" alt="夜戏貂蝉">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240145?groupId=90429" target="_blank">夜戏貂蝉</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/87.png" alt="爱尔兰精灵">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240128?groupId=90429" target="_blank">爱尔兰精灵</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/88.png" alt="唐伯虎点秋香">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240127?groupId=90429" target="_blank">唐伯虎点秋香</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/89.png" alt="忍者VS武士">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240134?groupId=90429" target="_blank">忍者VS武士</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/90.png" alt="拳霸">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/256143?groupId=90357" target="_blank">拳霸</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/91.png" alt="冰封奇侠">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240236?groupId=90429" target="_blank">冰封奇侠</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/92.png" alt="星旅淘金">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240267?groupId=90429" target="_blank">星旅淘金</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/93.png" alt="冰火双娇">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240244?groupId=90429" target="_blank">冰火双娇</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/94.png" alt="十倍金牛">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240233?groupId=90429" target="_blank">十倍金牛</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/95.png" alt="新国粹">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240229?groupId=90429" target="_blank">新国粹</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/96.png" alt="比特淘金">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240272?groupId=90429" target="_blank">比特淘金</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/97.png" alt="虎虎生财">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/246637?groupId=90429" target="_blank">虎虎生财</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/98.png" alt="江山美景图">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240237?groupId=90429" target="_blank">江山美景图</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/99.png" alt="美食美刻">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240201?groupId=90429" target="_blank">美食美刻</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/100.png" alt="假面嘉年华">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240205?groupId=90429" target="_blank">假面嘉年华</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/101.png" alt="炼金工坊">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240115?groupId=90429" target="_blank">炼金工坊</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/102.png" alt="泰嗨泼水节">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240266?groupId=90429" target="_blank">泰嗨泼水节</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/103.png" alt="元素精灵">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240113?groupId=90429" target="_blank">元素精灵</a>
-    </div>
-    
-    <div class="game-card">
-      <img src="https://pop520.vip/tupian/104.png" alt="超级高尔夫">
-      <a href="https://pgsoftslot.com/zh-CN/mini-game/details/240151?groupId=90429" target="_blank">超级高尔夫</a>
-    </div>
+    <div class="game-grid" id="gameGrid">
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240114?groupId=90429" target="_blank">
+        <img alt="夏威夷探奇" src="https://pop520.vip/tupian/a1.png"/>
+        <div class="title">夏威夷探奇</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/246639?groupId=90429" target="_blank">
+        <img alt="麻将糊了1" src="https://pop520.vip/tupian/a2.png"/>
+        <div class="title">麻将糊了1</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240106?groupId=90429" target="_blank">
+        <img alt="麻将糊了2" src="https://pop520.vip/tupian/a3.png"/>
+        <div class="title">麻将糊了2</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240253?groupId=90429" target="_blank">
+        <img alt="点石成金" src="https://pop520.vip/tupian/a4.jpg"/>
+        <div class="title">点石成金</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240133?groupId=90429" target="_blank">
+        <img alt="金钱兔" src="https://pop520.vip/tupian/a5.jpg"/>
+        <div class="title">金钱兔</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240257?groupId=90429" target="_blank">
+        <img alt="电音派对" src="https://pop520.vip/tupian/a6.jpg"/>
+        <div class="title">电音派对</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240192?groupId=90429" target="_blank">
+        <img alt="维京纪元" src="https://pop520.vip/tupian/a7.png"/>
+        <div class="title">维京纪元</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240204?groupId=90429" target="_blank">
+        <img alt="夜醉佳人" src="https://pop520.vip/tupian/a8.png"/>
+        <div class="title">夜醉佳人</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240159?groupId=90429" target="_blank">
+        <img alt="图腾奇迹" src="https://pop520.vip/tupian/a9.png"/>
+        <div class="title">图腾奇迹</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240203?groupId=90429" target="_blank">
+        <img alt="黄金摇钱树" src="https://pop520.vip/tupian/a11.png"/>
+        <div class="title">黄金摇钱树</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240184?groupId=90429" target="_blank">
+        <img alt="赏金大对决" src="https://pop520.vip/tupian/a13.png"/>
+        <div class="title">赏金大对决</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240206?groupId=90429" target="_blank">
+        <img alt="百鬼夜行" src="https://pop520.vip/tupian/a14.png"/>
+        <div class="title">百鬼夜行</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240187?groupId=90429" target="_blank">
+        <img alt="疯狂过山车" src="https://pop520.vip/tupian/a15.png"/>
+        <div class="title">疯狂过山车</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240232?groupId=90429" target="_blank">
+        <img alt="美猴王传奇" src="https://pop520.vip/tupian/a16.png"/>
+        <div class="title">美猴王传奇</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240178?groupId=90429" target="_blank">
+        <img alt="珀尔修斯传奇" src="https://pop520.vip/tupian/a17.png"/>
+        <div class="title">珀尔修斯传奇</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240235?groupId=90429" target="_blank">
+        <img alt="美洲野牛" src="https://pop520.vip/tupian/a18.png"/>
+        <div class="title">美洲野牛</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240176?groupId=90429" target="_blank">
+        <img alt="极速赢家" src="https://pop520.vip/tupian/a19.png"/>
+        <div class="title">极速赢家</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240209?groupId=90429" target="_blank">
+        <img alt="绝地大逃杀" src="https://pop520.vip/tupian/a20.png"/>
+        <div class="title">绝地大逃杀</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240185?groupId=90429" target="_blank">
+        <img alt="电玩金猪" src="https://pop520.vip/tupian/a21.png"/>
+        <div class="title">电玩金猪</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240213?groupId=90429" target="_blank">
+        <img alt="韩宫御宴" src="https://pop520.vip/tupian/a22.png"/>
+        <div class="title">韩宫御宴</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240180?groupId=90429" target="_blank">
+        <img alt="发财鱼虾蟹" src="https://pop520.vip/tupian/a23.png"/>
+        <div class="title">发财鱼虾蟹</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240208?groupId=90429" target="_blank">
+        <img alt="斗鸡" src="https://pop520.vip/tupian/a24.png"/>
+        <div class="title">斗鸡</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240210?groupId=90429" target="_blank">
+        <img alt="蝶恋花" src="https://pop520.vip/tupian/a25.png"/>
+        <div class="title">蝶恋花</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240214?groupId=90429" target="_blank">
+        <img alt="日月星辰" src="https://pop520.vip/tupian/a26.png"/>
+        <div class="title">日月星辰</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240215?groupId=90429" target="_blank">
+        <img alt="神鹰宝石" src="https://pop520.vip/tupian/a27.png"/>
+        <div class="title">神鹰宝石</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240238?groupId=90429" target="_blank">
+        <img alt="探秘埃及" src="https://pop520.vip/tupian/a28.png"/>
+        <div class="title">探秘埃及</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240242?groupId=90429" target="_blank">
+        <img alt="超市大血拼" src="https://pop520.vip/tupian/a29.png"/>
+        <div class="title">超市大血拼</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240270?groupId=90429" target="_blank">
+        <img alt="人鱼公主" src="https://pop520.vip/tupian/a31.png"/>
+        <div class="title">人鱼公主</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240245?groupId=90429" target="_blank">
+        <img alt="恐龙帝国" src="https://pop520.vip/tupian/a32.png"/>
+        <div class="title">恐龙帝国</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240269?groupId=90429" target="_blank">
+        <img alt="太阳神" src="https://pop520.vip/tupian/a34.png"/>
+        <div class="title">太阳神</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240230?groupId=90429" target="_blank">
+        <img alt="霹雳神偷" src="https://pop520.vip/tupian/a35.png"/>
+        <div class="title">霹雳神偷</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240231?groupId=90429" target="_blank">
+        <img alt="麒麟送宝" src="https://pop520.vip/tupian/a36.png"/>
+        <div class="title">麒麟送宝</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240274?groupId=90429" target="_blank">
+        <img alt="亡灵大道" src="https://pop520.vip/tupian/a37.png"/>
+        <div class="title">亡灵大道</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240276?groupId=90429" target="_blank">
+        <img alt="糖心风暴" src="https://pop520.vip/tupian/a38.png"/>
+        <div class="title">糖心风暴</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240227?groupId=90429" target="_blank">
+        <img alt="宝石传奇" src="https://pop520.vip/tupian/a39.png"/>
+        <div class="title">宝石传奇</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/599210?groupId=91189" target="_blank">
+        <img alt="招财猫" src="https://pop520.vip/tupian/a40.png"/>
+        <div class="title">招财猫</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240264?groupId=90429" target="_blank">
+        <img alt="金玉满堂" src="https://pop520.vip/tupian/a41.png"/>
+        <div class="title">金玉满堂</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240260?groupId=90429" target="_blank">
+        <img alt="赏金女王" src="https://pop520.vip/tupian/a42.png"/>
+        <div class="title">赏金女王</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240135?groupId=90429" target="_blank">
+        <img alt="古德拉女爵" src="https://pop520.vip/tupian/a43.png"/>
+        <div class="title">古德拉女爵</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/256201?groupId=90379" target="_blank">
+        <img alt="艳后之谜" src="https://pop520.vip/tupian/a44.png"/>
+        <div class="title">艳后之谜</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240243?groupId=90429" target="_blank">
+        <img alt="水上泰神奇" src="https://pop520.vip/tupian/a45.png"/>
+        <div class="title">水上泰神奇</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240275?groupId=90429" target="_blank">
+        <img alt="欢乐嘉年华" src="https://pop520.vip/tupian/a46.png"/>
+        <div class="title">欢乐嘉年华</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240265?groupId=90429" target="_blank">
+        <img alt="寻宝黄金城" src="https://pop520.vip/tupian/a47.png"/>
+        <div class="title">寻宝黄金城</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/256498?groupId=90394" target="_blank">
+        <img alt="阿拉丁神灯" src="https://pop520.vip/tupian/a48.png"/>
+        <div class="title">阿拉丁神灯</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240261?groupId=90429" target="_blank">
+        <img alt="火树赢花" src="https://pop520.vip/tupian/a49.png"/>
+        <div class="title">火树赢花</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240104?groupId=90429" target="_blank">
+        <img alt="澳门壕梦" src="https://pop520.vip/tupian/a50.png"/>
+        <div class="title">澳门壕梦</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240104?groupId=90429" target="_blank">
+        <img alt="凤凰传奇" src="https://pop520.vip/tupian/a51.png"/>
+        <div class="title">凤凰传奇</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240109?groupId=90429" target="_blank">
+        <img alt="福运象财神" src="https://pop520.vip/tupian/a52.png"/>
+        <div class="title">福运象财神</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240238?groupId=90429" target="_blank">
+        <img alt="埃及探秘宝典" src="https://pop520.vip/tupian/a53.png"/>
+        <div class="title">埃及探秘宝典</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240238?groupId=90429" target="_blank">
+        <img alt="比基尼天堂" src="https://pop520.vip/tupian/a54.png"/>
+        <div class="title">比基尼天堂</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240108?groupId=90429" target="_blank">
+        <img alt="赢财神" src="https://pop520.vip/tupian/a55.png"/>
+        <div class="title">赢财神</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240112?groupId=90429" target="_blank">
+        <img alt="糖果连连爆" src="https://pop520.vip/tupian/a56.png"/>
+        <div class="title">糖果连连爆</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240126?groupId=90429" target="_blank">
+        <img alt="宝藏征途" src="https://pop520.vip/tupian/a57.png"/>
+        <div class="title">宝藏征途</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240207?groupId=90429" target="_blank">
+        <img alt="亲爱的" src="https://pop520.vip/tupian/a58.png"/>
+        <div class="title">亲爱的</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240122?groupId=90429" target="_blank">
+        <img alt="鼠鼠福福" src="https://pop520.vip/tupian/a59.png"/>
+        <div class="title">鼠鼠福福</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240137?groupId=90429" target="_blank">
+        <img alt="寻龙探宝" src="https://pop520.vip/tupian/61.png"/>
+        <div class="title">寻龙探宝</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240222?groupId=90429" target="_blank">
+        <img alt="横财来啦" src="https://pop520.vip/tupian/62.png"/>
+        <div class="title">横财来啦</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/256057?groupId=90352" target="_blank">
+        <img alt="麻辣火锅" src="https://pop520.vip/tupian/63.png"/>
+        <div class="title">麻辣火锅</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240199?groupId=90429" target="_blank">
+        <img alt="鱼跃龍门" src="https://pop520.vip/tupian/64.png"/>
+        <div class="title">鱼跃龍门</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240172?groupId=90429" target="_blank">
+        <img alt="万胜狂欢夜" src="https://pop520.vip/tupian/65.png"/>
+        <div class="title">万胜狂欢夜</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240203?groupId=90429" target="_blank">
+        <img alt="摇钱树" src="https://pop520.vip/tupian/66.png"/>
+        <div class="title">摇钱树</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240177?groupId=90429" target="_blank">
+        <img alt="后羿射日" src="https://pop520.vip/tupian/67.png"/>
+        <div class="title">后羿射日</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/246636?groupId=90429" target="_blank">
+        <img alt="抓抓乐" src="https://pop520.vip/tupian/69.png"/>
+        <div class="title">抓抓乐</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/246636?groupId=90429" target="_blank">
+        <img alt="逆袭小红帽" src="https://pop520.vip/tupian/70.png"/>
+        <div class="title">逆袭小红帽</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240126?groupId=90429" target="_blank">
+        <img alt="宝石侠" src="https://pop520.vip/tupian/72.png"/>
+        <div class="title">宝石侠</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240171?groupId=90429" target="_blank">
+        <img alt="舞狮进宝" src="https://pop520.vip/tupian/73.png"/>
+        <div class="title">舞狮进宝</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240171?groupId=90429" target="_blank">
+        <img alt="龍虎" src="https://pop520.vip/tupian/74.png"/>
+        <div class="title">龍虎</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240179?groupId=90429" target="_blank">
+        <img alt="嘻哈熊猫" src="https://pop520.vip/tupian/75.png"/>
+        <div class="title">嘻哈熊猫</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240168?groupId=90429" target="_blank">
+        <img alt="宝石侠大宝剑" src="https://pop520.vip/tupian/76.png"/>
+        <div class="title">宝石侠大宝剑</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/576314?groupId=90350" target="_blank">
+        <img alt="金猪报财" src="https://pop520.vip/tupian/77.png"/>
+        <div class="title">金猪报财</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/577369?groupId=90390" target="_blank">
+        <img alt="埃及寻宝" src="https://pop520.vip/tupian/78.png"/>
+        <div class="title">埃及寻宝</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240163?groupId=90429" target="_blank">
+        <img alt="皇上吉祥" src="https://pop520.vip/tupian/79.png"/>
+        <div class="title">皇上吉祥</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240164?groupId=90429" target="_blank">
+        <img alt="象财神" src="https://pop520.vip/tupian/80.png"/>
+        <div class="title">象财神</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240155?groupId=90429" target="_blank">
+        <img alt="双囍临门" src="https://pop520.vip/tupian/82.png"/>
+        <div class="title">双囍临门</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240147?groupId=90429" target="_blank">
+        <img alt="冰雪大冲关" src="https://pop520.vip/tupian/83.png"/>
+        <div class="title">冰雪大冲关</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/256117?groupId=90357" target="_blank">
+        <img alt="嘻游记" src="https://pop520.vip/tupian/84.png"/>
+        <div class="title">嘻游记</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240145?groupId=90429" target="_blank">
+        <img alt="赏金船长" src="https://pop520.vip/tupian/85.png"/>
+        <div class="title">赏金船长</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240145?groupId=90429" target="_blank">
+        <img alt="夜戏貂蝉" src="https://pop520.vip/tupian/86.png"/>
+        <div class="title">夜戏貂蝉</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240128?groupId=90429" target="_blank">
+        <img alt="爱尔兰精灵" src="https://pop520.vip/tupian/87.png"/>
+        <div class="title">爱尔兰精灵</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240127?groupId=90429" target="_blank">
+        <img alt="唐伯虎点秋香" src="https://pop520.vip/tupian/88.png"/>
+        <div class="title">唐伯虎点秋香</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240134?groupId=90429" target="_blank">
+        <img alt="忍者VS武士" src="https://pop520.vip/tupian/89.png"/>
+        <div class="title">忍者VS武士</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/256143?groupId=90357" target="_blank">
+        <img alt="拳霸" src="https://pop520.vip/tupian/90.png"/>
+        <div class="title">拳霸</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240236?groupId=90429" target="_blank">
+        <img alt="冰封奇侠" src="https://pop520.vip/tupian/91.png"/>
+        <div class="title">冰封奇侠</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240267?groupId=90429" target="_blank">
+        <img alt="星旅淘金" src="https://pop520.vip/tupian/92.png"/>
+        <div class="title">星旅淘金</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240244?groupId=90429" target="_blank">
+        <img alt="冰火双娇" src="https://pop520.vip/tupian/93.png"/>
+        <div class="title">冰火双娇</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240233?groupId=90429" target="_blank">
+        <img alt="十倍金牛" src="https://pop520.vip/tupian/94.png"/>
+        <div class="title">十倍金牛</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240229?groupId=90429" target="_blank">
+        <img alt="新国粹" src="https://pop520.vip/tupian/95.png"/>
+        <div class="title">新国粹</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240272?groupId=90429" target="_blank">
+        <img alt="比特淘金" src="https://pop520.vip/tupian/96.png"/>
+        <div class="title">比特淘金</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/246637?groupId=90429" target="_blank">
+        <img alt="虎虎生财" src="https://pop520.vip/tupian/97.png"/>
+        <div class="title">虎虎生财</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240237?groupId=90429" target="_blank">
+        <img alt="江山美景图" src="https://pop520.vip/tupian/98.png"/>
+        <div class="title">江山美景图</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240201?groupId=90429" target="_blank">
+        <img alt="美食美刻" src="https://pop520.vip/tupian/99.png"/>
+        <div class="title">美食美刻</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240205?groupId=90429" target="_blank">
+        <img alt="假面嘉年华" src="https://pop520.vip/tupian/100.png"/>
+        <div class="title">假面嘉年华</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240115?groupId=90429" target="_blank">
+        <img alt="炼金工坊" src="https://pop520.vip/tupian/101.png"/>
+        <div class="title">炼金工坊</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240266?groupId=90429" target="_blank">
+        <img alt="泰嗨泼水节" src="https://pop520.vip/tupian/102.png"/>
+        <div class="title">泰嗨泼水节</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240113?groupId=90429" target="_blank">
+        <img alt="元素精灵" src="https://pop520.vip/tupian/103.png"/>
+        <div class="title">元素精灵</div>
+    </a>
+    <a class="game-card" href="https://pgsoftslot.com/zh-CN/mini-game/details/240151?groupId=90429" target="_blank">
+        <img alt="超级高尔夫" src="https://pop520.vip/tupian/104.png"/>
+        <div class="title">超级高尔夫</div>
+    </a>
+</div>
     
   <script>
     function filterGames() {

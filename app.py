@@ -770,9 +770,6 @@ HTML_TEMPLATE = '''
     box-shadow: 0 2px 6px rgba(128, 0, 128, 0.3);
   }
 
-  .tab-item.active .icon-wrapper img {
-    filter: brightness(10);
-  }
 
   .tab-item.active .label {
     color: #a855f7;
