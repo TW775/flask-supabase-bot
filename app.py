@@ -762,6 +762,7 @@ HTML_TEMPLATE = '''
   .tab-item .icon-wrapper img {
     width: 26px;
     height: 26px;
+    object-fit: contain; /* 防止拉伸 */
   }
 
   .tab-item.active .icon-wrapper {
