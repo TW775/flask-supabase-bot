@@ -589,131 +589,196 @@ HTML_TEMPLATE = '''
     <title>云顶加人领奖</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body {
-            font-family: sans-serif;
-            background: linear-gradient(to bottom right, #d6c6f4, #f2e7ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 30px;
-        }
-        .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            width: 100vw; /* ⬅️ 填满整个屏幕宽度 */
-            height: 60px;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-            padding: 0 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 999;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            box-sizing: border-box; /* ⬅️ 防止 padding 导致超宽 */
-        }
+  body {
+    font-family: sans-serif;
+    background: linear-gradient(to bottom right, #d6c6f4, #f2e7ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 30px;
+  }
 
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: 60px;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: white;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 999;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    box-sizing: border-box;
+  }
 
-        .top-bar .logo {
-            font-size: 24px;
-            margin-right: 10px;
-        }
+  .top-bar .logo {
+    font-size: 24px;
+    margin-right: 10px;
+  }
 
-        .top-bar .title {
-            font-size: 18px;
-            font-weight: bold;
-        }
+  .top-bar .title {
+    font-size: 18px;
+    font-weight: bold;
+  }
 
-        .top-bar .btn {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 6px;
-            border: none;
-            margin-left: 12px;
-            cursor: pointer;
-        }
+  .top-bar .btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    margin-left: 12px;
+    cursor: pointer;
+  }
 
-        .top-bar .btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
+  .top-bar .btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 
-        .popup-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
 
-        .popup-box {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }
+  .popup-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
 
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(123, 47, 247, 0.2);
-            width: 90%;
-            max-width: 500px;
-            margin-bottom: 30px;
-        }
-        input, textarea {
-            padding: 10px;
-            width: 90%;
-            margin: 10px 0;
-            font-size: 16px;
-            border: 1px solid #bfa9d6;
-            border-radius: 8px;
-        }
-        button {
-            padding: 12px 24px;
-            background: linear-gradient(to right, #7b2ff7, #f107a3);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: linear-gradient(to right, #6a11cb, #ff6ec4);
-        }
-        .error {
-            color: #d9534f;
-            margin-top: 10px;
-        }
-        .success {
-            color: #5cb85c;
-            margin-top: 10px;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 10px;
-            text-align: left;
-        }
-        li {
-            padding: 5px 0;
-            border-bottom: 1px dashed #ddd;
-        }
-        textarea {
-            height: 80px;
-            resize: vertical;
-        }
-    </style>
+  .card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(123, 47, 247, 0.2);
+    width: 90%;
+    max-width: 500px;
+    margin-bottom: 30px;
+  }
+
+  input,
+  textarea {
+    padding: 10px;
+    width: 90%;
+    margin: 10px 0;
+    font-size: 16px;
+    border: 1px solid #bfa9d6;
+    border-radius: 8px;
+  }
+
+  button {
+    padding: 12px 24px;
+    background: linear-gradient(to right, #7b2ff7, #f107a3);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: linear-gradient(to right, #6a11cb, #ff6ec4);
+  }
+
+  .error {
+    color: #d9534f;
+    margin-top: 10px;
+  }
+
+  .success {
+    color: #5cb85c;
+    margin-top: 10px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+    text-align: left;
+  }
+
+  li {
+    padding: 5px 0;
+    border-bottom: 1px dashed #ddd;
+  }
+
+  textarea {
+    height: 80px;
+    resize: vertical;
+  }
+
+  .bottom-tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 65px;
+    background: #fff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #e5e7eb;
+    z-index: 999;
+  }
+
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #666;
+    font-size: 12px;
+    text-decoration: none;
+  }
+
+  .tab-item .icon-wrapper {
+    background: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-bottom: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tab-item .icon-wrapper img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .tab-item.active .icon-wrapper {
+    background: linear-gradient(145deg, #a855f7, #6366f1);
+    box-shadow: 0 2px 6px rgba(128, 0, 128, 0.3);
+  }
+
+  .tab-item.active .icon-wrapper img {
+    filter: brightness(10);
+  }
+
+  .tab-item.active .label {
+    color: #a855f7;
+    font-weight: bold;
+  }
+</style>
+
 
 </head>
 <!-- ✅ 弹窗结构 -->
@@ -858,6 +923,20 @@ HTML_TEMPLATE = '''
         {% endif %}
     </div>
 
+<div class="bottom-tab-bar">
+  <a href="/" class="tab-item active">
+    <div class="icon-wrapper">
+      <img src="/static/icons/home.png" alt="大厅">
+    </div>
+    <div class="label">加人任务</div>
+  </a>
+  <a href="/pg" class="tab-item">
+    <div class="icon-wrapper">
+      <img src="/static/icons/game.png" alt="试玩">
+    </div>
+    <div class="label">PG试玩</div>
+  </a>
+</div>
 </body>
 </html>
 '''
