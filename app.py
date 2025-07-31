@@ -941,6 +941,11 @@ HTML_TEMPLATE = '''
 </html>
 '''
 
+@app.route("/pg")
+def pg_page():
+    return render_template("pg.html", active_tab="pg")
+
+
 @app.route("/", methods=["GET", "POST", "HEAD"])
 def index():
     if request.method == "HEAD":
