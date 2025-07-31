@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, request, render_template_string, redirect, url_for, session
+from flask import Flask, request, render_template, render_template_string, redirect, url_for, session
 import json, os, time
 from datetime import datetime
 from werkzeug.utils import secure_filename
