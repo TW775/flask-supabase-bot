@@ -978,7 +978,7 @@ def pg_page():
 @app.route("/", methods=["GET", "POST", "HEAD"])
 def index():
     if request.method == "HEAD":
-            return "", 200
+        return "", 200
 
     whitelist = load_whitelist()
     status = load_user_status()
@@ -991,73 +991,70 @@ def index():
     upload_success = False
     used_index = [v["index"] for v in status.values() if "index" in v]
 
-if request.method == "POST":
-    action = request.form.get("action")
-    uid = request.form.get("userid", "").strip()
-    now = time.time()
+    if request.method == "POST":
+        action = request.form.get("action")
+        uid = request.form.get("userid", "").strip()
+        now = time.time()
 
-    if action == "get":
-        if not uid:
-            error = "请输入 ID"
-        elif uid not in whitelist:
-            error = "❌ 该 ID 不在名单内，请联系管理员"
-        else:
-            record = status.get(uid, {"count": 0, "last": 0})
-
-            if record["count"] >= MAX_TIMES:
-                # 从白名单中移除
-                new_whitelist = [id for id in whitelist if id != uid]
-                save_whitelist(new_whitelist)
-                error = "❌ 已达到最大领取次数，请联系管理员"
-
-                if "index" in record and record["index"] < len(groups):
-                    phones = groups[record["index"]]
-
-            elif now - record["last"] < INTERVAL_SECONDS:
-                wait_min = int((INTERVAL_SECONDS - (now - record["last"])) / 60)
-                error = f"⏱ 请在 {wait_min} 分钟后再领取"
-
-                if "index" in record and record["index"] < len(groups):
-                    phones = groups[record["index"]]
-
+        if action == "get":
+            if not uid:
+                error = "请输入 ID"
+            elif uid not in whitelist:
+                error = "❌ 该 ID 不在名单内，请联系管理员"
             else:
-                for i, group in enumerate(groups):
-                    if i not in used_index:
-                        phones = group
-                        new_status = {
-                            "count": record["count"] + 1,
-                            "last": now,
-                            "index": i
-                        }
-                        save_user_status(uid, new_status)
-                        break
+                record = status.get(uid, {"count": 0, "last": 0})
+
+                if record["count"] >= MAX_TIMES:
+                    new_whitelist = [id for id in whitelist if id != uid]
+                    save_whitelist(new_whitelist)
+                    error = "❌ 已达到最大领取次数，请联系管理员"
+                    if "index" in record and record["index"] < len(groups):
+                        phones = groups[record["index"]]
+
+                elif now - record["last"] < INTERVAL_SECONDS:
+                    wait_min = int((INTERVAL_SECONDS - (now - record["last"])) / 60)
+                    error = f"⏱ 请在 {wait_min} 分钟后再领取"
+                    if "index" in record and record["index"] < len(groups):
+                        phones = groups[record["index"]]
+
                 else:
-                    error = "❌ 资料已发放完，请联系管理员"
+                    for i, group in enumerate(groups):
+                        if i not in used_index:
+                            phones = group
+                            new_status = {
+                                "count": record["count"] + 1,
+                                "last": now,
+                                "index": i
+                            }
+                            save_user_status(uid, new_status)
+                            break
+                    else:
+                        error = "❌ 资料已发放完，请联系管理员"
 
-    elif action == "upload":
-        raw_data = request.form.get("phones", "").strip()
-        if not uid or not raw_data:
-            upload_msg = "❌ ID 和资料不能为空"
-        else:
-            all_phones = [p.strip() for p in raw_data.splitlines() if p.strip()]
-            now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-            user_status = status.get(uid, {})
-            if "index" not in user_status:
-                upload_msg = "❌ 您尚未领取任何资料"
+        elif action == "upload":
+            raw_data = request.form.get("phones", "").strip()
+            if not uid or not raw_data:
+                upload_msg = "❌ ID 和资料不能为空"
             else:
-                group_index = user_status["index"]
-                assigned_group = groups[group_index] if group_index < len(groups) else []
+                all_phones = [p.strip() for p in raw_data.splitlines() if p.strip()]
+                now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                invalid_phones = [p for p in all_phones if p not in assigned_group]
-
-                if invalid_phones:
-                    upload_msg = f"❌ 以下号码不在您的分配组中: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
+                user_status = status.get(uid, {})
+                if "index" not in user_status:
+                    upload_msg = "❌ 您尚未领取任何资料"
                 else:
-                    for phone in all_phones:
-                        add_upload_log(uid, phone)
-                    upload_msg = f"✅ 成功上传 {len(all_phones)} 条，将在24小时内审核成功后发放奖励至云顶app"
-                    upload_success = True
+                    group_index = user_status["index"]
+                    assigned_group = groups[group_index] if group_index < len(groups) else []
+
+                    invalid_phones = [p for p in all_phones if p not in assigned_group]
+
+                    if invalid_phones:
+                        upload_msg = f"❌ 以下号码不在您的分配组中: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
+                    else:
+                        for phone in all_phones:
+                            add_upload_log(uid, phone)
+                        upload_msg = f"✅ 成功上传 {len(all_phones)} 条，将在24小时内审核成功后发放奖励至云顶app"
+                        upload_success = True
 
     return render_template_string(
         HTML_TEMPLATE,
@@ -1066,6 +1063,7 @@ if request.method == "POST":
         upload_msg=upload_msg,
         upload_success=upload_success
     )
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
