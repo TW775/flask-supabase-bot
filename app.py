@@ -192,7 +192,7 @@ def ping_page():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>唤醒中 · 云顶资料站</title>
+        <title>进入中 · 云顶资料站</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             body {
@@ -232,9 +232,9 @@ def ping_page():
     </head>
     <body>
         <div class="card">
-            <h2>📄 排队领取中</h2>
+            <h2>线路匹配中</h2>
             <div class="spinner"></div>
-            <p>请不要退出，0~20 秒自动进入领取中心...</p>
+            <p>请不要退出，正在加速进入🚀...</p>
         </div>
 
         <script>
@@ -732,7 +732,7 @@ HTML_TEMPLATE = '''
     left: 0;
     width: 100%;
     height: 65px;
-    background: #fff;
+    background: linear-gradient(to right, #ede9fe, #f3e8ff);
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -852,7 +852,7 @@ HTML_TEMPLATE = '''
     </div>
     <div style="height: 80px;"></div>  <!-- ⬅️ 跟顶部高度一致或略高 -->
     <div class="card">
-        <h2>📥 领取手机号</h2>
+        <h2 style="color:red; font-weight:bold;">📥 领取手机号</h2>
         <form method="POST">
             <input type="hidden" name="action" value="get">
             <input name="userid" placeholder="请输入（如：ap_）您的云顶账号" required><br>
@@ -911,7 +911,7 @@ HTML_TEMPLATE = '''
     </div>
 
     <div class="card">
-        <h2>📤 上传已成功号码</h2>
+        <h2 style="color:red; font-weight:bold;">📤 上传已成功号码</h2>
         <form method="POST" action="/">
             <input type="hidden" name="action" value="upload">
             <input name="userid" placeholder="请输入您的 账号" required><br>
