@@ -658,6 +658,7 @@ HTML_TEMPLATE = '''
 
   .popup-box {
     background: white;
+    color: #333;  /* ✅ 加这行 */
     padding: 20px;
     border-radius: 10px;
     max-width: 400px;
@@ -787,7 +788,7 @@ HTML_TEMPLATE = '''
 <div id="popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:999;">
   <div style="background:white; max-width:400px; margin:100px auto; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.3); position:relative;">
     <h3 style="color:green;">✅ 以下是您的号码</h3>
-    <pre id="popup-content" style="font-size:16px; white-space:pre-wrap; max-height:300px; overflow-y:auto;">{% for phone in phones %}{{ phone }}{% if not loop.last %}
+    <pre id="popup-content" style="font-size:16px; white-space:pre-wrap; max-height:300px; overflow-y:auto;color:#000;">{% for phone in phones %}{{ phone }}{% if not loop.last %}
 {% endif %}{% endfor %}</pre>
     <div style="text-align:right; margin-top:10px;">
       <button onclick="copyPopupText()">📋 复制</button>
