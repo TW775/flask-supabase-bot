@@ -848,10 +848,13 @@ HTML_TEMPLATE = '''
 
 
         {% if error %}
-            <div class="error">{{ error }}</div>
+          <div class="error">{{ error }}</div>
+          {% if phones %}
+            <button onclick="showPopup()">📋 查看上次号码</button>
+          {% endif %}
         {% elif phones %}
-            <div class="success">✅ 成功！！</div>
-            <button onclick="showPopup()">📋 查看</button>
+          <div class="success">✅ 成功！！</div>
+          <button onclick="showPopup()">📋 查看</button>
         {% endif %}
     </div>
 
