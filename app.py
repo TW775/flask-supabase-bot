@@ -992,9 +992,9 @@ def index():
     used_index = [v["index"] for v in status.values() if "index" in v]
 
     if request.method == "POST":
-    action = request.form.get("action")
-    uid = request.form.get("userid", "").strip()
-    now = time.time()
+        action = request.form.get("action")
+        uid = request.form.get("userid", "").strip()
+        now = time.time()
 
     if action == "get":
         if not uid:
