@@ -991,10 +991,10 @@ def index():
     upload_success = False
     used_index = [v["index"] for v in status.values() if "index" in v]
 
-    if request.method == "POST":
-        action = request.form.get("action")
-        uid = request.form.get("userid", "").strip()
-        now = time.time()
+if request.method == "POST":
+    action = request.form.get("action")
+    uid = request.form.get("userid", "").strip()
+    now = time.time()
 
     if action == "get":
         if not uid:
@@ -1035,6 +1035,7 @@ def index():
                         break
                 else:
                     error = "❌ 资料已发放完，请联系管理员"
+
 
 
         elif action == "upload":
