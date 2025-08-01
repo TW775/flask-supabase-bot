@@ -784,62 +784,6 @@ HTML_TEMPLATE = '''
 
 
 </head>
-<!-- ✅ 弹窗结构 -->
-<div id="popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:999;">
-  <div style="background:white; max-width:400px; margin:100px auto; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.3); position:relative;">
-    <h3 style="color:green;">✅ 以下是您的号码</h3>
-    <pre id="popup-content" style="font-size:16px; white-space:pre-wrap; max-height:300px; overflow-y:auto;color:#000;">{% for phone in phones %}{{ phone }}{% if not loop.last %}
-{% endif %}{% endfor %}</pre>
-    <div style="text-align:right; margin-top:10px;">
-      <button onclick="copyPopupText()">📋 复制</button>
-      <button onclick="closePopup()" style="margin-left:10px;">❌ 关闭</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  function showPopup() {
-    document.getElementById("popup").style.display = "block";
-  }
-
-  function closePopup() {
-    document.getElementById("popup").style.display = "none";
-  }
-
-  function showRules() {
-    document.getElementById('popup-rules').style.display = 'flex';
-  }
-
-  function closeRulesPopup() {
-    document.getElementById('popup-rules').style.display = 'none';
-  }
-
-  function copyPopupText() {
-    const content = document.getElementById("popup-content").innerText;
-    navigator.clipboard.writeText(content).then(() => {
-      alert("✅ 已复制");
-    });
-  }
-</script>
-
-
-<!-- 📜 任务规则弹窗 -->
-<div id="popup-rules" class="popup-overlay" style="display:none;">
-  <div class="popup-box">
-    <h3>📜 任务规则</h3>
-    <p style="text-align:left;">
-      云顶的玩家都可领平台提供的号码加人领奖励<br><br>
-      1. 领取号码后微信、QQ、短信都可尝试添加好友<br>
-      （只负责引导他加云顶管理的旺旺号即可，管理会带他查福利.）<br>
-      2. 每人可领取 <b>3 次</b>，每次十个号码<br>
-        （不可浪费资料，3份资料领完可联系管理再加次数）<br>
-      3. 他成功加到管理旺旺号后，你在下方上传至后台待审核发放奖励<br>
-        （成功一位奖励58多加多得，24小时内审核自动上云顶账单）
-    </p>
-    <button onclick="closeRulesPopup()">关闭</button>
-  </div>
-</div>
-
 <body>
 
     <div class="top-bar">
@@ -861,8 +805,8 @@ HTML_TEMPLATE = '''
             <p style="font-size:14px; color:#666; margin-top:10px;">
   联系让他加管理旺旺： 
   <span id="wangwang" onclick="copyWangwang()" style="color:#007aff; text-decoration:underline; cursor:pointer;">
-    497332360（点击复制）
-  </span>
+    497332360
+  </span>（点击复制）
 </p>
         </form>
 
@@ -925,6 +869,62 @@ HTML_TEMPLATE = '''
             <div class="{{ 'success' if upload_success else 'error' }}">{{ upload_msg }}</div>
         {% endif %}
     </div>
+
+<!-- ✅ 弹窗结构 -->
+<div id="popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:999;">
+  <div style="background:white; max-width:400px; margin:100px auto; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.3); position:relative;">
+    <h3 style="color:green;">✅ 以下是您的号码</h3>
+    <pre id="popup-content" style="font-size:16px; white-space:pre-wrap; max-height:300px; overflow-y:auto;color:#000;">{% for phone in phones %}{{ phone }}{% if not loop.last %}
+{% endif %}{% endfor %}</pre>
+    <div style="text-align:right; margin-top:10px;">
+      <button onclick="copyPopupText()">📋 复制</button>
+      <button onclick="closePopup()" style="margin-left:10px;">❌ 关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showPopup() {
+    document.getElementById("popup").style.display = "block";
+  }
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+  }
+
+  function showRules() {
+    document.getElementById('popup-rules').style.display = 'flex';
+  }
+
+  function closeRulesPopup() {
+    document.getElementById('popup-rules').style.display = 'none';
+  }
+
+  function copyPopupText() {
+    const content = document.getElementById("popup-content").innerText;
+    navigator.clipboard.writeText(content).then(() => {
+      alert("✅ 已复制");
+    });
+  }
+</script>
+
+
+<!-- 📜 任务规则弹窗 -->
+<div id="popup-rules" class="popup-overlay" style="display:none;">
+  <div class="popup-box">
+    <h3>📜 任务规则</h3>
+    <p style="text-align:left;">
+      云顶的玩家都可领平台提供的号码加人领奖励<br><br>
+      1. 领取号码后微信、QQ、短信都可尝试添加好友<br>
+      （只负责引导他加云顶管理的旺旺号即可，管理会带他查福利.）<br>
+      2. 每人可领取 <b>3 次</b>，每次十个号码<br>
+        （不可浪费资料，3份资料领完可联系管理再加次数）<br>
+      3. 他成功加到管理旺旺号后，你在下方上传至后台待审核发放奖励<br>
+        （成功一位奖励58多加多得，24小时内审核自动上云顶账单）
+    </p>
+    <button onclick="closeRulesPopup()">关闭</button>
+  </div>
+</div>
 
 <div class="bottom-tab-bar">
   <a href="/" class="tab-item active">
