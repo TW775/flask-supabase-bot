@@ -590,8 +590,9 @@ HTML_TEMPLATE = '''
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
   body {
-    font-family: sans-serif;
-    background: linear-gradient(to bottom right, #d6c6f4, #f2e7ff);
+    font-family: "Helvetica Neue", sans-serif;
+    background: linear-gradient(to right, #7e22ce, #2563eb); /* 更深更统一 */
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -599,23 +600,15 @@ HTML_TEMPLATE = '''
     padding: 30px;
   }
 
-  .top-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100vw;
-    height: 60px;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
-    color: white;
-    padding: 0 24px;
+  .top-bar, header {
+    padding: 12px 20px;
+    height: auto;
+    min-height: 48px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 999;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    box-sizing: border-box;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
   }
 
   .top-bar .logo {
@@ -760,14 +753,17 @@ HTML_TEMPLATE = '''
   }
 
   .tab-item .icon-wrapper img {
-    width: 26px;
-    height: 26px;
-    object-fit: contain; /* 防止拉伸 */
+    width: 100%;
+    height: 100%;
+    padding: 7px; /* 缩小内部图标大小一致化 */
+    object-fit: contain;
+    box-sizing: border-box;
   }
 
   .tab-item.active .icon-wrapper {
     background: linear-gradient(145deg, #a855f7, #6366f1);
-    box-shadow: 0 2px 6px rgba(128, 0, 128, 0.3);
+    /* ✅ 移除阴影效果 */
+    box-shadow: none;
   }
 
 
