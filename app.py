@@ -839,6 +839,7 @@ HTML_TEMPLATE = '''
 
 <body>
 
+    <div class="top-bar-wrapper">
     <div class="top-bar">
       <div class="left">
         <span class="title">📱加人领奖</span>
