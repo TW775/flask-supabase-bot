@@ -600,6 +600,12 @@ HTML_TEMPLATE = '''
     padding: 30px;
   }
 
+  .top-bar-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
   .top-bar {
     padding: 12px 20px;
     height: auto;
