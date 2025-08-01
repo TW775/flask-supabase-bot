@@ -591,7 +591,7 @@ HTML_TEMPLATE = '''
     <style>
   body {
     font-family: "Helvetica Neue", sans-serif;
-    background: linear-gradient(to right, #7e22ce, #2563eb); /* 更深更统一 */
+    background: linear-gradient(to right, #3b0764, #1e3a8a); /* 更深更统一 */
     color: #fff;
     display: flex;
     align-items: center;
