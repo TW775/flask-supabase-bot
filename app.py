@@ -600,21 +600,23 @@ HTML_TEMPLATE = '''
     padding: 30px;
   }
 
-  .top-bar-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
   .top-bar {
-    padding: 12px 20px;
-    height: auto;
-    min-height: 48px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: 60px;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: white;
+    padding: 0 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
+    z-index: 999;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    box-sizing: border-box;
   }
 
   .top-bar .logo {
@@ -839,7 +841,6 @@ HTML_TEMPLATE = '''
 
 <body>
 
-    <div class="top-bar-wrapper">
     <div class="top-bar">
       <div class="left">
         <span class="title">📱加人领奖</span>
