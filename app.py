@@ -893,18 +893,44 @@ HTML_TEMPLATE = '''
   }
 
   function showRules() {
-    document.getElementById('popup-rules').style.display = 'flex';
+    document.getElementById("popup-rules").style.display = "flex";
   }
 
   function closeRulesPopup() {
-    document.getElementById('popup-rules').style.display = 'none';
+    document.getElementById("popup-rules").style.display = "none";
   }
 
   function copyPopupText() {
     const content = document.getElementById("popup-content").innerText;
-    navigator.clipboard.writeText(content).then(() => {
-      alert("✅ 已复制");
-    });
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(content).then(() => {
+        alert("✅ 已复制");
+      }).catch(() => {
+        fallbackCopy(content);
+      });
+    } else {
+      fallbackCopy(content);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = 0;
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    try {
+      const success = document.execCommand("copy");
+      alert(success ? "✅ 已复制" : "❌ 复制失败，请长按手动复制");
+    } catch (err) {
+      alert("❌ 复制失败，请长按手动复制");
+    }
+
+    document.body.removeChild(textarea);
   }
 </script>
 
