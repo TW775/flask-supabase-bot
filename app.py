@@ -600,7 +600,7 @@ HTML_TEMPLATE = '''
     padding: 30px;
   }
 
-  .top-bar, header {
+  .top-bar {
     padding: 12px 20px;
     height: auto;
     min-height: 48px;
@@ -736,17 +736,14 @@ HTML_TEMPLATE = '''
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #666;
-    font-size: 12px;
     text-decoration: none;
   }
 
   .tab-item .icon-wrapper {
-    background: none;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    margin-bottom: 2px;
+    background: linear-gradient(145deg, #a855f7, #6366f1);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -758,6 +755,7 @@ HTML_TEMPLATE = '''
     padding: 7px; /* 缩小内部图标大小一致化 */
     object-fit: contain;
     box-sizing: border-box;
+    display: block;
   }
 
   .tab-item.active .icon-wrapper {
@@ -768,8 +766,10 @@ HTML_TEMPLATE = '''
 
 
   .tab-item.active .label {
-    color: #a855f7;
+    font-size: 13px;
     font-weight: bold;
+    margin-top: 4px;
+    color: #a855f7;
   }
 </style>
 
