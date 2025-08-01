@@ -992,47 +992,50 @@ def index():
     used_index = [v["index"] for v in status.values() if "index" in v]
 
     if request.method == "POST":
-        action = request.form.get("action")
-        uid = request.form.get("userid", "").strip()
-        now = time.time()
+    action = request.form.get("action")
+    uid = request.form.get("userid", "").strip()
+    now = time.time()
 
-        if action == "get":
-            if not uid:
-                error = "请输入 ID"
-            elif uid not in whitelist:
-                error = "❌ 该 ID 不在名单内，请联系管理员"
+    if action == "get":
+        if not uid:
+            error = "请输入 ID"
+        elif uid not in whitelist:
+            error = "❌ 该 ID 不在名单内，请联系管理员"
+        else:
+            record = status.get(uid, {"count": 0, "last": 0})
+
+            if record["count"] >= MAX_TIMES:
+                # 从白名单中移除
+                new_whitelist = [id for id in whitelist if id != uid]
+                save_whitelist(new_whitelist)
+                error = "❌ 已达到最大领取次数，请联系管理员"
+
+                # ✅ 补充：显示上一次领取的号码
+                if "index" in record and record["index"] < len(groups):
+                    phones = groups[record["index"]]
+
+            elif now - record["last"] < INTERVAL_SECONDS:
+                wait_min = int((INTERVAL_SECONDS - (now - record["last"])) / 60)
+                error = f"⏱ 请在 {wait_min} 分钟后再领取"
+
+                # ✅ 补充：显示上一次领取的号码
+                if "index" in record and record["index"] < len(groups):
+                    phones = groups[record["index"]]
+
             else:
-                record = status.get(uid, {"count": 0, "last": 0})
-                if record["count"] >= MAX_TIMES:
-                    # 从白名单中移除
-                    new_whitelist = [id for id in whitelist if id != uid]
-                    save_whitelist(new_whitelist)
-                    error = "❌ 已达到最大领取次数，请联系管理员"
-
-                    # ✅ 补充：显示上一次领取的号码
-                    if "index" in record and record["index"] < len(groups):
-                    phones = groups[record["index"]]
-
-                elif now - record["last"] < INTERVAL_SECONDS:
-                    wait_min = int((INTERVAL_SECONDS - (now - record["last"])) / 60)
-                    error = f"⏱ 请在 {wait_min} 分钟后再领取"
-
-                    # ✅ 补充：显示上一次领取的号码
-                    if "index" in record and record["index"] < len(groups):
-                    phones = groups[record["index"]]
+                for i, group in enumerate(groups):
+                    if i not in used_index:
+                        phones = group
+                        new_status = {
+                            "count": record["count"] + 1,
+                            "last": now,
+                            "index": i
+                        }
+                        save_user_status(uid, new_status)
+                        break
                 else:
-                    for i, group in enumerate(groups):
-                        if i not in used_index:
-                            phones = group
-                            new_status = {
-                                "count": record["count"] + 1,
-                                "last": now,
-                                "index": i
-                            }
-                            save_user_status(uid, new_status)
-                            break
-                    else:
-                        error = "❌ 资料已发放完，请联系管理员"
+                    error = "❌ 资料已发放完，请联系管理员"
+
 
         elif action == "upload":
             raw_data = request.form.get("phones", "").strip()
