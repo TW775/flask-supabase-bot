@@ -1008,9 +1008,18 @@ def index():
                     new_whitelist = [id for id in whitelist if id != uid]
                     save_whitelist(new_whitelist)
                     error = "❌ 已达到最大领取次数，请联系管理员"
+
+                    # ✅ 补充：显示上一次领取的号码
+                    if "index" in record and record["index"] < len(groups):
+                    phones = groups[record["index"]]
+
                 elif now - record["last"] < INTERVAL_SECONDS:
                     wait_min = int((INTERVAL_SECONDS - (now - record["last"])) / 60)
                     error = f"⏱ 请在 {wait_min} 分钟后再领取"
+
+                    # ✅ 补充：显示上一次领取的号码
+                    if "index" in record and record["index"] < len(groups):
+                    phones = groups[record["index"]]
                 else:
                     for i, group in enumerate(groups):
                         if i not in used_index:
