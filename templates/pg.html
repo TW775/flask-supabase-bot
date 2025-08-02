@@ -1,643 +1,848 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>云顶官方PG试玩</title>
-  <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>云顶官方PG试玩</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  body {
-    font-family: "Helvetica Neue", sans-serif;
-    background: linear-gradient(to right, #3b0764, #1e3a8a);
-    color: #fff;
-    margin: 0;
-    padding: 0;
-  }
+        body {
+            font-family: "Helvetica Neue", sans-serif;
+            background: linear-gradient(to right, #3b0764, #1e3a8a);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
 
-  header {
-    background: linear-gradient(to right, #7e22ce, #2563eb);
-    padding: 12px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
-    margin-bottom: 20px;
-  }
+        header {
+            background: linear-gradient(to right, #7e22ce, #2563eb);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            margin-bottom: 20px;
+        }
 
-  header .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #fff;
-  }
+        header .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
 
-  header .logo img {
-    width: 30px;
-    height: 30px;
-  }
+        header .logo img {
+            width: 30px;
+            height: 30px;
+        }
 
-  header a {
-    color: #facc15;
-    text-decoration: none;
-    font-weight: bold;
-  }
+        header a {
+            color: #facc15;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-  h1 {
-    text-align: center;
-    margin: 10px 0 10px;
-    color: #facc15;
-  }
+        h1 {
+            text-align: center;
+            margin: 10px 0 10px;
+            color: #facc15;
+        }
 
-  .search-box {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
+        .search-box {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
 
-  .search-box input {
-    padding: 8px;
-    width: 300px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-  }
+        .search-box input {
+            padding: 8px;
+            width: 300px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
 
-  .game-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 16px;
-    padding: 0 20px 40px;
-  }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            padding: 0 20px 40px;
+        }
 
 
-  /* 让 .game-card 是链接但外观看不出 a 的默认样式 */
-  .game-card {
-    display: block;
-    text-decoration: none;
-    color: #facc15;
-    background: #2d3748;
-    border-radius: 12px;
-    padding: 10px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    transition: transform 0.2s ease;
-    -webkit-tap-highlight-color: transparent; /* 手机点击不出现阴影 */
-  }
+        /* 让 .game-card 是链接但外观看不出 a 的默认样式 */
+        .game-card {
+            display: block;
+            text-decoration: none;
+            color: #facc15;
+            background: #2d3748;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            /* 手机点击不出现阴影 */
+        }
 
-  /* 悬浮浮动保留 */
-  .game-card:hover {
-    transform: scale(1.05);
-    background-color: #4b5563;
-  }
+        /* 悬浮浮动保留 */
+        .game-card:hover {
+            transform: scale(1.05);
+            background-color: #4b5563;
+        }
 
-  /* 图片大小不变 */
-  .game-card img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    margin-bottom: 8px;
-    border-radius: 10px;
-  }
+        /* 图片大小不变 */
+        .game-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 8px;
+            border-radius: 10px;
+        }
 
-  /* 游戏标题样式 */
-  .game-card .title {
-    font-weight: bold;
-    font-size: 14px;
-  }
+        /* 游戏标题样式 */
+        .game-card .title {
+            font-weight: bold;
+            font-size: 14px;
+        }
 
-  .game-card a {
-    display: block;
-    color: #facc15;
-    text-decoration: none;
-    font-weight: bold;
-  }
+        .game-card a {
+            display: block;
+            color: #facc15;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-  .bottom-tab-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 65px;
-    background: linear-gradient(to right, #ede9fe, #f3e8ff);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-top: 1px solid #e5e7eb;
-    z-index: 999;
-  }
+        .bottom-tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: linear-gradient(to right, #ede9fe, #f3e8ff);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #e5e7eb;
+            z-index: 999;
+        }
 
-  .tab-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-  }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+        }
 
-  .tab-item .icon-wrapper {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(145deg, #a855f7, #6366f1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+        .tab-item .icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #a855f7, #6366f1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-  .tab-item .icon-wrapper img {
-    width: 100%;
-    height: 100%;
-    padding: 7px; /* 缩小内部图标大小一致化 */
-    object-fit: contain;
-    box-sizing: border-box;
-    display: block;
-  }
+        .tab-item .icon-wrapper img {
+            width: 70%;
+            height: 70%;
+            padding: 7px;
+            /* 缩小内部图标大小一致化 */
+            object-fit: contain;
+            box-sizing: border-box;
+            display: block;
+        }
 
-  .tab-item.active .icon-wrapper {
-    background: linear-gradient(145deg, #a855f7, #6366f1);
-    /* ✅ 移除阴影效果 */
-    box-shadow: none;
-  }
+        .tab-item.active .icon-wrapper {
+            background: linear-gradient(145deg, #a855f7, #6366f1);
+            /* ✅ 移除阴影效果 */
+            box-shadow: none;
+        }
 
-  .tab-item.active .label {
-    font-size: 13px;
-    font-weight: bold;
-    margin-top: 4px;
-    color: #a855f7;                                             
-  }
-</style>
+        .tab-item.active .label {
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 4px;
+            color: #a855f7;
+        }
+    </style>
 
 </head>
+
 <body>
-  <header>
-    <div class="logo">
-      <img src="/static/icons/logo.png" alt="logo">
-      云顶官方PG试玩
+    <header>
+        <div class="logo">
+            <img src="/static/icons/logo.png" alt="logo">
+            云顶官方PG试玩
+        </div>
+        <a href="https://m.ydpc28.cc" target="_blank">进入云顶 ➤</a>
+    </header>
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索游戏名称..." onkeyup="filterGames()">
     </div>
-    <a href="https://m.ydpc28.cc" target="_blank">进入云顶 ➤</a>
-  </header>
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="搜索游戏名称..." onkeyup="filterGames()">
-  </div>
-  <div style="text-align: center; color: #f87171; margin-top: -20px; margin-bottom: 20px; font-size: 14px;">
-  提示！首次加载稍慢 请耐心等待 后续进入自动加速
-  </div>
+    <div style="text-align: center; color: #f87171; margin-top: -20px; margin-bottom: 20px; font-size: 14px;">
+        提示！首次加载稍慢 请耐心等待 后续进入自动加速
+    </div>
     <div class="game-grid" id="gameGrid">
-    <div class="game-card" onclick="loadIframeGame('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMTQ/Z3JvdXBJZD05MDQyOQ==')">
-        <img alt="夏威夷探奇" src="https://pop520.vip/tupian/a1.png"/>
-        <div class="title">夏威夷探奇</div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240114?groupId=90429')">
+            <img alt="夏威夷探奇" src="https://pop520.vip/tupian/a1.png" />
+            <div class="title">夏威夷探奇</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/246639?groupId=90429')">
+            <img alt="麻将糊了1" src="https://pop520.vip/tupian/a2.png" />
+            <div class="title">麻将糊了1</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240106?groupId=90429')">
+            <img alt="麻将糊了2" src="https://pop520.vip/tupian/a3.png" />
+            <div class="title">麻将糊了2</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240253?groupId=90429')">
+            <img alt="点石成金" src="https://pop520.vip/tupian/a4.jpg" />
+            <div class="title">点石成金</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240133?groupId=90429')">
+            <img alt="金钱兔" src="https://pop520.vip/tupian/a5.jpg" />
+            <div class="title">金钱兔</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240257?groupId=90429')">
+            <img alt="电音派对" src="https://pop520.vip/tupian/a6.jpg" />
+            <div class="title">电音派对</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240192?groupId=90429')">
+            <img alt="维京纪元" src="https://pop520.vip/tupian/a7.png" />
+            <div class="title">维京纪元</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240204?groupId=90429')">
+            <img alt="夜醉佳人" src="https://pop520.vip/tupian/a8.png" />
+            <div class="title">夜醉佳人</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240159?groupId=90429')">
+            <img alt="图腾奇迹" src="https://pop520.vip/tupian/a9.png" />
+            <div class="title">图腾奇迹</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240203?groupId=90429')">
+            <img alt="黄金摇钱树" src="https://pop520.vip/tupian/a11.png" />
+            <div class="title">黄金摇钱树</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240184?groupId=90429')">
+            <img alt="赏金大对决" src="https://pop520.vip/tupian/a13.png" />
+            <div class="title">赏金大对决</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240206?groupId=90429')">
+            <img alt="百鬼夜行" src="https://pop520.vip/tupian/a14.png" />
+            <div class="title">百鬼夜行</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240187?groupId=90429')">
+            <img alt="疯狂过山车" src="https://pop520.vip/tupian/a15.png" />
+            <div class="title">疯狂过山车</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240232?groupId=90429')">
+            <img alt="美猴王传奇" src="https://pop520.vip/tupian/a16.png" />
+            <div class="title">美猴王传奇</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240178?groupId=90429')">
+            <img alt="珀尔修斯传奇" src="https://pop520.vip/tupian/a17.png" />
+            <div class="title">珀尔修斯传奇</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240235?groupId=90429')">
+            <img alt="美洲野牛" src="https://pop520.vip/tupian/a18.png" />
+            <div class="title">美洲野牛</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240176?groupId=90429')">
+            <img alt="极速赢家" src="https://pop520.vip/tupian/a19.png" />
+            <div class="title">极速赢家</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240209?groupId=90429')">
+            <img alt="绝地大逃杀" src="https://pop520.vip/tupian/a20.png" />
+            <div class="title">绝地大逃杀</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240185?groupId=90429')">
+            <img alt="电玩金猪" src="https://pop520.vip/tupian/a21.png" />
+            <div class="title">电玩金猪</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240213?groupId=90429')">
+            <img alt="韩宫御宴" src="https://pop520.vip/tupian/a22.png" />
+            <div class="title">韩宫御宴</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240180?groupId=90429')">
+            <img alt="发财鱼虾蟹" src="https://pop520.vip/tupian/a23.png" />
+            <div class="title">发财鱼虾蟹</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240208?groupId=90429')">
+            <img alt="斗鸡" src="https://pop520.vip/tupian/a24.png" />
+            <div class="title">斗鸡</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240210?groupId=90429')">
+            <img alt="蝶恋花" src="https://pop520.vip/tupian/a25.png" />
+            <div class="title">蝶恋花</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240214?groupId=90429')">
+            <img alt="日月星辰" src="https://pop520.vip/tupian/a26.png" />
+            <div class="title">日月星辰</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240215?groupId=90429')">
+            <img alt="神鹰宝石" src="https://pop520.vip/tupian/a27.png" />
+            <div class="title">神鹰宝石</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240238?groupId=90429')">
+            <img alt="探秘埃及" src="https://pop520.vip/tupian/a28.png" />
+            <div class="title">探秘埃及</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240242?groupId=90429')">
+            <img alt="超市大血拼" src="https://pop520.vip/tupian/a29.png" />
+            <div class="title">超市大血拼</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240270?groupId=90429')">
+            <img alt="人鱼公主" src="https://pop520.vip/tupian/a31.png" />
+            <div class="title">人鱼公主</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240245?groupId=90429')">
+            <img alt="恐龙帝国" src="https://pop520.vip/tupian/a32.png" />
+            <div class="title">恐龙帝国</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240269?groupId=90429')">
+            <img alt="太阳神" src="https://pop520.vip/tupian/a34.png" />
+            <div class="title">太阳神</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240230?groupId=90429')">
+            <img alt="霹雳神偷" src="https://pop520.vip/tupian/a35.png" />
+            <div class="title">霹雳神偷</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240231?groupId=90429')">
+            <img alt="麒麟送宝" src="https://pop520.vip/tupian/a36.png" />
+            <div class="title">麒麟送宝</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240274?groupId=90429')">
+            <img alt="亡灵大道" src="https://pop520.vip/tupian/a37.png" />
+            <div class="title">亡灵大道</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240276?groupId=90429')">
+            <img alt="糖心风暴" src="https://pop520.vip/tupian/a38.png" />
+            <div class="title">糖心风暴</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240227?groupId=90429')">
+            <img alt="宝石传奇" src="https://pop520.vip/tupian/a39.png" />
+            <div class="title">宝石传奇</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/599210?groupId=91189')">
+            <img alt="招财猫" src="https://pop520.vip/tupian/a40.png" />
+            <div class="title">招财猫</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240264?groupId=90429')">
+            <img alt="金玉满堂" src="https://pop520.vip/tupian/a41.png" />
+            <div class="title">金玉满堂</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240260?groupId=90429')">
+            <img alt="赏金女王" src="https://pop520.vip/tupian/a42.png" />
+            <div class="title">赏金女王</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240135?groupId=90429')">
+            <img alt="古德拉女爵" src="https://pop520.vip/tupian/a43.png" />
+            <div class="title">古德拉女爵</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/256201?groupId=90379')">
+            <img alt="艳后之谜" src="https://pop520.vip/tupian/a44.png" />
+            <div class="title">艳后之谜</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240243?groupId=90429')">
+            <img alt="水上泰神奇" src="https://pop520.vip/tupian/a45.png" />
+            <div class="title">水上泰神奇</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240275?groupId=90429')">
+            <img alt="欢乐嘉年华" src="https://pop520.vip/tupian/a46.png" />
+            <div class="title">欢乐嘉年华</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240265?groupId=90429')">
+            <img alt="寻宝黄金城" src="https://pop520.vip/tupian/a47.png" />
+            <div class="title">寻宝黄金城</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/256498?groupId=90394')">
+            <img alt="阿拉丁神灯" src="https://pop520.vip/tupian/a48.png" />
+            <div class="title">阿拉丁神灯</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240261?groupId=90429')">
+            <img alt="火树赢花" src="https://pop520.vip/tupian/a49.png" />
+            <div class="title">火树赢花</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240104?groupId=90429')">
+            <img alt="澳门壕梦" src="https://pop520.vip/tupian/a50.png" />
+            <div class="title">澳门壕梦</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240104?groupId=90429')">
+            <img alt="凤凰传奇" src="https://pop520.vip/tupian/a51.png" />
+            <div class="title">凤凰传奇</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240109?groupId=90429')">
+            <img alt="福运象财神" src="https://pop520.vip/tupian/a52.png" />
+            <div class="title">福运象财神</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240238?groupId=90429')">
+            <img alt="埃及探秘宝典" src="https://pop520.vip/tupian/a53.png" />
+            <div class="title">埃及探秘宝典</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240238?groupId=90429')">
+            <img alt="比基尼天堂" src="https://pop520.vip/tupian/a54.png" />
+            <div class="title">比基尼天堂</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240108?groupId=90429')">
+            <img alt="赢财神" src="https://pop520.vip/tupian/a55.png" />
+            <div class="title">赢财神</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240112?groupId=90429')">
+            <img alt="糖果连连爆" src="https://pop520.vip/tupian/a56.png" />
+            <div class="title">糖果连连爆</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240126?groupId=90429')">
+            <img alt="宝藏征途" src="https://pop520.vip/tupian/a57.png" />
+            <div class="title">宝藏征途</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240207?groupId=90429')">
+            <img alt="亲爱的" src="https://pop520.vip/tupian/a58.png" />
+            <div class="title">亲爱的</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240122?groupId=90429')">
+            <img alt="鼠鼠福福" src="https://pop520.vip/tupian/a59.png" />
+            <div class="title">鼠鼠福福</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240137?groupId=90429')">
+            <img alt="寻龙探宝" src="https://pop520.vip/tupian/61.png" />
+            <div class="title">寻龙探宝</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240222?groupId=90429')">
+            <img alt="横财来啦" src="https://pop520.vip/tupian/62.png" />
+            <div class="title">横财来啦</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/256057?groupId=90352')">
+            <img alt="麻辣火锅" src="https://pop520.vip/tupian/63.png" />
+            <div class="title">麻辣火锅</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240199?groupId=90429')">
+            <img alt="鱼跃龍门" src="https://pop520.vip/tupian/64.png" />
+            <div class="title">鱼跃龍门</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240172?groupId=90429')">
+            <img alt="万胜狂欢夜" src="https://pop520.vip/tupian/65.png" />
+            <div class="title">万胜狂欢夜</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240203?groupId=90429')">
+            <img alt="摇钱树" src="https://pop520.vip/tupian/66.png" />
+            <div class="title">摇钱树</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240177?groupId=90429')">
+            <img alt="后羿射日" src="https://pop520.vip/tupian/67.png" />
+            <div class="title">后羿射日</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/246636?groupId=90429')">
+            <img alt="抓抓乐" src="https://pop520.vip/tupian/69.png" />
+            <div class="title">抓抓乐</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/246636?groupId=90429')">
+            <img alt="逆袭小红帽" src="https://pop520.vip/tupian/70.png" />
+            <div class="title">逆袭小红帽</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240126?groupId=90429')">
+            <img alt="宝石侠" src="https://pop520.vip/tupian/72.png" />
+            <div class="title">宝石侠</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240171?groupId=90429')">
+            <img alt="舞狮进宝" src="https://pop520.vip/tupian/73.png" />
+            <div class="title">舞狮进宝</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240171?groupId=90429')">
+            <img alt="龍虎" src="https://pop520.vip/tupian/74.png" />
+            <div class="title">龍虎</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240179?groupId=90429')">
+            <img alt="嘻哈熊猫" src="https://pop520.vip/tupian/75.png" />
+            <div class="title">嘻哈熊猫</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240168?groupId=90429')">
+            <img alt="宝石侠大宝剑" src="https://pop520.vip/tupian/76.png" />
+            <div class="title">宝石侠大宝剑</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/576314?groupId=90350')">
+            <img alt="金猪报财" src="https://pop520.vip/tupian/77.png" />
+            <div class="title">金猪报财</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/577369?groupId=90390')">
+            <img alt="埃及寻宝" src="https://pop520.vip/tupian/78.png" />
+            <div class="title">埃及寻宝</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240163?groupId=90429')">
+            <img alt="皇上吉祥" src="https://pop520.vip/tupian/79.png" />
+            <div class="title">皇上吉祥</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240164?groupId=90429')">
+            <img alt="象财神" src="https://pop520.vip/tupian/80.png" />
+            <div class="title">象财神</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240155?groupId=90429')">
+            <img alt="双囍临门" src="https://pop520.vip/tupian/82.png" />
+            <div class="title">双囍临门</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240147?groupId=90429')">
+            <img alt="冰雪大冲关" src="https://pop520.vip/tupian/83.png" />
+            <div class="title">冰雪大冲关</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/256117?groupId=90357')">
+            <img alt="嘻游记" src="https://pop520.vip/tupian/84.png" />
+            <div class="title">嘻游记</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240145?groupId=90429')">
+            <img alt="赏金船长" src="https://pop520.vip/tupian/85.png" />
+            <div class="title">赏金船长</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240145?groupId=90429')">
+            <img alt="夜戏貂蝉" src="https://pop520.vip/tupian/86.png" />
+            <div class="title">夜戏貂蝉</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240128?groupId=90429')">
+            <img alt="爱尔兰精灵" src="https://pop520.vip/tupian/87.png" />
+            <div class="title">爱尔兰精灵</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240127?groupId=90429')">
+            <img alt="唐伯虎点秋香" src="https://pop520.vip/tupian/88.png" />
+            <div class="title">唐伯虎点秋香</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240134?groupId=90429')">
+            <img alt="忍者VS武士" src="https://pop520.vip/tupian/89.png" />
+            <div class="title">忍者VS武士</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/256143?groupId=90357')">
+            <img alt="拳霸" src="https://pop520.vip/tupian/90.png" />
+            <div class="title">拳霸</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240236?groupId=90429')">
+            <img alt="冰封奇侠" src="https://pop520.vip/tupian/91.png" />
+            <div class="title">冰封奇侠</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240267?groupId=90429')">
+            <img alt="星旅淘金" src="https://pop520.vip/tupian/92.png" />
+            <div class="title">星旅淘金</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240244?groupId=90429')">
+            <img alt="冰火双娇" src="https://pop520.vip/tupian/93.png" />
+            <div class="title">冰火双娇</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240233?groupId=90429')">
+            <img alt="十倍金牛" src="https://pop520.vip/tupian/94.png" />
+            <div class="title">十倍金牛</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240229?groupId=90429')">
+            <img alt="新国粹" src="https://pop520.vip/tupian/95.png" />
+            <div class="title">新国粹</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240272?groupId=90429')">
+            <img alt="比特淘金" src="https://pop520.vip/tupian/96.png" />
+            <div class="title">比特淘金</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/246637?groupId=90429')">
+            <img alt="虎虎生财" src="https://pop520.vip/tupian/97.png" />
+            <div class="title">虎虎生财</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240237?groupId=90429')">
+            <img alt="江山美景图" src="https://pop520.vip/tupian/98.png" />
+            <div class="title">江山美景图</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240201?groupId=90429')">
+            <img alt="美食美刻" src="https://pop520.vip/tupian/99.png" />
+            <div class="title">美食美刻</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240205?groupId=90429')">
+            <img alt="假面嘉年华" src="https://pop520.vip/tupian/100.png" />
+            <div class="title">假面嘉年华</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240115?groupId=90429')">
+            <img alt="炼金工坊" src="https://pop520.vip/tupian/101.png" />
+            <div class="title">炼金工坊</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240266?groupId=90429')">
+            <img alt="泰嗨泼水节" src="https://pop520.vip/tupian/102.png" />
+            <div class="title">泰嗨泼水节</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240113?groupId=90429')">
+            <img alt="元素精灵" src="https://pop520.vip/tupian/103.png" />
+            <div class="title">元素精灵</div>
+        </div>
+        <div class="game-card"
+            onclick="loadIframeGame('https://pgsoftslot.com/zh-CN/mini-game/details/240151?groupId=90429')">
+            <img alt="超级高尔夫" src="https://pop520.vip/tupian/104.png" />
+            <div class="title">超级高尔夫</div>
+        </div>
     </div>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDY2Mzk/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="麻将糊了1" src="https://pop520.vip/tupian/a2.png"/>
-        <div class="title">麻将糊了1</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMDY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="麻将糊了2" src="https://pop520.vip/tupian/a3.png"/>
-        <div class="title">麻将糊了2</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNTM/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="点石成金" src="https://pop520.vip/tupian/a4.jpg"/>
-        <div class="title">点石成金</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMzM/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="金钱兔" src="https://pop520.vip/tupian/a5.jpg"/>
-        <div class="title">金钱兔</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNTc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="电音派对" src="https://pop520.vip/tupian/a6.jpg"/>
-        <div class="title">电音派对</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxOTI/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="维京纪元" src="https://pop520.vip/tupian/a7.png"/>
-        <div class="title">维京纪元</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMDQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="夜醉佳人" src="https://pop520.vip/tupian/a8.png"/>
-        <div class="title">夜醉佳人</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNTk/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="图腾奇迹" src="https://pop520.vip/tupian/a9.png"/>
-        <div class="title">图腾奇迹</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMDM/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="黄金摇钱树" src="https://pop520.vip/tupian/a11.png"/>
-        <div class="title">黄金摇钱树</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxODQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="赏金大对决" src="https://pop520.vip/tupian/a13.png"/>
-        <div class="title">赏金大对决</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMDY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="百鬼夜行" src="https://pop520.vip/tupian/a14.png"/>
-        <div class="title">百鬼夜行</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxODc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="疯狂过山车" src="https://pop520.vip/tupian/a15.png"/>
-        <div class="title">疯狂过山车</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzI/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="美猴王传奇" src="https://pop520.vip/tupian/a16.png"/>
-        <div class="title">美猴王传奇</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNzg/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="珀尔修斯传奇" src="https://pop520.vip/tupian/a17.png"/>
-        <div class="title">珀尔修斯传奇</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="美洲野牛" src="https://pop520.vip/tupian/a18.png"/>
-        <div class="title">美洲野牛</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNzY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="极速赢家" src="https://pop520.vip/tupian/a19.png"/>
-        <div class="title">极速赢家</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMDk/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="绝地大逃杀" src="https://pop520.vip/tupian/a20.png"/>
-        <div class="title">绝地大逃杀</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxODU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="电玩金猪" src="https://pop520.vip/tupian/a21.png"/>
-        <div class="title">电玩金猪</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMTM/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="韩宫御宴" src="https://pop520.vip/tupian/a22.png"/>
-        <div class="title">韩宫御宴</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxODA/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="发财鱼虾蟹" src="https://pop520.vip/tupian/a23.png"/>
-        <div class="title">发财鱼虾蟹</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMDg/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="斗鸡" src="https://pop520.vip/tupian/a24.png"/>
-        <div class="title">斗鸡</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMTA/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="蝶恋花" src="https://pop520.vip/tupian/a25.png"/>
-        <div class="title">蝶恋花</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMTQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="日月星辰" src="https://pop520.vip/tupian/a26.png"/>
-        <div class="title">日月星辰</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMTU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="神鹰宝石" src="https://pop520.vip/tupian/a27.png"/>
-        <div class="title">神鹰宝石</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzg/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="探秘埃及" src="https://pop520.vip/tupian/a28.png"/>
-        <div class="title">探秘埃及</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNDI/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="超市大血拼" src="https://pop520.vip/tupian/a29.png"/>
-        <div class="title">超市大血拼</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNzA/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="人鱼公主" src="https://pop520.vip/tupian/a31.png"/>
-        <div class="title">人鱼公主</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNDU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="恐龙帝国" src="https://pop520.vip/tupian/a32.png"/>
-        <div class="title">恐龙帝国</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNjk/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="太阳神" src="https://pop520.vip/tupian/a34.png"/>
-        <div class="title">太阳神</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzA/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="霹雳神偷" src="https://pop520.vip/tupian/a35.png"/>
-        <div class="title">霹雳神偷</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzE/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="麒麟送宝" src="https://pop520.vip/tupian/a36.png"/>
-        <div class="title">麒麟送宝</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNzQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="亡灵大道" src="https://pop520.vip/tupian/a37.png"/>
-        <div class="title">亡灵大道</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNzY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="糖心风暴" src="https://pop520.vip/tupian/a38.png"/>
-        <div class="title">糖心风暴</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMjc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="宝石传奇" src="https://pop520.vip/tupian/a39.png"/>
-        <div class="title">宝石传奇</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy81OTkyMTA/Z3JvdXBJZD05MTE4OQ=='), '_blank'); return false;">
-        <img alt="招财猫" src="https://pop520.vip/tupian/a40.png"/>
-        <div class="title">招财猫</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNjQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="金玉满堂" src="https://pop520.vip/tupian/a41.png"/>
-        <div class="title">金玉满堂</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNjA/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="赏金女王" src="https://pop520.vip/tupian/a42.png"/>
-        <div class="title">赏金女王</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMzU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="古德拉女爵" src="https://pop520.vip/tupian/a43.png"/>
-        <div class="title">古德拉女爵</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNTYyMDE/Z3JvdXBJZD05MDM3OQ=='), '_blank'); return false;">
-        <img alt="艳后之谜" src="https://pop520.vip/tupian/a44.png"/>
-        <div class="title">艳后之谜</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNDM/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="水上泰神奇" src="https://pop520.vip/tupian/a45.png"/>
-        <div class="title">水上泰神奇</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNzU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="欢乐嘉年华" src="https://pop520.vip/tupian/a46.png"/>
-        <div class="title">欢乐嘉年华</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNjU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="寻宝黄金城" src="https://pop520.vip/tupian/a47.png"/>
-        <div class="title">寻宝黄金城</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNTY0OTg/Z3JvdXBJZD05MDM5NA=='), '_blank'); return false;">
-        <img alt="阿拉丁神灯" src="https://pop520.vip/tupian/a48.png"/>
-        <div class="title">阿拉丁神灯</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNjE/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="火树赢花" src="https://pop520.vip/tupian/a49.png"/>
-        <div class="title">火树赢花</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMDQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="澳门壕梦" src="https://pop520.vip/tupian/a50.png"/>
-        <div class="title">澳门壕梦</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMDQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="凤凰传奇" src="https://pop520.vip/tupian/a51.png"/>
-        <div class="title">凤凰传奇</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMDk/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="福运象财神" src="https://pop520.vip/tupian/a52.png"/>
-        <div class="title">福运象财神</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzg/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="埃及探秘宝典" src="https://pop520.vip/tupian/a53.png"/>
-        <div class="title">埃及探秘宝典</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzg/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="比基尼天堂" src="https://pop520.vip/tupian/a54.png"/>
-        <div class="title">比基尼天堂</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMDg/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="赢财神" src="https://pop520.vip/tupian/a55.png"/>
-        <div class="title">赢财神</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMTI/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="糖果连连爆" src="https://pop520.vip/tupian/a56.png"/>
-        <div class="title">糖果连连爆</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMjY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="宝藏征途" src="https://pop520.vip/tupian/a57.png"/>
-        <div class="title">宝藏征途</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMDc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="亲爱的" src="https://pop520.vip/tupian/a58.png"/>
-        <div class="title">亲爱的</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMjI/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="鼠鼠福福" src="https://pop520.vip/tupian/a59.png"/>
-        <div class="title">鼠鼠福福</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMzc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="寻龙探宝" src="https://pop520.vip/tupian/61.png"/>
-        <div class="title">寻龙探宝</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMjI/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="横财来啦" src="https://pop520.vip/tupian/62.png"/>
-        <div class="title">横财来啦</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNTYwNTc/Z3JvdXBJZD05MDM1Mg=='), '_blank'); return false;">
-        <img alt="麻辣火锅" src="https://pop520.vip/tupian/63.png"/>
-        <div class="title">麻辣火锅</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxOTk/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="鱼跃龍门" src="https://pop520.vip/tupian/64.png"/>
-        <div class="title">鱼跃龍门</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNzI/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="万胜狂欢夜" src="https://pop520.vip/tupian/65.png"/>
-        <div class="title">万胜狂欢夜</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMDM/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="摇钱树" src="https://pop520.vip/tupian/66.png"/>
-        <div class="title">摇钱树</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNzc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="后羿射日" src="https://pop520.vip/tupian/67.png"/>
-        <div class="title">后羿射日</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDY2MzY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="抓抓乐" src="https://pop520.vip/tupian/69.png"/>
-        <div class="title">抓抓乐</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDY2MzY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="逆袭小红帽" src="https://pop520.vip/tupian/70.png"/>
-        <div class="title">逆袭小红帽</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMjY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="宝石侠" src="https://pop520.vip/tupian/72.png"/>
-        <div class="title">宝石侠</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNzE/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="舞狮进宝" src="https://pop520.vip/tupian/73.png"/>
-        <div class="title">舞狮进宝</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNzE/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="龍虎" src="https://pop520.vip/tupian/74.png"/>
-        <div class="title">龍虎</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNzk/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="嘻哈熊猫" src="https://pop520.vip/tupian/75.png"/>
-        <div class="title">嘻哈熊猫</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNjg/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="宝石侠大宝剑" src="https://pop520.vip/tupian/76.png"/>
-        <div class="title">宝石侠大宝剑</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy81NzYzMTQ/Z3JvdXBJZD05MDM1MA=='), '_blank'); return false;">
-        <img alt="金猪报财" src="https://pop520.vip/tupian/77.png"/>
-        <div class="title">金猪报财</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy81NzczNjk/Z3JvdXBJZD05MDM5MA=='), '_blank'); return false;">
-        <img alt="埃及寻宝" src="https://pop520.vip/tupian/78.png"/>
-        <div class="title">埃及寻宝</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNjM/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="皇上吉祥" src="https://pop520.vip/tupian/79.png"/>
-        <div class="title">皇上吉祥</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNjQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="象财神" src="https://pop520.vip/tupian/80.png"/>
-        <div class="title">象财神</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNTU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="双囍临门" src="https://pop520.vip/tupian/82.png"/>
-        <div class="title">双囍临门</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNDc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="冰雪大冲关" src="https://pop520.vip/tupian/83.png"/>
-        <div class="title">冰雪大冲关</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNTYxMTc/Z3JvdXBJZD05MDM1Nw=='), '_blank'); return false;">
-        <img alt="嘻游记" src="https://pop520.vip/tupian/84.png"/>
-        <div class="title">嘻游记</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNDU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="赏金船长" src="https://pop520.vip/tupian/85.png"/>
-        <div class="title">赏金船长</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNDU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="夜戏貂蝉" src="https://pop520.vip/tupian/86.png"/>
-        <div class="title">夜戏貂蝉</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMjg/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="爱尔兰精灵" src="https://pop520.vip/tupian/87.png"/>
-        <div class="title">爱尔兰精灵</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMjc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="唐伯虎点秋香" src="https://pop520.vip/tupian/88.png"/>
-        <div class="title">唐伯虎点秋香</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMzQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="忍者VS武士" src="https://pop520.vip/tupian/89.png"/>
-        <div class="title">忍者VS武士</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNTYxNDM/Z3JvdXBJZD05MDM1Nw=='), '_blank'); return false;">
-        <img alt="拳霸" src="https://pop520.vip/tupian/90.png"/>
-        <div class="title">拳霸</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="冰封奇侠" src="https://pop520.vip/tupian/91.png"/>
-        <div class="title">冰封奇侠</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNjc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="星旅淘金" src="https://pop520.vip/tupian/92.png"/>
-        <div class="title">星旅淘金</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNDQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="冰火双娇" src="https://pop520.vip/tupian/93.png"/>
-        <div class="title">冰火双娇</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzM/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="十倍金牛" src="https://pop520.vip/tupian/94.png"/>
-        <div class="title">十倍金牛</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMjk/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="新国粹" src="https://pop520.vip/tupian/95.png"/>
-        <div class="title">新国粹</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNzI/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="比特淘金" src="https://pop520.vip/tupian/96.png"/>
-        <div class="title">比特淘金</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDY2Mzc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="虎虎生财" src="https://pop520.vip/tupian/97.png"/>
-        <div class="title">虎虎生财</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMzc/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="江山美景图" src="https://pop520.vip/tupian/98.png"/>
-        <div class="title">江山美景图</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMDE/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="美食美刻" src="https://pop520.vip/tupian/99.png"/>
-        <div class="title">美食美刻</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyMDU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="假面嘉年华" src="https://pop520.vip/tupian/100.png"/>
-        <div class="title">假面嘉年华</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMTU/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="炼金工坊" src="https://pop520.vip/tupian/101.png"/>
-        <div class="title">炼金工坊</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAyNjY/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="泰嗨泼水节" src="https://pop520.vip/tupian/102.png"/>
-        <div class="title">泰嗨泼水节</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMTM/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="元素精灵" src="https://pop520.vip/tupian/103.png"/>
-        <div class="title">元素精灵</div>
-    </a>
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxNTE/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
-        <img alt="超级高尔夫" src="https://pop520.vip/tupian/104.png"/>
-        <div class="title">超级高尔夫</div>
-    </a>
-</div>
-    
-  <script>
-    function filterGames() {
-      const input = document.getElementById('searchInput');
-      const filter = input.value.toLowerCase();
-      const grid = document.getElementById('gameGrid');
-      const cards = grid.getElementsByClassName('game-card');
-      for (let i = 0; i < cards.length; i++) {
-        const title = cards[i].innerText || cards[i].textContent;
-        cards[i].style.display = title.toLowerCase().includes(filter) ? "block" : "none";
-      }
-    }
-  </script>
-<!-- 在 </body> 前加入： -->
-<div class="bottom-tab-bar">
-  <a href="/" class="tab-item active">
-    <div class="icon-wrapper">
-      <img src="/static/icons/home.png" alt="大厅">
-    </div>
-    <div class="label">加人任务</div>
-  </a>
-  <a href="/pg" class="tab-item">
-    <div class="icon-wrapper">
-      <img src="/static/icons/game.png" alt="试玩">
-    </div>
-    <div class="label">PG试玩</div>
-  </a>
-</div>
 
-<!-- 添加iframe容器 (建议放在game-grid下方) -->
-<div id="gameIframeContainer" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
-    <div style="position:relative; width:90%; height:90%; margin:5% auto;">
-        <button onclick="closeIframe()" style="position:absolute; top:-40px; right:0; background:#f44336; color:white; border:none; padding:5px 10px; cursor:pointer;">
-            关闭
-        </button>
-        <iframe id="gameIframe" style="width:100%; height:100%; border:none; border-radius:8px;"></iframe>
+    <script>
+        function filterGames() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const grid = document.getElementById('gameGrid');
+            const cards = grid.getElementsByClassName('game-card');
+            for (let i = 0; i < cards.length; i++) {
+                const title = cards[i].innerText || cards[i].textContent;
+                cards[i].style.display = title.toLowerCase().includes(filter) ? "block" : "none";
+            }
+        }
+
+        // ====== 以下是新增/修改的部分 ======
+        let currentGameUrl = null;
+        let isIframeOpen = false;
+
+        function adjustIframeSize() {
+            const container = document.getElementById('gameIframeContainer');
+            const iframeWrapper = container.firstElementChild;
+
+            const maxWidth = Math.min(window.innerWidth * 0.95, 1200);
+            const maxHeight = Math.min(window.innerHeight * 0.95, 800);
+
+            iframeWrapper.style.width = `${maxWidth}px`;
+            iframeWrapper.style.height = `${maxHeight}px`;
+        }
+
+        function loadIframeGame(encodedUrl) {
+            const iframeContainer = document.getElementById('gameIframeContainer');
+            const iframe = document.getElementById('gameIframe');
+            const decodedUrl = atob(encodedUrl);
+
+            if (currentGameUrl === decodedUrl && isIframeOpen) {
+                return; // 已经打开，不做任何操作
+            }
+
+            currentGameUrl = decodedUrl;
+            adjustIframeSize();
+            iframe.src = decodedUrl;
+            iframeContainer.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            isIframeOpen = true;
+
+            // 添加浏览器历史记录
+            history.pushState({ iframeOpen: true }, '');
+
+            window.addEventListener('popstate', handleBackButton);
+            window.addEventListener('resize', adjustIframeSize);
+        }
+
+        function handleBackButton(event) {
+            if (isIframeOpen) {
+                event.preventDefault();
+                closeIframe();
+                // 手动回退历史记录
+                history.back();
+            }
+        }
+
+        function closeIframe() {
+            const iframeContainer = document.getElementById('gameIframeContainer');
+            iframeContainer.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            isIframeOpen = false;
+
+            window.removeEventListener('popstate', handleBackButton);
+            window.removeEventListener('resize', adjustIframeSize);
+        }
+
+        // 初始化历史记录
+        window.addEventListener('load', () => {
+            history.pushState({ iframeOpen: false }, '');
+        });
+        // ====== 以上是新增/修改的部分 ======
+    </script>
+    <!-- 在 </body> 前加入： -->
+    <div class="bottom-tab-bar">
+        <a href="/" class="tab-item active">
+            <div class="icon-wrapper">
+                <img src="/static/icons/home.png" alt="大厅">
+            </div>
+            <div class="label">加人任务</div>
+        </a>
+        <a href="/pg" class="tab-item">
+            <div class="icon-wrapper">
+                <img src="/static/icons/game.png" alt="试玩">
+            </div>
+            <div class="label">PG试玩</div>
+        </a>
     </div>
-</div>
 
-<script>
-// 加载游戏到iframe
-function loadIframeGame(encodedUrl) {
-    const iframeContainer = document.getElementById('gameIframeContainer');
-    const iframe = document.getElementById('gameIframe');
-    
-    // 解码并加载URL
-    iframe.src = atob(encodedUrl);
-    
-    // 显示iframe容器
-    iframeContainer.style.display = 'block';
-    
-    // 阻止页面滚动
-    document.body.style.overflow = 'hidden';
-}
+    <!-- 添加iframe容器 (建议放在game-grid下方) -->
+    <div id="gameIframeContainer" style="display:none; 
+            position:fixed; 
+            top:0; 
+            left:0; 
+            right:0; 
+            bottom:0; 
+            background:rgba(0,0,0,0.9); 
+            z-index:1000;
+            overflow:auto;
+            padding:20px;">
+        <div style="position:relative; 
+                width:95%; 
+                height:95%; 
+                margin:10px auto;
+                max-width:1200px;
+                max-height:800px;">
+            <button onclick="closeIframe()" style="position:absolute; 
+                       top:-40px; 
+                       right:0; 
+                       background:#f44336; 
+                       color:white; 
+                       border:none; 
+                       padding:5px 15px; 
+                       border-radius:4px;
+                       cursor:pointer;
+                       z-index:1001;">
+                关闭
+            </button>
+            <iframe id="gameIframe" style="width:100%; 
+                       height:100%; 
+                       border:none; 
+                       border-radius:8px;
+                       box-shadow:0 0 20px rgba(0,0,0,0.5);"></iframe>
+        </div>
+    </div>
 
-// 关闭iframe
-function closeIframe() {
-    document.getElementById('gameIframeContainer').style.display = 'none';
-    document.body.style.overflow = 'auto';
-    
-    // 可选：清除iframe内容
-    document.getElementById('gameIframe').src = '';
-}
-</script>
+    <script>
+        function adjustIframeSize() {
+            const container = document.getElementById('gameIframeContainer');
+            const iframeWrapper = container.firstElementChild;
+
+            // 计算适合的尺寸（比视口稍小一些）
+            const maxWidth = Math.min(window.innerWidth * 0.95, 1200);
+            const maxHeight = Math.min(window.innerHeight * 0.95, 800);
+
+            iframeWrapper.style.width = `${maxWidth}px`;
+            iframeWrapper.style.height = `${maxHeight}px`;
+        }
+
+        function loadIframeGame(encodedUrl) {
+            const iframeContainer = document.getElementById('gameIframeContainer');
+            const iframe = document.getElementById('gameIframe');
+
+            // 调整尺寸
+            adjustIframeSize();
+
+            // 解码并加载URL
+            iframe.src = atob(encodedUrl);
+            iframeContainer.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            // 添加窗口大小变化监听
+            window.addEventListener('resize', adjustIframeSize);
+        }
+
+        function closeIframe() {
+            const iframeContainer = document.getElementById('gameIframeContainer');
+            iframeContainer.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('gameIframe').src = '';
+
+            // 移除窗口大小变化监听
+            window.removeEventListener('resize', adjustIframeSize);
+        }
+    </script>
 </body>
+
 </html>

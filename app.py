@@ -759,8 +759,8 @@ HTML_TEMPLATE = '''
   }
 
   .tab-item .icon-wrapper img {
-    width: 100%;
-    height: 100%;
+    width: 70%;
+    height: 70%;
     padding: 7px; /* 缩小内部图标大小一致化 */
     object-fit: contain;
     box-sizing: border-box;
