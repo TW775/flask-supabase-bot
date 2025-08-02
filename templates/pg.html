@@ -676,97 +676,6 @@
         </div>
     </div>
 
-    <script>
-        function filterGames() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
-            const grid = document.getElementById('gameGrid');
-            const cards = grid.getElementsByClassName('game-card');
-            for (let i = 0; i < cards.length; i++) {
-                const title = cards[i].innerText || cards[i].textContent;
-                cards[i].style.display = title.toLowerCase().includes(filter) ? "block" : "none";
-            }
-        }
-
-        // ====== 以下是新增/修改的部分 ======
-        let currentGameUrl = null;
-        let isIframeOpen = false;
-
-        function adjustIframeSize() {
-            const container = document.getElementById('gameIframeContainer');
-            const iframeWrapper = container.firstElementChild;
-
-            const maxWidth = Math.min(window.innerWidth * 0.95, 1200);
-            const maxHeight = Math.min(window.innerHeight * 0.95, 800);
-
-            iframeWrapper.style.width = `${maxWidth}px`;
-            iframeWrapper.style.height = `${maxHeight}px`;
-        }
-
-        function loadIframeGame(encodedUrl) {
-            const iframeContainer = document.getElementById('gameIframeContainer');
-            const iframe = document.getElementById('gameIframe');
-            const decodedUrl = atob(encodedUrl);
-
-            if (currentGameUrl === decodedUrl && isIframeOpen) {
-                return; // 已经打开，不做任何操作
-            }
-
-            currentGameUrl = decodedUrl;
-            adjustIframeSize();
-            iframe.src = decodedUrl;
-            iframeContainer.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-            isIframeOpen = true;
-
-            // 添加浏览器历史记录
-            history.pushState({ iframeOpen: true }, '');
-
-            window.addEventListener('popstate', handleBackButton);
-            window.addEventListener('resize', adjustIframeSize);
-        }
-
-        function handleBackButton(event) {
-            if (isIframeOpen) {
-                event.preventDefault();
-                closeIframe();
-                // 手动回退历史记录
-                history.back();
-            }
-        }
-
-        function closeIframe() {
-            const iframeContainer = document.getElementById('gameIframeContainer');
-            iframeContainer.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            isIframeOpen = false;
-
-            window.removeEventListener('popstate', handleBackButton);
-            window.removeEventListener('resize', adjustIframeSize);
-        }
-
-        // 初始化历史记录
-        window.addEventListener('load', () => {
-            history.pushState({ iframeOpen: false }, '');
-        });
-        // ====== 以上是新增/修改的部分 ======
-    </script>
-    <!-- 在 </body> 前加入： -->
-    <div class="bottom-tab-bar">
-        <a href="/" class="tab-item active">
-            <div class="icon-wrapper">
-                <img src="/static/icons/home.png" alt="大厅">
-            </div>
-            <div class="label">加人任务</div>
-        </a>
-        <a href="/pg" class="tab-item">
-            <div class="icon-wrapper">
-                <img src="/static/icons/game.png" alt="试玩">
-            </div>
-            <div class="label">PG试玩</div>
-        </a>
-    </div>
-
     <!-- 添加iframe容器 (建议放在game-grid下方) -->
     <div id="gameIframeContainer" style="display:none; 
             position:fixed; 
@@ -805,11 +714,25 @@
     </div>
 
     <script>
+        function filterGames() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const grid = document.getElementById('gameGrid');
+            const cards = grid.getElementsByClassName('game-card');
+            for (let i = 0; i < cards.length; i++) {
+                const title = cards[i].innerText || cards[i].textContent;
+                cards[i].style.display = title.toLowerCase().includes(filter) ? "block" : "none";
+            }
+        }
+
+        // ====== iframe 控制逻辑 ======
+        let currentGameUrl = null;
+        let isIframeOpen = false;
+
         function adjustIframeSize() {
             const container = document.getElementById('gameIframeContainer');
             const iframeWrapper = container.firstElementChild;
 
-            // 计算适合的尺寸（比视口稍小一些）
             const maxWidth = Math.min(window.innerWidth * 0.95, 1200);
             const maxHeight = Math.min(window.innerHeight * 0.95, 800);
 
@@ -821,28 +744,70 @@
             const iframeContainer = document.getElementById('gameIframeContainer');
             const iframe = document.getElementById('gameIframe');
 
-            // 调整尺寸
-            adjustIframeSize();
+            // 直接使用原始URL，不需要解码
+            const gameUrl = encodedUrl; // 移除 atob() 解码
 
-            // 解码并加载URL
-            iframe.src = atob(encodedUrl);
+            if (currentGameUrl === gameUrl && isIframeOpen) {
+                return; // 已经打开，不做任何操作
+            }
+
+            currentGameUrl = gameUrl;
+            adjustIframeSize();
+            iframe.src = gameUrl; // 直接使用原始URL
             iframeContainer.style.display = 'block';
             document.body.style.overflow = 'hidden';
+            isIframeOpen = true;
 
-            // 添加窗口大小变化监听
+            // 添加浏览器历史记录
+            history.pushState({ iframeOpen: true }, '');
+
+            window.addEventListener('popstate', handleBackButton);
             window.addEventListener('resize', adjustIframeSize);
+        }
+
+        function handleBackButton(event) {
+            if (isIframeOpen) {
+                event.preventDefault();
+                closeIframe();
+                // 手动回退历史记录
+                history.back();
+            }
         }
 
         function closeIframe() {
             const iframeContainer = document.getElementById('gameIframeContainer');
             iframeContainer.style.display = 'none';
             document.body.style.overflow = 'auto';
-            document.getElementById('gameIframe').src = '';
+            isIframeOpen = false;
 
-            // 移除窗口大小变化监听
+            // 不清空iframe.src，保持游戏状态
+            window.removeEventListener('popstate', handleBackButton);
             window.removeEventListener('resize', adjustIframeSize);
         }
+
+        // 初始化历史记录
+        window.addEventListener('load', () => {
+            history.pushState({ iframeOpen: false }, '');
+        });
     </script>
+
+    <!-- 在 </body> 前加入： -->
+    <div class="bottom-tab-bar">
+        <a href="/" class="tab-item active">
+            <div class="icon-wrapper">
+                <img src="/static/icons/home.png" alt="大厅">
+            </div>
+            <div class="label">加人任务</div>
+        </a>
+        <a href="/pg" class="tab-item">
+            <div class="icon-wrapper">
+                <img src="/static/icons/game.png" alt="试玩">
+            </div>
+            <div class="label">PG试玩</div>
+        </a>
+    </div>
+
+
 </body>
 
 </html>
