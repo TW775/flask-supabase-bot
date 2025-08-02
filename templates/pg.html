@@ -77,6 +77,7 @@
     padding: 0 20px 40px;
   }
 
+
   /* 让 .game-card 是链接但外观看不出 a 的默认样式 */
   .game-card {
     display: block;
@@ -189,10 +190,10 @@
   提示！首次加载稍慢 请耐心等待 后续进入自动加速
   </div>
     <div class="game-grid" id="gameGrid">
-    <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMTQ/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
+    <div class="game-card" onclick="loadIframeGame('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDAxMTQ/Z3JvdXBJZD05MDQyOQ==')">
         <img alt="夏威夷探奇" src="https://pop520.vip/tupian/a1.png"/>
         <div class="title">夏威夷探奇</div>
-    </a>
+    </div>
     <a class="game-card" href="#" onclick="window.open(atob('aHR0cHM6Ly9wZ3NvZnRzbG90LmNvbS96aC1DTi9taW5pLWdhbWUvZGV0YWlscy8yNDY2Mzk/Z3JvdXBJZD05MDQyOQ=='), '_blank'); return false;">
         <img alt="麻将糊了1" src="https://pop520.vip/tupian/a2.png"/>
         <div class="title">麻将糊了1</div>
@@ -603,6 +604,40 @@
   </a>
 </div>
 
+<!-- 添加iframe容器 (建议放在game-grid下方) -->
+<div id="gameIframeContainer" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
+    <div style="position:relative; width:90%; height:90%; margin:5% auto;">
+        <button onclick="closeIframe()" style="position:absolute; top:-40px; right:0; background:#f44336; color:white; border:none; padding:5px 10px; cursor:pointer;">
+            关闭
+        </button>
+        <iframe id="gameIframe" style="width:100%; height:100%; border:none; border-radius:8px;"></iframe>
+    </div>
+</div>
 
+<script>
+// 加载游戏到iframe
+function loadIframeGame(encodedUrl) {
+    const iframeContainer = document.getElementById('gameIframeContainer');
+    const iframe = document.getElementById('gameIframe');
+    
+    // 解码并加载URL
+    iframe.src = atob(encodedUrl);
+    
+    // 显示iframe容器
+    iframeContainer.style.display = 'block';
+    
+    // 阻止页面滚动
+    document.body.style.overflow = 'hidden';
+}
+
+// 关闭iframe
+function closeIframe() {
+    document.getElementById('gameIframeContainer').style.display = 'none';
+    document.body.style.overflow = 'auto';
+    
+    // 可选：清除iframe内容
+    document.getElementById('gameIframe').src = '';
+}
+</script>
 </body>
 </html>
