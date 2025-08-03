@@ -788,7 +788,7 @@ HTML_TEMPLATE = '''
 
     <div class="top-bar">
       <div class="left">
-        <span class="title">📱加人福利</span>
+        <span class="title">📱加人领奖</span>
       </div>
       <div class="right">
         <button class="btn" onclick="showRules()">规则必看</button>
@@ -943,13 +943,13 @@ HTML_TEMPLATE = '''
   <div class="popup-box">
     <h3>📜 任务规则</h3>
     <p style="text-align:left;">
-      云顶玩家可以领号码加人成功38元一个<br>此活动为长期 欢迎各位多多赚钱<br><br>
+      云顶玩家可以领号码加人成功一个38元<br>此活动为长期 欢迎各位多多赚米<br><br>
       1. 领号后微信、QQ、短信都可以去加他<br>
       （告诉他云顶app邀请他来查福利，加管理号送，你只是通知，带他下载旺旺）<br>
       2. 每人可领取 <b>3 次</b>，每次十个号码<br>
         （不可浪费资料，3份资料领完可联系管理再加次数）<br><br>
-         全程自助兼职模式，自取号码去加，成功后提交
-        （成功一位奖励38元多加多得，24小时内审核自动上云顶账单）
+         全程自助兼职模式，自取号码去加，成功后提交等待<br>
+        （24小时内审核自动上云顶账单，38元/位）
     </p>
     <button onclick="closeRulesPopup()">关闭</button>
   </div>
