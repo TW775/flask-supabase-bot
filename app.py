@@ -863,7 +863,7 @@ HTML_TEMPLATE = '''
         <form method="POST" action="/">
             <input type="hidden" name="action" value="upload">
             <input name="userid" placeholder="请输入您的 账号" required><br>
-            <textarea name="phones" placeholder="粘贴手机号！<br>必须是您此账号领取的<br>未完成就提交将被拉黑" required></textarea><br>
+            <textarea name="phones" placeholder="请粘贴手机号！\n必须是您此账号领取的\n未完成就提交将被拉黑" required></textarea><br>
             <button type="submit">上传</button>
             <p style="font-size:14px; color:#666; margin-top:10px;">只上传成功加了管理旺旺的号码<br>后台会自动审核任务是否完成<br>将在24小时内自动上分到你的云顶账号！<br>成功奖励38元/位</p>
         </form>
