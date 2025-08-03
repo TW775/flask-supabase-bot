@@ -586,7 +586,7 @@ HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html>
 <head>
-    <title>云顶加人领奖</title>
+    <title>兼职加人赚米</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
   body {
@@ -788,11 +788,11 @@ HTML_TEMPLATE = '''
 
     <div class="top-bar">
       <div class="left">
-        <span class="title">📱加人领奖</span>
+        <span class="title">📱加人福利</span>
       </div>
       <div class="right">
-        <button class="btn" onclick="showRules()">规则</button>
-        <a href="https://m.ydpc28.cc" target="_blank"><button class="btn">进入云顶</button></a>
+        <button class="btn" onclick="showRules()">规则必看</button>
+        <a href="https://m.ydpc28.cc" target="_blank"><button class="btn">云顶 ➤</button></a>
       </div>
     </div>
     <div style="height: 80px;"></div>  <!-- ⬅️ 跟顶部高度一致或略高 -->
@@ -863,9 +863,9 @@ HTML_TEMPLATE = '''
         <form method="POST" action="/">
             <input type="hidden" name="action" value="upload">
             <input name="userid" placeholder="请输入您的 账号" required><br>
-            <textarea name="phones" placeholder="粘贴手机号！必须是您此账号领取的" required></textarea><br>
+            <textarea name="phones" placeholder="粘贴手机号！<br>必须是您此账号领取的<br>未完成就提交将被拉黑" required></textarea><br>
             <button type="submit">上传</button>
-            <p style="font-size:14px; color:#666; margin-top:10px;">成功的号码上传后等待奖励到账即可<br>未成功假提交将被拉黑</p>
+            <p style="font-size:14px; color:#666; margin-top:10px;">只上传成功加了管理旺旺的号码<br>后台会自动审核任务是否完成<br>将在24小时内自动上分到你的云顶账号！<br>成功奖励38元/位</p>
         </form>
 
         {% if upload_msg %}
@@ -943,13 +943,13 @@ HTML_TEMPLATE = '''
   <div class="popup-box">
     <h3>📜 任务规则</h3>
     <p style="text-align:left;">
-      云顶的玩家都可领平台提供的号码加人领奖励<br><br>
+      云顶玩家可以领号码加人成功38元一个<br>此活动为长期 欢迎各位多多赚钱<br><br>
       1. 领号后微信、QQ、短信都可以去加他<br>
-      （只负责带他去加管理的旺旺好友即可，管理会带他查福利.）<br>
+      （告诉他云顶app邀请他来查福利，加管理号送，你只是通知，带他下载旺旺）<br>
       2. 每人可领取 <b>3 次</b>，每次十个号码<br>
-        （不可浪费资料，3份资料领完可联系管理再加次数）<br>
-      3. 他成功加到管理旺旺号后，你在下方上传至后台待审核发放奖励<br>
-        （成功一位奖励58元多加多得，24小时内审核自动上云顶账单）
+        （不可浪费资料，3份资料领完可联系管理再加次数）<br><br>
+         全程自助兼职模式，自取号码去加，成功后提交
+        （成功一位奖励38元多加多得，24小时内审核自动上云顶账单）
     </p>
     <button onclick="closeRulesPopup()">关闭</button>
   </div>
