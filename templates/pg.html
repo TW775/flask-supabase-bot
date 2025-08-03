@@ -735,8 +735,8 @@
             const container = document.getElementById('gameIframeContainer');
             const iframeWrapper = container.firstElementChild;
 
-            const maxWidth = Math.min(window.innerWidth * 0.95, 1200);
-            const maxHeight = Math.min(window.innerHeight * 0.95, 800);
+            const maxWidth = window.innerWidth;
+            const maxHeight = window.innerHeight;
 
             iframeWrapper.style.width = `${maxWidth}px`;
             iframeWrapper.style.height = `${maxHeight}px`;
