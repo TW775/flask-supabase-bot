@@ -920,22 +920,74 @@ HTML_TEMPLATE = '''
     </div>
 
 <div id="auto-rules-popup" class="popup-overlay" style="display:none;">
-  <div class="popup-box">
-    <h3>📜必看任务规则</h3>
-    <p style="text-align:left;">
-      云顶玩家可以领号码加人成功一个38元<br>此活动为长期 欢迎各位多多赚米<br><br>
-      1. 领号后通过微信/QQ/短信联系对方<br>
-      （告诉他云顶app邀请他来查福利，加管理号送，你只是通知，带他下载旺旺）<br>
-      2. 每人可领取 <b>3 次</b>，每次十个号码<br>
-      （不可浪费资料，3份资料领完可联系管理再加次数）<br><br>
-      全程自助兼职模式，自取号码去加，成功后提交等待<br>
-      （24小时内审核自动上云顶账单，38元/位）
-    </p>
-    <div style="text-align:left; margin:15px 0;">
-      <input type="checkbox" id="dontShowAgain"> 
-      <label for="dontShowAgain" style="margin-left:5px;">不再显示此提示</label>
+  <div class="popup-box" style="max-width: 450px; border-radius: 12px;">
+    <h3 style="color: #7b2ff7; font-size: 20px; margin-bottom: 15px; display: flex; align-items: center;">
+      <span style="margin-right: 10px;">📜</span>必看任务规则
+    </h3>
+    
+    <div style="max-height: 50vh; overflow-y: auto; padding-right: 10px;">
+      <p style="text-align:left; color: #555; line-height: 1.6; margin-bottom: 15px;">
+        <span style="color: #7b2ff7; font-weight: bold;">云顶玩家可以领号码加人成功一个38元</span><br>
+        <span style="font-size: 14px; color: #888;">此活动为长期 欢迎各位多多赚米</span>
+      </p>
+      
+      <ul style="padding-left: 20px; margin: 0 0 15px 0;">
+        <li style="margin-bottom: 10px; position: relative; padding-left: 25px;">
+          <span style="position: absolute; left: 0; color: #7b2ff7;">1.</span>
+          领号后通过微信/QQ/短信联系对方
+          <div style="font-size: 13px; color: #666; margin-top: 5px; padding-left: 10px;">
+            （告诉他云顶app邀请他来查福利，加管理号送，你只是通知，带他下载旺旺）
+          </div>
+        </li>
+        <li style="margin-bottom: 10px; position: relative; padding-left: 25px;">
+          <span style="position: absolute; left: 0; color: #7b2ff7;">2.</span>
+          每人可领取 <span style="color: #ff4757; font-weight: bold;">3 次</span>，每次十个号码
+          <div style="font-size: 13px; color: #666; margin-top: 5px; padding-left: 10px;">
+            （不可浪费资料，3份资料领完可联系管理再加次数）
+          </div>
+        </li>
+      </ul>
+      
+      <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+        <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.5;">
+          <span style="color: #7b2ff7;">ⓘ</span> 全程自助兼职模式，自取号码去加，成功后提交等待<br>
+          （24小时内审核自动上云顶账单，38元/位）
+        </p>
+      </div>
     </div>
-    <button onclick="closeAutoPopup()">我知道了</button>
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 15px;">
+      <div style="display: flex; align-items: center;">
+        <input type="checkbox" id="dontShowAgain" style="
+          width: 18px;
+          height: 18px;
+          accent-color: #7b2ff7;
+          cursor: pointer;
+          margin-right: 8px;
+        "> 
+        <label for="dontShowAgain" style="
+          color: #666;
+          font-size: 14px;
+          cursor: pointer;
+          user-select: none;
+        ">
+          不再显示此提示
+        </label>
+      </div>
+      
+      <button onclick="closeAutoPopup()" style="
+        padding: 8px 20px;
+        background: linear-gradient(to right, #7b2ff7, #f107a3);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+      ">
+        我知道了
+      </button>
+    </div>
   </div>
 </div>
 
@@ -954,17 +1006,18 @@ HTML_TEMPLATE = '''
 
 <script>
   // 新增自动弹窗控制逻辑
+const RULES_VERSION = "2024-08-04";    // 日期标记
+
 document.addEventListener('DOMContentLoaded', function() {
-  // 检查是否已经设置过"不再提示"
-  if(localStorage.getItem('dontShowAutoRules') !== 'true') {
+  const lastSeenVersion = localStorage.getItem('rulesVersion');
+  if(lastSeenVersion !== RULES_VERSION) {
     document.getElementById("auto-rules-popup").style.display = "flex";
   }
 });
 
 function closeAutoPopup() {
-  // 如果勾选了"不再提示"，则保存到本地存储
   if(document.getElementById('dontShowAgain').checked) {
-    localStorage.setItem('dontShowAutoRules', 'true');
+    localStorage.setItem('rulesVersion', RULES_VERSION); // 存储当前版本
   }
   document.getElementById("auto-rules-popup").style.display = "none";
 }
