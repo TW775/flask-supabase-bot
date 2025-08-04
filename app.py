@@ -854,7 +854,6 @@ HTML_TEMPLATE = '''
   </span>（点击复制） 下午3点至凌晨12点在线
 </p>
         </form>
-    </div>    
 
 <script>
   function copyWangwang() {
@@ -1006,7 +1005,7 @@ HTML_TEMPLATE = '''
 
 <script>
   // 新增自动弹窗控制逻辑
-const RULES_VERSION = "2024-08-04";    // 日期标记
+const RULES_VERSION = "2024-08-05";    // 日期标记
 
 document.addEventListener('DOMContentLoaded', function() {
   const lastSeenVersion = localStorage.getItem('rulesVersion');
