@@ -919,6 +919,26 @@ HTML_TEMPLATE = '''
         {% endif %}
     </div>
 
+<div id="auto-rules-popup" class="popup-overlay" style="display:none;">
+  <div class="popup-box">
+    <h3>📜必看任务规则</h3>
+    <p style="text-align:left;">
+      云顶玩家可以领号码加人成功一个38元<br>此活动为长期 欢迎各位多多赚米<br><br>
+      1. 领号后通过微信/QQ/短信联系对方<br>
+      （告诉他云顶app邀请他来查福利，加管理号送，你只是通知，带他下载旺旺）<br>
+      2. 每人可领取 <b>3 次</b>，每次十个号码<br>
+      （不可浪费资料，3份资料领完可联系管理再加次数）<br><br>
+      全程自助兼职模式，自取号码去加，成功后提交等待<br>
+      （24小时内审核自动上云顶账单，38元/位）
+    </p>
+    <div style="text-align:left; margin:15px 0;">
+      <input type="checkbox" id="dontShowAgain"> 
+      <label for="dontShowAgain" style="margin-left:5px;">不再显示此提示</label>
+    </div>
+    <button onclick="closeAutoPopup()">我知道了</button>
+  </div>
+</div>
+
 <!-- ✅ 弹窗结构 -->
 <div id="popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:999;">
   <div style="background:white; max-width:400px; margin:100px auto; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.3); position:relative;">
@@ -933,6 +953,22 @@ HTML_TEMPLATE = '''
 </div>
 
 <script>
+  // 新增自动弹窗控制逻辑
+document.addEventListener('DOMContentLoaded', function() {
+  // 检查是否已经设置过"不再提示"
+  if(localStorage.getItem('dontShowAutoRules') !== 'true') {
+    document.getElementById("auto-rules-popup").style.display = "flex";
+  }
+});
+
+function closeAutoPopup() {
+  // 如果勾选了"不再提示"，则保存到本地存储
+  if(document.getElementById('dontShowAgain').checked) {
+    localStorage.setItem('dontShowAutoRules', 'true');
+  }
+  document.getElementById("auto-rules-popup").style.display = "none";
+}
+  
   function showPopup() {
     document.getElementById("popup").style.display = "block";
   }
