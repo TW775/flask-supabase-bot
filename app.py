@@ -839,7 +839,7 @@ HTML_TEMPLATE = '''
         <a href="https://m.ydpc28.cc" target="_blank"><button class="btn">云顶 ➤</button></a>
       </div>
     </div>
-    <div style="height: 80px;"></div>  <!-- ⬅️ 跟顶部高度一致或略高 -->
+    <div style="height: 60px;"></div>  <!-- ⬅️ 跟顶部高度一致或略高 -->
     <div class="card">
         <h2 style="color:red; font-weight:bold;">📥 领取手机号</h2>
         <form method="POST">
@@ -847,7 +847,6 @@ HTML_TEMPLATE = '''
             <input name="userid" placeholder="请输入（如：ap_）您的云顶账号" required><br>
             <button type="submit">点击领取</button>
             <button type="button" class="download-btn" onclick="showMaterial()">下载素材</button>
-        </div>
             <p style="font-size:14px; color:#666; margin-top:10px;">
   联系让他加管理旺旺： 
   <span id="wangwang" onclick="copyWangwang()" style="color:#007aff; text-decoration:underline; cursor:pointer;">
@@ -855,6 +854,7 @@ HTML_TEMPLATE = '''
   </span>（点击复制） 下午3点至凌晨12点在线
 </p>
         </form>
+    </div>    
 
 <script>
   function copyWangwang() {
