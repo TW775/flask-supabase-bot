@@ -780,6 +780,46 @@ HTML_TEMPLATE = '''
     margin-top: 4px;
     color: #a855f7;
   }
+
+  /* ▼ 新增以下样式 ▼ */
+    .download-btn {
+        padding: 8px 12px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+    
+    .image-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1001;
+    }
+    
+    .image-popup img {
+        max-width: 90%;
+        max-height: 80%;
+        border-radius: 10px;
+    }
+    
+    .image-popup button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: #7b2ff7;
+        color: white;
+    }
+    /* ▲ 新增结束 ▲ */
 </style>
 
 
@@ -802,11 +842,13 @@ HTML_TEMPLATE = '''
             <input type="hidden" name="action" value="get">
             <input name="userid" placeholder="请输入（如：ap_）您的云顶账号" required><br>
             <button type="submit">点击领取</button>
+            <button type="button" class="download-btn" onclick="showMaterial()">下载素材</button>
+        </div>
             <p style="font-size:14px; color:#666; margin-top:10px;">
   联系让他加管理旺旺： 
   <span id="wangwang" onclick="copyWangwang()" style="color:#007aff; text-decoration:underline; cursor:pointer;">
     497332360
-  </span>（点击复制）
+  </span>（点击复制） 下午3点至凌晨12点在线
 </p>
         </form>
 
@@ -954,6 +996,39 @@ HTML_TEMPLATE = '''
     <button onclick="closeRulesPopup()">关闭</button>
   </div>
 </div>
+
+<!-- ▼ 新增图片弹窗和脚本 ▼ -->
+<div id="materialPopup" class="image-popup">
+    <img src="/static/material.jpg" alt="加人素材">
+    <button onclick="saveImageToAlbum()">保存到相册</button>
+    <button onclick="closeMaterialPopup()" style="margin-top:10px;">关闭</button>
+</div>
+
+<script>
+    function showMaterial() {
+        document.getElementById("materialPopup").style.display = "flex";
+    }
+    
+    function closeMaterialPopup() {
+        document.getElementById("materialPopup").style.display = "none";
+    }
+    
+    function saveImageToAlbum() {
+        const image = document.querySelector('.image-popup img');
+        const imageUrl = image.src;
+        
+        // 创建隐藏下载链接
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = '云顶加人素材.jpg'; 
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        alert('图片已开始下载，请到相册查看');
+    }
+</script>
+<!-- ▲ 新增结束 ▲ -->
 
 <div class="bottom-tab-bar">
   <a href="/" class="tab-item active">
