@@ -799,7 +799,7 @@ HTML_TEMPLATE = '''
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.8);
+        background: rgba(0,0,0,0.9);
         display: none;
         flex-direction: column;
         align-items: center;
@@ -808,16 +808,20 @@ HTML_TEMPLATE = '''
     }
     
     .image-popup img {
-        max-width: 90%;
-        max-height: 80%;
+        max-width: 95%;
+        max-height: 70vh;
+        border: 2px solid white;
         border-radius: 10px;
     }
     
     .image-popup button {
-        margin-top: 20px;
         padding: 10px 20px;
         background: #7b2ff7;
         color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
     }
     /* ▲ 新增结束 ▲ */
 </style>
@@ -997,35 +1001,52 @@ HTML_TEMPLATE = '''
   </div>
 </div>
 
-<!-- ▼ 新增图片弹窗和脚本 ▼ -->
-<div id="materialPopup" class="image-popup">
-    <img src="/static/material.jpg" alt="加人素材">
-    <button onclick="saveImageToAlbum()">保存到相册</button>
-    <button onclick="closeMaterialPopup()" style="margin-top:10px;">关闭</button>
+<!-- 图片弹窗 -->
+<div id="materialPopup" class="image-popup" style="display:none;">
+    <img src="/static/material.jpg" alt="加人素材" id="materialImage">
+    <div style="margin-top: 20px;">
+        <button onclick="downloadImage()">保存图片</button>
+        <button onclick="closeMaterialPopup()" style="margin-left: 10px;">关闭</button>
+    </div>
+    <p id="downloadHint" style="color: white; margin-top: 10px; display: none;">
+        ✅ 长按图片 → 选择"保存到相册"
+    </p>
 </div>
 
 <script>
+    // 显示弹窗
     function showMaterial() {
         document.getElementById("materialPopup").style.display = "flex";
+        // 自动显示手机端操作提示
+        if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+            document.getElementById("downloadHint").style.display = "block";
+        }
     }
-    
+
+    // 关闭弹窗
     function closeMaterialPopup() {
         document.getElementById("materialPopup").style.display = "none";
     }
-    
-    function saveImageToAlbum() {
-        const image = document.querySelector('.image-popup img');
-        const imageUrl = image.src;
+
+    // 下载/保存图片
+    function downloadImage() {
+        const imageUrl = document.getElementById("materialImage").src;
+        const fileName = '云顶加人素材.jpg';
         
-        // 创建隐藏下载链接
+        // 方法1：创建下载链接（桌面浏览器有效）
         const link = document.createElement('a');
         link.href = imageUrl;
-        link.download = '云顶加人素材.jpg'; 
+        link.download = fileName;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         
-        alert('图片已开始下载，请到相册查看');
+        // 方法2：提示移动端用户手动保存
+        if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+            alert('请长按图片，然后选择"保存到相册"');
+        } else {
+            alert('图片已开始下载，请查看您的下载文件夹');
+        }
     }
 </script>
 <!-- ▲ 新增结束 ▲ -->
