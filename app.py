@@ -844,7 +844,7 @@ HTML_TEMPLATE = '''
         <h2 style="color:red; font-weight:bold;">📥 领取手机号</h2>
         <form method="POST">
             <input type="hidden" name="action" value="get">
-            <input name="userid" placeholder="请输入（如：ap_）您的云顶账号" required><br>
+            <input name="userid" placeholder="请输入如：ap_11krdgv 字母云顶账号" required><br>
             <button type="submit">点击领取</button>
             <button type="button" class="download-btn" onclick="showMaterial()">下载素材</button>
             <p style="font-size:14px; color:#666; margin-top:10px;">
