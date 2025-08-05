@@ -1205,17 +1205,22 @@ def index():
 
                 else:
                     # 获取所有已被分配的组索引（包括当前用户的）
-                    all_used_indices = {v["index"] for v in status.values() if "index" in v}
+                    all_used_indices = {v["index"] for v in status.values() if "index" in v and v["index"] is not None}
                     
-                    # 寻找第一个未被分配的组
+                    # 获取所有已标记为"已领"的手机号（黑名单）
+                    blacklist = load_blacklist()
+                    
+                    # 寻找第一个未被分配的组，且组内号码都不在黑名单中
                     for i, group in enumerate(groups):
-                        if i not in all_used_indices:  # 确保只分配未被任何用户领取的组
+                        if (i not in all_used_indices and 
+                            not any(phone in blacklist for phone in group)):
                             phones = group
                             new_status = {
                                 "count": record["count"] + 1,
                                 "last": now,
                                 "index": i  # 记录分配的组索引
                             }
+                            # 立即保存状态，避免并发问题
                             save_user_status(uid, new_status)
                             break
                     else:
