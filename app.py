@@ -430,15 +430,23 @@ def admin():
 
 
 
+    blacklist_count_num = blacklist_count()
+    total_phones = sum(len(group) for group in groups)  # 计算总手机号数量
+    available_phones = total_phones - blacklist_count_num  # 计算剩余可用手机号
+    
     # 黑名单预览部分
     result_html += f"""
     <div class="card">
         <p>共有 <strong>{blacklist_count()}</strong> 个手机号已被拉黑。</p>
+        <p>剩余可用资料: <strong>{available_phones}</strong> 条</p>
         <div id="blacklist-preview">
             <ul style="font-size: 13px; margin-top: 5px; display: none;" id="blacklist-items">
                 {''.join(f'<li>{p}</li>' for p in blacklist_preview(10))}
             </ul>
-            <button onclick="toggleBlacklist()" style="margin-top: 5px;">🔽 展开预览</button>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button onclick="toggleBlacklist()">🔽 展开黑名单预览</button>
+                <button onclick="showAvailablePhones()">📊 查看剩余资料</button>
+            </div>
         </div>
     </div>
 
@@ -454,6 +462,10 @@ def admin():
                 btn.innerText = "🔽 展开预览";
             }}
         }}
+        
+        function showAvailablePhones() {{
+            alert("剩余可用手机号数量: {available_phones}条");
+        }}    
     </script>
     """
 
