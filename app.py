@@ -118,10 +118,6 @@ def save_phone_groups(groups):
             supabase.table("phone_groups").insert(data).execute()
 
 def add_upload_log(uid, phone):
-    # 检查黑名单
-    blacklist = load_blacklist()
-    if phone in blacklist:
-        return False
     # 检查是否已经上传过
     existing = supabase.table("upload_logs").select("phone").eq("user_id", uid).eq("phone", phone).execute()
     if existing.data:
@@ -319,15 +315,9 @@ def admin():
 
     logs = load_upload_logs()
     marks = load_marks()
-    groups = load_phone_groups()  # 新增这行，加载手机号分组数据
-    blacklist = load_blacklist()  # 加载黑名单数据
 
     query_date = request.args.get("date", "")
     query_id = request.args.get("uid", "").strip()
-    
-    # 计算剩余可用手机号数量
-    total_phones = sum(len(group) for group in groups)
-    available_phones = total_phones - len(blacklist)
 
     # 构建管理后台 HTML
     result_html = f"""
@@ -434,20 +424,17 @@ def admin():
         <div class="container">
     """
 
-    
+
+
     # 黑名单预览部分
     result_html += f"""
     <div class="card">
         <p>共有 <strong>{blacklist_count()}</strong> 个手机号已被拉黑。</p>
-        <p>剩余可用资料: <strong>{available_phones}</strong> 条</p>
         <div id="blacklist-preview">
             <ul style="font-size: 13px; margin-top: 5px; display: none;" id="blacklist-items">
                 {''.join(f'<li>{p}</li>' for p in blacklist_preview(10))}
             </ul>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button onclick="toggleBlacklist()">🔽 展开黑名单预览</button>
-                <button onclick="showAvailablePhones()">📊 查看剩余资料</button>
-            </div>
+            <button onclick="toggleBlacklist()" style="margin-top: 5px;">🔽 展开预览</button>
         </div>
     </div>
 
@@ -463,10 +450,6 @@ def admin():
                 btn.innerText = "🔽 展开预览";
             }}
         }}
-        
-        function showAvailablePhones() {{
-            alert("剩余可用手机号数量: {available_phones}条");
-        }}    
     </script>
     """
 
@@ -816,7 +799,7 @@ HTML_TEMPLATE = '''
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.9);
+        background: rgba(0,0,0,0.8);
         display: none;
         flex-direction: column;
         align-items: center;
@@ -825,20 +808,16 @@ HTML_TEMPLATE = '''
     }
     
     .image-popup img {
-        max-width: 95%;
-        max-height: 70vh;
-        border: 2px solid white;
+        max-width: 90%;
+        max-height: 80%;
         border-radius: 10px;
     }
     
     .image-popup button {
+        margin-top: 20px;
         padding: 10px 20px;
         background: #7b2ff7;
         color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 16px;
-        cursor: pointer;
     }
     /* ▲ 新增结束 ▲ */
 </style>
@@ -856,14 +835,15 @@ HTML_TEMPLATE = '''
         <a href="https://m.ydpc28.cc" target="_blank"><button class="btn">云顶 ➤</button></a>
       </div>
     </div>
-    <div style="height: 60px;"></div>  <!-- ⬅️ 跟顶部高度一致或略高 -->
+    <div style="height: 80px;"></div>  <!-- ⬅️ 跟顶部高度一致或略高 -->
     <div class="card">
         <h2 style="color:red; font-weight:bold;">📥 领取手机号</h2>
         <form method="POST">
             <input type="hidden" name="action" value="get">
-            <input name="userid" placeholder="请输入如：ap_11krdgv 字母云顶账号" required><br>
+            <input name="userid" placeholder="请输入（如：ap_）您的云顶账号" required><br>
             <button type="submit">点击领取</button>
             <button type="button" class="download-btn" onclick="showMaterial()">下载素材</button>
+        </div>
             <p style="font-size:14px; color:#666; margin-top:10px;">
   联系让他加管理旺旺： 
   <span id="wangwang" onclick="copyWangwang()" style="color:#007aff; text-decoration:underline; cursor:pointer;">
@@ -935,78 +915,6 @@ HTML_TEMPLATE = '''
         {% endif %}
     </div>
 
-<div id="auto-rules-popup" class="popup-overlay" style="display:none;">
-  <div class="popup-box" style="max-width: 450px; border-radius: 12px;">
-    <h3 style="color: #7b2ff7; font-size: 20px; margin-bottom: 15px; display: flex; align-items: center;">
-      <span style="margin-right: 10px;">📜</span>必看任务规则
-    </h3>
-    
-    <div style="max-height: 50vh; overflow-y: auto; padding-right: 10px;">
-      <p style="text-align:left; color: #555; line-height: 1.6; margin-bottom: 15px;">
-        <span style="color: #7b2ff7; font-weight: bold;">云顶玩家可以领号码加人成功一个38元</span><br>
-        <span style="font-size: 14px; color: #888;">此活动为长期 欢迎各位多多赚米</span>
-      </p>
-      
-      <ul style="padding-left: 20px; margin: 0 0 15px 0;">
-        <li style="margin-bottom: 10px; position: relative; padding-left: 25px;">
-          <span style="position: absolute; left: 0; color: #7b2ff7;">1.</span>
-          领号后通过微信/QQ/短信联系对方
-          <div style="font-size: 13px; color: #666; margin-top: 5px; padding-left: 10px;">
-            （告诉他云顶app邀请他来查福利，加管理号送，你只是通知，带他下载旺旺）
-          </div>
-        </li>
-        <li style="margin-bottom: 10px; position: relative; padding-left: 25px;">
-          <span style="position: absolute; left: 0; color: #7b2ff7;">2.</span>
-          每人可领取 <span style="color: #ff4757; font-weight: bold;">3 次</span>，每次十个号码
-          <div style="font-size: 13px; color: #666; margin-top: 5px; padding-left: 10px;">
-            （不可浪费资料，3份资料领完可联系管理再加次数）
-          </div>
-        </li>
-      </ul>
-      
-      <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-        <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.5;">
-          <span style="color: #7b2ff7;">ⓘ</span> 全程自助兼职模式，自取号码去加，成功后提交等待<br>
-          （24小时内审核自动上云顶账单，38元/位）
-        </p>
-      </div>
-    </div>
-    
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 15px;">
-      <div style="display: flex; align-items: center;">
-        <input type="checkbox" id="dontShowAgain" style="
-          width: 18px;
-          height: 18px;
-          accent-color: #7b2ff7;
-          cursor: pointer;
-          margin-right: 8px;
-        "> 
-        <label for="dontShowAgain" style="
-          color: #666;
-          font-size: 14px;
-          cursor: pointer;
-          user-select: none;
-        ">
-          不再显示此提示
-        </label>
-      </div>
-      
-      <button onclick="closeAutoPopup()" style="
-        padding: 8px 20px;
-        background: linear-gradient(to right, #7b2ff7, #f107a3);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.3s;
-      ">
-        我知道了
-      </button>
-    </div>
-  </div>
-</div>
-
 <!-- ✅ 弹窗结构 -->
 <div id="popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:999;">
   <div style="background:white; max-width:400px; margin:100px auto; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.3); position:relative;">
@@ -1021,23 +929,6 @@ HTML_TEMPLATE = '''
 </div>
 
 <script>
-  // 新增自动弹窗控制逻辑
-const RULES_VERSION = "2024-08-05";    // 日期标记
-
-document.addEventListener('DOMContentLoaded', function() {
-  const lastSeenVersion = localStorage.getItem('rulesVersion');
-  if(lastSeenVersion !== RULES_VERSION) {
-    document.getElementById("auto-rules-popup").style.display = "flex";
-  }
-});
-
-function closeAutoPopup() {
-  if(document.getElementById('dontShowAgain').checked) {
-    localStorage.setItem('rulesVersion', RULES_VERSION); // 存储当前版本
-  }
-  document.getElementById("auto-rules-popup").style.display = "none";
-}
-  
   function showPopup() {
     document.getElementById("popup").style.display = "block";
   }
@@ -1106,52 +997,35 @@ function closeAutoPopup() {
   </div>
 </div>
 
-<!-- 图片弹窗 -->
-<div id="materialPopup" class="image-popup" style="display:none;">
-    <img src="/static/material.jpg" alt="加人素材" id="materialImage">
-    <div style="margin-top: 20px;">
-        <button onclick="downloadImage()">保存图片</button>
-        <button onclick="closeMaterialPopup()" style="margin-left: 10px;">关闭</button>
-    </div>
-    <p id="downloadHint" style="color: white; margin-top: 10px; display: none;">
-        ✅ 长按图片 → 选择"保存到相册"
-    </p>
+<!-- ▼ 新增图片弹窗和脚本 ▼ -->
+<div id="materialPopup" class="image-popup">
+    <img src="/static/material.jpg" alt="加人素材">
+    <button onclick="saveImageToAlbum()">保存到相册</button>
+    <button onclick="closeMaterialPopup()" style="margin-top:10px;">关闭</button>
 </div>
 
 <script>
-    // 显示弹窗
     function showMaterial() {
         document.getElementById("materialPopup").style.display = "flex";
-        // 自动显示手机端操作提示
-        if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-            document.getElementById("downloadHint").style.display = "block";
-        }
     }
-
-    // 关闭弹窗
+    
     function closeMaterialPopup() {
         document.getElementById("materialPopup").style.display = "none";
     }
-
-    // 下载/保存图片
-    function downloadImage() {
-        const imageUrl = document.getElementById("materialImage").src;
-        const fileName = '云顶加人素材.jpg';
+    
+    function saveImageToAlbum() {
+        const image = document.querySelector('.image-popup img');
+        const imageUrl = image.src;
         
-        // 方法1：创建下载链接（桌面浏览器有效）
+        // 创建隐藏下载链接
         const link = document.createElement('a');
         link.href = imageUrl;
-        link.download = fileName;
+        link.download = '云顶加人素材.jpg'; 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         
-        // 方法2：提示移动端用户手动保存
-        if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-            alert('请长按图片，然后选择"保存到相册"');
-        } else {
-            alert('图片已开始下载，请查看您的下载文件夹');
-        }
+        alert('图片已开始下载，请到相册查看');
     }
 </script>
 <!-- ▲ 新增结束 ▲ -->
@@ -1222,16 +1096,17 @@ def index():
                         phones = groups[record["index"]]
 
                 else:
-                    blacklist = load_blacklist()  # 获取最新黑名单
+                    # 获取所有已被分配的组索引
+                    all_used_indices = {v["index"] for v in status.values() if "index" in v}
+                    
+                    # 寻找第一个未被分配的组
                     for i, group in enumerate(groups):
-                        # 过滤黑名单号码
-                        available_phones = [p for p in group if p not in blacklist]
-                        if available_phones:  # 如果组内还有可用号码
-                            phones = available_phones[:10]  # 最多10个
+                        if i not in all_used_indices:  # 只分配未被任何用户领取的组
+                            phones = group
                             new_status = {
                                 "count": record["count"] + 1,
                                 "last": now,
-                                "index": i
+                                "index": i  # 记录分配的组索引
                             }
                             save_user_status(uid, new_status)
                             break
@@ -1253,24 +1128,23 @@ def index():
                     group_index = user_status["index"]
                     assigned_group = groups[group_index] if group_index < len(groups) else []
 
-                    blacklist = load_blacklist()
-                    marked_phones = [p for p in all_phones if p in blacklist]
                     invalid_phones = [p for p in all_phones if p not in assigned_group]
 
-                    if marked_phones:
-                        upload_msg = f"❌ 以下号码已被标记为已领: {', '.join(marked_phones[:3])}{'...' if len(marked_phones) > 3 else ''}"
-                    elif invalid_phones:
-                        upload_msg = f"❌ 号码已过时效或已重新分配: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
+                    if invalid_phones:
+                        upload_msg = f"❌ 以下号码不在您的分配组中: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
                     else:
-                        success_count = 0
                         for phone in all_phones:
-                            if add_upload_log(uid, phone):  # 修改为检查返回值
-                                success_count += 1
-                        if success_count > 0:
-                            upload_msg = f"✅ 成功上传 {success_count} 条，将在24小时内审核成功后发放奖励至云顶app"
-                            upload_success = True
-                        else:
-                            upload_msg = "❌ 所有号码都已上传过或无效"
+                            add_upload_log(uid, phone)
+                        upload_msg = f"✅ 成功上传 {len(all_phones)} 条，将在24小时内审核成功后发放奖励至云顶app"
+                        upload_success = True
+
+    return render_template_string(
+        HTML_TEMPLATE,
+        phones=phones,
+        error=error,
+        upload_msg=upload_msg,
+        upload_success=upload_success
+    )
 
     return render_template_string(
         HTML_TEMPLATE,
