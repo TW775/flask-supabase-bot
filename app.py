@@ -118,6 +118,10 @@ def save_phone_groups(groups):
             supabase.table("phone_groups").insert(data).execute()
 
 def add_upload_log(uid, phone):
+    # 检查黑名单
+    blacklist = load_blacklist()
+    if phone in blacklist:
+        return False
     # 检查是否已经上传过
     existing = supabase.table("upload_logs").select("phone").eq("user_id", uid).eq("phone", phone).execute()
     if existing.data:
@@ -1205,9 +1209,12 @@ def index():
                         phones = groups[record["index"]]
 
                 else:
+                    blacklist = load_blacklist()  # 获取最新黑名单
                     for i, group in enumerate(groups):
-                        if i not in used_index:
-                            phones = group
+                        # 过滤黑名单号码
+                        available_phones = [p for p in group if p not in blacklist]
+                        if available_phones:  # 如果组内还有可用号码
+                            phones = available_phones[:10]  # 最多10个
                             new_status = {
                                 "count": record["count"] + 1,
                                 "last": now,
@@ -1233,15 +1240,24 @@ def index():
                     group_index = user_status["index"]
                     assigned_group = groups[group_index] if group_index < len(groups) else []
 
+                    blacklist = load_blacklist()
+                    marked_phones = [p for p in all_phones if p in blacklist]
                     invalid_phones = [p for p in all_phones if p not in assigned_group]
 
-                    if invalid_phones:
-                        upload_msg = f"❌ 以下号码不在您的分配组中: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
+                    if marked_phones:
+                        upload_msg = f"❌ 以下号码已被标记为已领: {', '.join(marked_phones[:3])}{'...' if len(marked_phones) > 3 else ''}"
+                    elif invalid_phones:
+                        upload_msg = f"❌ 号码已过时效或已重新分配: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
                     else:
+                        success_count = 0
                         for phone in all_phones:
-                            add_upload_log(uid, phone)
-                        upload_msg = f"✅ 成功上传 {len(all_phones)} 条，将在24小时内审核成功后发放奖励至云顶app"
-                        upload_success = True
+                            if add_upload_log(uid, phone):  # 修改为检查返回值
+                                success_count += 1
+                        if success_count > 0:
+                            upload_msg = f"✅ 成功上传 {success_count} 条，将在24小时内审核成功后发放奖励至云顶app"
+                            upload_success = True
+                        else:
+                            upload_msg = "❌ 所有号码都已上传过或无效"
 
     return render_template_string(
         HTML_TEMPLATE,
