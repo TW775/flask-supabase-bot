@@ -319,9 +319,15 @@ def admin():
 
     logs = load_upload_logs()
     marks = load_marks()
+    groups = load_phone_groups()  # 新增这行，加载手机号分组数据
+    blacklist = load_blacklist()  # 加载黑名单数据
 
     query_date = request.args.get("date", "")
     query_id = request.args.get("uid", "").strip()
+    
+    # 计算剩余可用手机号数量
+    total_phones = sum(len(group) for group in groups)
+    available_phones = total_phones - len(blacklist)
 
     # 构建管理后台 HTML
     result_html = f"""
@@ -428,11 +434,6 @@ def admin():
         <div class="container">
     """
 
-
-
-    blacklist_count_num = blacklist_count()
-    total_phones = sum(len(group) for group in groups)  # 计算总手机号数量
-    available_phones = total_phones - blacklist_count_num  # 计算剩余可用手机号
     
     # 黑名单预览部分
     result_html += f"""
