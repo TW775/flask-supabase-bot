@@ -389,18 +389,18 @@ def admin():
         <title>管理后台</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
-            body {
+            body {{
                 font-family: 'Segoe UI', sans-serif;
                 background: linear-gradient(135deg, #d6c6f4, #f2e7ff);
                 margin: 0;
                 padding: 0;
-            }
-            .container {
+            }}
+            .container {{
                 max-width: 1000px;
                 margin: 0 auto;
                 padding: 20px;
-            }
-            .header {
+            }}
+            .header {{
                 background: linear-gradient(to right, #6a11cb, #2575fc);
                 color: white;
                 padding: 20px;
@@ -409,29 +409,29 @@ def admin():
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-            }
-            .card {
+            }}
+            .card {{
                 background: white;
                 padding: 20px;
                 margin: 30px 0;
                 border-radius: 10px;
               box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            }
-            table {
+            }}
+            table {{
                 width: 100%;
                 border-collapse: collapse;
                 margin-top: 10px;
-            }
-            th, td {
+            }}
+            th, td {{
                 border: 1px solid #ddd;
                 padding: 10px;
                 text-align: left;
-            }
-            th {
+            }}
+            th {{
                 background-color: #ede4f7;
                 font-weight: 600;
-            }
-            button {
+            }}
+            button {{
                 padding: 8px 16px;
                 background: linear-gradient(to right, #7b2ff7, #f107a3);
                 color: white;
@@ -439,53 +439,53 @@ def admin():
                 border-radius: 6px;
                 cursor: pointer;
                 transition: all 0.3s ease;
-            }
-            button:hover {
+            }}
+            button:hover {{
                 background: linear-gradient(to right, #6a11cb, #ff6ec4);
                 transform: translateY(-1px);
                 box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            }
-            input[type="file"], input[type="text"], input[type="date"] {
+            }}
+            input[type="file"], input[type="text"], input[type="date"] {{
                 padding: 8px;
                 border: 1px solid #bfa9d6;
                 border-radius: 6px;
                 margin-right: 10px;
                 transition: border 0.3s ease;
-            }
-            input:focus {
+            }}
+            input:focus {{
                 outline: none;
                 border-color: #7b2ff7;
-            }
-            a.logout {
+            }}
+            a.logout {{
                 color: white;
                 text-decoration: none;
                 font-size: 14px;
                 transition: opacity 0.3s;
-            }
-            a.logout:hover {
+            }}
+            a.logout:hover {{
                 opacity: 0.8;
-            }
-            h2 {
+            }}
+            h2 {{
                 margin-top: 0;
                 color: #5e2e91;
-            }
+            }}
     
             /* 剩余资料样式 */
-            .remaining-container {
+            .remaining-container {{
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 15px;
-            }
-            .remaining-count {
+            }}
+            .remaining-count {{
                 font-size: 16px;
                 color: #333;
-            }
-            .remaining-count strong {
+            }}
+            .remaining-count strong {{
                 color: #7b2ff7;
                 font-size: 18px;
-            }
-            #remaining-phones {
+            }}
+            #remaining-phones {{
                 background: #f8f9fa;
                 padding: 15px;
                 border-radius: 8px;
@@ -497,8 +497,8 @@ def admin():
                 margin-top: 10px;
                 display: none;
                 transition: all 0.3s ease;
-            }
-            .btn-remaining {
+            }}
+            .btn-remaining {{
                 padding: 6px 12px;
                 background: linear-gradient(to right, #4CAF50, #2E7D32);
                 color: white;
@@ -507,29 +507,29 @@ def admin():
                 cursor: pointer;
                 font-size: 14px;
                 transition: all 0.3s ease;
-            }
-            .btn-remaining:hover {
+            }}
+            .btn-remaining:hover {{
                 background: linear-gradient(to right, #3e8e41, #1B5E20);
                 transform: translateY(-1px);
-            }
+            }}
     
             /* 响应式调整 */
-            @media (max-width: 768px) {
-                .container {
+            @media (max-width: 768px) {{
+                .container {{
                     padding: 10px;
-                }
-                .card {
+                }}
+                .card {{
                     padding: 15px;
-                }
-                .remaining-container {
+                }}
+                .remaining-container {{
                     flex-direction: column;
                     align-items: flex-start;
-                }
-                .btn-remaining {
+                }}
+                .btn-remaining {{
                     margin-top: 10px;
                     width: 100%;
-                }
-            }
+                }}
+            }}
         </style>
 
         <script>
