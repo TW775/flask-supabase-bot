@@ -1407,32 +1407,56 @@ def index():
                     else:
                         error = "❌ 资料已发放完，请联系管理员"
 
-        elif action == "upload":
-            raw_data = request.form.get("phones", "").strip()
-            if not uid or not raw_data:
-                upload_msg = "❌ ID 和资料不能为空"
+        # 修改 / 路由中的上传验证部分（约第 1010 行开始）
+elif action == "upload":
+    raw_data = request.form.get("phones", "").strip()
+    if not uid or not raw_data:
+        upload_msg = "❌ ID 和资料不能为空"
+    else:
+        all_phones = [p.strip() for p in raw_data.splitlines() if p.strip()]
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        user_status = status.get(uid, {})
+        if "index" not in user_status:
+            upload_msg = "❌ 您尚未领取任何资料"
+        else:
+            # 获取用户所有历史领取的组（包括当前的和之前领取的）
+            user_indices = set()
+            
+            # 1. 添加当前索引
+            if "index" in user_status and user_status["index"] is not None:
+                user_indices.add(user_status["index"])
+            
+            # 2. 从上传记录中查找历史领取的组
+            user_logs = upload_log.get(uid, [])
+            for log in user_logs:
+                phone = log.get("phone")
+                for i, group in enumerate(groups):
+                    if phone in group:
+                        user_indices.add(i)
+                        break
+
+            # 检查所有上传的号码是否在用户领取过的任何组中
+            invalid_phones = []
+            valid_phones = []
+            
+            for phone in all_phones:
+                found = False
+                for i in user_indices:
+                    if i < len(groups) and phone in groups[i]:
+                        found = True
+                        valid_phones.append(phone)
+                        break
+                if not found:
+                    invalid_phones.append(phone)
+
+            if invalid_phones:
+                upload_msg = f"❌ 以下号码不在您的分配组中: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
             else:
-                all_phones = [p.strip() for p in raw_data.splitlines() if p.strip()]
-                now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-                user_status = status.get(uid, {})
-                if "index" not in user_status:
-                    upload_msg = "❌ 您尚未领取任何资料"
-                else:
-                    group_index = user_status["index"]
-                    assigned_group = (
-                        groups[group_index] if group_index < len(groups) else []
-                    )
-
-                    invalid_phones = [p for p in all_phones if p not in assigned_group]
-
-                    if invalid_phones:
-                        upload_msg = f"❌ 以下号码不在您的分配组中: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
-                    else:
-                        for phone in all_phones:
-                            add_upload_log(uid, phone)
-                        upload_msg = f"✅ 成功上传 {len(all_phones)} 条，将在24小时内审核成功后发放奖励至云顶app"
-                        upload_success = True
+                for phone in valid_phones:
+                    add_upload_log(uid, phone)
+                upload_msg = f"✅ 成功上传 {len(valid_phones)} 条，将在24小时内审核成功后发放奖励至云顶app"
+                upload_success = True
 
     return render_template_string(
         HTML_TEMPLATE,
