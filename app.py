@@ -1411,7 +1411,7 @@ def index():
         elif action == "upload":
             raw_data = request.form.get("phones", "").strip()
             if not uid or not raw_data:
-        upload_msg = "❌ ID 和资料不能为空"
+                upload_msg = "❌ ID 和资料不能为空"
             else:
                 all_phones = [p.strip() for p in raw_data.splitlines() if p.strip()]
                 now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -1422,11 +1422,11 @@ def index():
                 else:
                     # 获取用户所有历史领取的组（包括当前的和之前领取的）
                     user_indices = set()
-            
+
                     # 1. 添加当前索引
                     if "index" in user_status and user_status["index"] is not None:
                         user_indices.add(user_status["index"])
-            
+
                     # 2. 从上传记录中查找历史领取的组
                     user_logs = upload_log.get(uid, [])
                     for log in user_logs:
@@ -1435,11 +1435,11 @@ def index():
                             if phone in group:
                                 user_indices.add(i)
                                 break
-        
+
                     # 检查所有上传的号码是否在用户领取过的任何组中
                     invalid_phones = []
                     valid_phones = []
-            
+
                     for phone in all_phones:
                         found = False
                         for i in user_indices:
