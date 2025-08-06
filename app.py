@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, request, render_template, render_template_string, redirect, url_for, session
+from flask import (
+    Flask,
+    request,
+    render_template,
+    render_template_string,
+    redirect,
+    url_for,
+    session,
+)
 import json, os, time
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -13,7 +21,7 @@ app = Flask(__name__)
 app.config["DEBUG"] = True  # 添加这一行
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default-secret-key")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "tw223322")
-app.config['UPLOAD_FOLDER'] = '.'
+app.config["UPLOAD_FOLDER"] = "."
 
 MAX_TIMES = 3
 INTERVAL_SECONDS = 6 * 3600
@@ -25,7 +33,9 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 # 环境变量检查
 print(f"环境变量检查:")
 print(f"SUPABASE_URL: {SUPABASE_URL}")
-print(f"SUPABASE_KEY: {SUPABASE_KEY and '*****' + SUPABASE_KEY[-4:] if SUPABASE_KEY else '未设置'}")
+print(
+    f"SUPABASE_KEY: {SUPABASE_KEY and '*****' + SUPABASE_KEY[-4:] if SUPABASE_KEY else '未设置'}"
+)
 print(f"FLASK_SECRET_KEY: {app.secret_key and '*****' + app.secret_key[-4:]}")
 print(f"ADMIN_PASSWORD: {ADMIN_PASSWORD and '*****' + ADMIN_PASSWORD[-4]}")
 
@@ -35,15 +45,24 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+
 # ===== Supabase 工具函数 =====
 def load_whitelist():
     response = supabase.table("whitelist").select("*").execute()
     return [item["id"] for item in response.data]
 
+
 def load_user_status():
     response = supabase.table("user_status").select("*").execute()
-    return {item["uid"]: {"count": item["count"], "last": item["last"], "index": item["index"]}
-             for item in response.data}
+    return {
+        item["uid"]: {
+            "count": item["count"],
+            "last": item["last"],
+            "index": item["index"],
+        }
+        for item in response.data
+    }
+
 
 def load_phone_groups():
     response = supabase.table("phone_groups").select("phones").execute()
@@ -56,11 +75,18 @@ def load_phone_groups():
             groups.append(phones)
     return groups
 
+
 def load_upload_logs():
     logs = {}
     try:
-        response = supabase.table("upload_logs").select("user_id, phone, upload_time").execute()
-        for item in sorted(response.data, key=lambda x: x.get("upload_time", ""), reverse=True):
+        response = (
+            supabase.table("upload_logs")
+            .select("user_id, phone, upload_time")
+            .execute()
+        )
+        for item in sorted(
+            response.data, key=lambda x: x.get("upload_time", ""), reverse=True
+        ):
             uid = item.get("user_id")  # ← 注意字段名要改成 Supabase 中真实存在的
             if uid not in logs:
                 logs[uid] = []
@@ -72,10 +98,7 @@ def load_upload_logs():
             else:
                 time_str = str(time_value)
 
-            logs[uid].append({
-                "phone": item.get("phone"),
-                "time": time_str
-            })
+            logs[uid].append({"phone": item.get("phone"), "time": time_str})
     except Exception as e:
         print(f"❌ 加载上传记录失败: {e}")
 
@@ -86,9 +109,11 @@ def load_marks():
     response = supabase.table("mark_status").select("*").execute()
     return {item["phone"]: item["status"] for item in response.data}
 
+
 def load_blacklist():
     response = supabase.table("blacklist").select("phone").execute()
     return {item["phone"] for item in response.data}
+
 
 def save_whitelist(ids):
     # 先清空表
@@ -97,6 +122,7 @@ def save_whitelist(ids):
     if ids:
         data = [{"id": id_val} for id_val in ids]
         supabase.table("whitelist").insert(data).execute()
+
 
 def save_user_status(uid, data):
     # 检查是否存在
@@ -109,17 +135,25 @@ def save_user_status(uid, data):
         data["uid"] = uid
         supabase.table("user_status").insert(data).execute()
 
+
 def save_phone_groups(groups):
     # 清空表
     supabase.table("phone_groups").delete().neq("group_id", -1).execute()
     # 插入新分组
     data = [{"group_id": idx, "phones": group} for idx, group in enumerate(groups)]
     if data:
-            supabase.table("phone_groups").insert(data).execute()
+        supabase.table("phone_groups").insert(data).execute()
+
 
 def add_upload_log(uid, phone):
     # 检查是否已经上传过
-    existing = supabase.table("upload_logs").select("phone").eq("user_id", uid).eq("phone", phone).execute()
+    existing = (
+        supabase.table("upload_logs")
+        .select("phone")
+        .eq("user_id", uid)
+        .eq("phone", phone)
+        .execute()
+    )
     if existing.data:
         print(f"已存在记录: {uid} - {phone}，跳过上传")
         return False  # 返回 False 表示重复
@@ -127,13 +161,10 @@ def add_upload_log(uid, phone):
     tz = pytz.timezone("Asia/Shanghai")
     china_time = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
 
-    data = {
-        "user_id": uid,
-        "phone": phone,
-        "upload_time": china_time
-    }
+    data = {"user_id": uid, "phone": phone, "upload_time": china_time}
     supabase.table("upload_logs").insert(data).execute()
     return True  # 插入成功
+
 
 def toggle_mark(phone):
     # 读取当前状态
@@ -150,9 +181,13 @@ def toggle_mark(phone):
 
     # 写入 mark_status 表
     if data:
-        supabase.table("mark_status").update({"status": new_status}).eq("phone", phone).execute()
+        supabase.table("mark_status").update({"status": new_status}).eq(
+            "phone", phone
+        ).execute()
     else:
-        supabase.table("mark_status").insert({"phone": phone, "status": new_status}).execute()
+        supabase.table("mark_status").insert(
+            {"phone": phone, "status": new_status}
+        ).execute()
 
     # 黑名单操作
     if new_status == "已领":
@@ -171,9 +206,11 @@ def save_blacklist(phones):
         data = [{"phone": phone} for phone in phones]
         supabase.table("blacklist").insert(data).execute()
 
+
 def blacklist_count():
     response = supabase.table("blacklist").select("phone", count="exact").execute()
     return response.count
+
 
 def blacklist_preview(n=10):
     try:
@@ -184,7 +221,27 @@ def blacklist_preview(n=10):
         return ["⚠️ 数据读取失败"]
 
 
+def get_remaining_phones_count():
+    # 获取所有手机号组
+    groups = load_phone_groups()
+    if not groups:
+        return 0
+
+    # 获取所有已分配的组索引
+    status = load_user_status()
+    assigned_indices = {
+        v["index"] for v in status.values() if "index" in v and v["index"] is not None
+    }
+
+    # 计算剩余数量
+    total = sum(len(group) for group in groups)
+    assigned = sum(len(groups[i]) for i in assigned_indices if i < len(groups))
+
+    return total - assigned
+
+
 # ===== 路由处理 =====
+
 
 @app.route("/ping")
 def ping_page():
@@ -255,6 +312,7 @@ def ping_page():
     </html>
     """
 
+
 @app.route("/mark", methods=["POST"])
 def mark_phone():
     phone = request.form.get("phone")
@@ -275,19 +333,21 @@ def login():
         else:
             message = "❌ 密码错误，请重试"
 
-    return f'''
+    return f"""
     <h2>🔐 管理后台登录</h2>
     <form method="POST">
         <input type="password" name="password" placeholder="请输入密码" required>
         <button type="submit">登录</button>
     </form>
     <p style="color:red;">{message}</p>
-    '''
+    """
+
 
 @app.route("/logout")
 def logout():
     session.pop("admin_logged_in", None)
     return redirect("/login")
+
 
 def is_date_match(record_time, target_date):
     if not target_date:
@@ -298,6 +358,7 @@ def is_date_match(record_time, target_date):
     except:
         return False
 
+
 @app.route("/reset_status", methods=["POST"])
 def reset_status():
     if not session.get("admin_logged_in"):
@@ -307,6 +368,7 @@ def reset_status():
         return "无效 ID", 400
     supabase.table("user_status").delete().eq("uid", uid).execute()
     return redirect("/admin")
+
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
@@ -327,18 +389,18 @@ def admin():
         <title>管理后台</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
-            body {{
+            body {
                 font-family: 'Segoe UI', sans-serif;
                 background: linear-gradient(135deg, #d6c6f4, #f2e7ff);
                 margin: 0;
                 padding: 0;
-            }}
-            .container {{
+            }
+            .container {
                 max-width: 1000px;
                 margin: 0 auto;
                 padding: 20px;
-            }}
-            .header {{
+            }
+            .header {
                 background: linear-gradient(to right, #6a11cb, #2575fc);
                 color: white;
                 padding: 20px;
@@ -347,55 +409,127 @@ def admin():
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-            }}
-            .card {{
+            }
+            .card {
                 background: white;
                 padding: 20px;
                 margin: 30px 0;
                 border-radius: 10px;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            }}
-            table {{
+              box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            }
+            table {
                 width: 100%;
                 border-collapse: collapse;
                 margin-top: 10px;
-            }}
-            th, td {{
+            }
+            th, td {
                 border: 1px solid #ddd;
                 padding: 10px;
                 text-align: left;
-            }}
-            th {{
+            }
+            th {
                 background-color: #ede4f7;
                 font-weight: 600;
-            }}
-            button {{
+            }
+            button {
                 padding: 8px 16px;
                 background: linear-gradient(to right, #7b2ff7, #f107a3);
                 color: white;
                 border: none;
                 border-radius: 6px;
                 cursor: pointer;
-                transition: background 0.3s ease;
-            }}
-            button:hover {{
+                transition: all 0.3s ease;
+            }
+            button:hover {
                 background: linear-gradient(to right, #6a11cb, #ff6ec4);
-            }}
-            input[type="file"], input[type="text"], input[type="date"] {{
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            input[type="file"], input[type="text"], input[type="date"] {
                 padding: 8px;
                 border: 1px solid #bfa9d6;
                 border-radius: 6px;
                 margin-right: 10px;
-            }}
-            a.logout {{
+                transition: border 0.3s ease;
+            }
+            input:focus {
+                outline: none;
+                border-color: #7b2ff7;
+            }
+            a.logout {
                 color: white;
                 text-decoration: none;
                 font-size: 14px;
-            }}
-            h2 {{
+                transition: opacity 0.3s;
+            }
+            a.logout:hover {
+                opacity: 0.8;
+            }
+            h2 {
                 margin-top: 0;
                 color: #5e2e91;
-            }}
+            }
+    
+            /* 剩余资料样式 */
+            .remaining-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+            .remaining-count {
+                font-size: 16px;
+                color: #333;
+            }
+            .remaining-count strong {
+                color: #7b2ff7;
+                font-size: 18px;
+            }
+            #remaining-phones {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px dashed #d1c4e9;
+                font-family: monospace;
+                font-size: 14px;
+                max-height: 300px;
+                overflow-y: auto;
+                margin-top: 10px;
+                display: none;
+                transition: all 0.3s ease;
+            }
+            .btn-remaining {
+                padding: 6px 12px;
+                background: linear-gradient(to right, #4CAF50, #2E7D32);
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s ease;
+            }
+            .btn-remaining:hover {
+                background: linear-gradient(to right, #3e8e41, #1B5E20);
+                transform: translateY(-1px);
+            }
+    
+            /* 响应式调整 */
+            @media (max-width: 768px) {
+                .container {
+                    padding: 10px;
+                }
+                .card {
+                    padding: 15px;
+                }
+                .remaining-container {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .btn-remaining {
+                    margin-top: 10px;
+                    width: 100%;
+                }
+            }
         </style>
 
         <script>
@@ -424,8 +558,6 @@ def admin():
         <div class="container">
     """
 
-
-
     # 黑名单预览部分
     result_html += f"""
     <div class="card">
@@ -450,6 +582,36 @@ def admin():
                 btn.innerText = "🔽 展开预览";
             }}
         }}
+    </script>
+    """
+
+    result_html += f"""
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <p>剩余可分配手机号：<strong>{get_remaining_phones_count()}</strong> 条</p>
+            <button onclick="showRemainingPhones()" style="padding: 6px 12px; font-size: 14px;">
+                📋 查看详情
+            </button>
+        </div>
+        <div id="remaining-phones" style="display: none; margin-top: 10px; max-height: 200px; overflow-y: auto;">
+            <!-- 动态加载内容 -->
+        </div>
+    </div>
+
+    <script>
+    function showRemainingPhones() {{
+        const container = document.getElementById('remaining-phones');
+        if (container.style.display === 'none') {{
+            fetch('/get_remaining_phones')
+                .then(res => res.json())
+                .then(data => {{
+                    container.innerHTML = data.phones.join('<br>') || '无剩余号码';
+                    container.style.display = 'block';
+                }});
+        }} else {{
+            container.style.display = 'none';
+        }}
+    }}
     </script>
     """
 
@@ -483,7 +645,7 @@ def admin():
         filtered_records = []
         for record in records:
             # 将时间值转换为日期字符串
-            time_value = record['time']
+            time_value = record["time"]
             if isinstance(time_value, str):
                 # 如果是字符串，提取前10个字符 (YYYY-MM-DD)
                 record_date = time_value[:10]
@@ -506,11 +668,17 @@ def admin():
         </form>
         """
 
-        result_html += "<table><tr><th>手机号</th><th>上传时间</th><th>状态</th><th>操作</th></tr>"
+        result_html += (
+            "<table><tr><th>手机号</th><th>上传时间</th><th>状态</th><th>操作</th></tr>"
+        )
         for record in filtered_records:
-            phone = record['phone']
+            phone = record["phone"]
             # 确保时间字符串正确显示
-            time_str = record['time'] if isinstance(record['time'], str) else record['time'].strftime("%Y-%m-%d %H:%M:%S")
+            time_str = (
+                record["time"]
+                if isinstance(record["time"], str)
+                else record["time"].strftime("%Y-%m-%d %H:%M:%S")
+            )
             mark_status = marks.get(phone, "未领")
             is_marked = mark_status == "已领"
             status = "✅ 已领" if is_marked else "❌ 未标记"
@@ -554,22 +722,28 @@ def admin():
         ftype = request.form.get("upload_type")
         if ftype == "phones" and "phones" in request.files:
             file = request.files["phones"]
-            path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename("phones.txt"))
+            path = os.path.join(
+                app.config["UPLOAD_FOLDER"], secure_filename("phones.txt")
+            )
             file.save(path)
             process_phones(path)
         elif ftype == "idlist" and "idlist" in request.files:
             file = request.files["idlist"]
-            path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename("id_list.txt"))
+            path = os.path.join(
+                app.config["UPLOAD_FOLDER"], secure_filename("id_list.txt")
+            )
             file.save(path)
             process_id_list(path)
         return redirect(url_for("admin"))
 
     return result_html
 
+
 def process_id_list(file_path):
     with open(file_path, "r") as f:
         ids = [line.strip() for line in f if line.strip()]
     save_whitelist(ids)
+
 
 def process_phones(file_path):
     with open(file_path, "r") as f:
@@ -578,11 +752,12 @@ def process_phones(file_path):
     phones = [p for p in phones if p not in blacklist]  # 跳过黑名单
     groups = []
     for i in range(0, len(phones), 10):
-        groups.append(phones[i:i+10])
+        groups.append(phones[i : i + 10])
     save_phone_groups(groups)
 
+
 # ===== 用户资料领取页面 =====
-HTML_TEMPLATE = '''
+HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html>
 <head>
@@ -1155,7 +1330,8 @@ function closeAutoPopup() {
 </div>
 </body>
 </html>
-'''
+"""
+
 
 @app.route("/pg")
 def pg_page():
@@ -1205,20 +1381,25 @@ def index():
 
                 else:
                     # 获取所有已被分配的组索引（包括当前用户的）
-                    all_used_indices = {v["index"] for v in status.values() if "index" in v and v["index"] is not None}
-                    
+                    all_used_indices = {
+                        v["index"]
+                        for v in status.values()
+                        if "index" in v and v["index"] is not None
+                    }
+
                     # 获取所有已标记为"已领"的手机号（黑名单）
                     blacklist = load_blacklist()
-                    
+
                     # 寻找第一个未被分配的组，且组内号码都不在黑名单中
                     for i, group in enumerate(groups):
-                        if (i not in all_used_indices and 
-                            not any(phone in blacklist for phone in group)):
+                        if i not in all_used_indices and not any(
+                            phone in blacklist for phone in group
+                        ):
                             phones = group
                             new_status = {
                                 "count": record["count"] + 1,
                                 "last": now,
-                                "index": i  # 记录分配的组索引
+                                "index": i,  # 记录分配的组索引
                             }
                             # 立即保存状态，避免并发问题
                             save_user_status(uid, new_status)
@@ -1239,7 +1420,9 @@ def index():
                     upload_msg = "❌ 您尚未领取任何资料"
                 else:
                     group_index = user_status["index"]
-                    assigned_group = groups[group_index] if group_index < len(groups) else []
+                    assigned_group = (
+                        groups[group_index] if group_index < len(groups) else []
+                    )
 
                     invalid_phones = [p for p in all_phones if p not in assigned_group]
 
@@ -1256,10 +1439,32 @@ def index():
         phones=phones,
         error=error,
         upload_msg=upload_msg,
-        upload_success=upload_success
+        upload_success=upload_success,
     )
 
 
-if __name__ == '__main__':
+@app.route("/get_remaining_phones")
+def get_remaining_phones():
+    # 获取所有组
+    groups = load_phone_groups()
+    if not groups:
+        return jsonify({"phones": []})
+
+    # 获取已分配组索引
+    status = load_user_status()
+    assigned_indices = {
+        v["index"] for v in status.values() if "index" in v and v["index"] is not None
+    }
+
+    # 收集未分配组的号码
+    remaining_phones = []
+    for i, group in enumerate(groups):
+        if i not in assigned_indices:
+            remaining_phones.extend(group)
+
+    return jsonify({"phones": remaining_phones})
+
+
+if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host="0.0.0.0", port=port)

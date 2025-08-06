@@ -1,0 +1,15 @@
+{
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.formatOnPaste": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.autoIndent": "full",
+    // Python 格式化配置
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "black",
+    // 保存时整理 import
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
+}
