@@ -14,8 +14,7 @@ from werkzeug.utils import secure_filename
 from supabase import create_client, Client
 from flask import jsonify
 import pytz
-from functools import lru_cache
-import time
+
 
 # ✅ Render 专用配置（不使用 .env 文件）
 app = Flask(__name__)
@@ -48,33 +47,31 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 # ===== Supabase 工具函数 =====
-@lru_cache(maxsize=1)
-def cached_load_phone_groups(ttl=300):
-    """带缓存的加载手机号组，5分钟自动失效"""
-    return load_phone_groups()
-
-
-@lru_cache(maxsize=1)
-def cached_load_whitelist(ttl=300):
-    """带缓存的白名单加载"""
-    return load_whitelist()
-
-
 def load_whitelist():
     response = supabase.table("whitelist").select("*").execute()
     return [item["id"] for item in response.data]
 
 
-def load_user_status():
-    response = supabase.table("user_status").select("*").execute()
-    return {
-        item["uid"]: {
-            "count": item["count"],
-            "last": item["last"],
-            "index": item["index"],
-        }
+def get_user_assignments(uid):
+    """获取用户所有分配记录"""
+    response = supabase.table("user_assignments").select("*").eq("uid", uid).execute()
+    return [
+        {"group_index": item["group_index"], "assign_time": item["assign_time"]}
         for item in response.data
-    }
+    ]
+
+
+def get_all_assigned_indices():
+    """获取所有已分配的组索引"""
+    response = supabase.table("user_assignments").select("group_index").execute()
+    return {item["group_index"] for item in response.data}
+
+
+def add_user_assignment(uid, group_index):
+    """添加新的分配记录"""
+    supabase.table("user_assignments").insert(
+        {"uid": uid, "group_index": group_index}
+    ).execute()
 
 
 def load_phone_groups():
@@ -137,27 +134,6 @@ def save_whitelist(ids):
         supabase.table("whitelist").insert(data).execute()
 
 
-def save_user_status(uid, data):
-    # 检查是否存在
-    existing = supabase.table("user_status").select("*").eq("uid", uid).execute()
-    if existing.data:
-        # 更新
-        supabase.table("user_status").update(data).eq("uid", uid).execute()
-    else:
-        # 插入
-        data["uid"] = uid
-        supabase.table("user_status").insert(data).execute()
-
-
-def save_phone_groups(groups):
-    # 清空表
-    supabase.table("phone_groups").delete().neq("group_id", -1).execute()
-    # 插入新分组
-    data = [{"group_id": idx, "phones": group} for idx, group in enumerate(groups)]
-    if data:
-        supabase.table("phone_groups").insert(data).execute()
-
-
 def add_upload_log(uid, phone):
     # 检查是否已经上传过
     existing = (
@@ -211,6 +187,15 @@ def toggle_mark(phone):
     return new_status
 
 
+def save_phone_groups(groups):
+    # 清空表
+    supabase.table("phone_groups").delete().neq("group_id", -1).execute()
+    # 插入新分组
+    data = [{"group_id": idx, "phones": group} for idx, group in enumerate(groups)]
+    if data:
+        supabase.table("phone_groups").insert(data).execute()
+
+
 def save_blacklist(phones):
     # 清空表
     supabase.table("blacklist").delete().neq("phone", "").execute()
@@ -241,10 +226,7 @@ def get_remaining_phones_count():
         return 0
 
     # 获取所有已分配的组索引
-    status = load_user_status()
-    assigned_indices = {
-        v["index"] for v in status.values() if "index" in v and v["index"] is not None
-    }
+    assigned_indices = get_all_assigned_indices()
 
     # 计算剩余数量
     total = sum(len(group) for group in groups)
@@ -379,7 +361,7 @@ def reset_status():
     uid = request.form.get("uid", "").strip()
     if not uid:
         return "无效 ID", 400
-    supabase.table("user_status").delete().eq("uid", uid).execute()
+    supabase.table("user_assignments").delete().eq("uid", uid).execute()
     return redirect("/admin")
 
 
@@ -1109,7 +1091,7 @@ HTML_TEMPLATE = """
 <div id="auto-rules-popup" class="popup-overlay" style="display:none;">
   <div class="popup-box" style="max-width: 450px; border-radius: 12px;">
     <h3 style="color: #7b2ff7; font-size: 20px; margin-bottom: 15px; display: flex; align-items: center;">
-      <span style="margin-right: 10px;">📜</span>必看任务规则
+      <span style="margin-right: 10px;">📜</span>重复领取和上传bug已修复
     </h3>
     
     <div style="max-height: 50vh; overflow-y: auto; padding-right: 10px;">
@@ -1193,7 +1175,7 @@ HTML_TEMPLATE = """
 
 <script>
   // 新增自动弹窗控制逻辑
-const RULES_VERSION = "2024-08-05";    // 日期标记
+const RULES_VERSION = "2024-08-12";    // 日期标记
 
 document.addEventListener('DOMContentLoaded', function() {
   const lastSeenVersion = localStorage.getItem('rulesVersion');
@@ -1356,9 +1338,8 @@ def index():
     if request.method == "HEAD":
         return "", 200
 
-    whitelist = cached_load_whitelist()
-    status = load_user_status()
-    groups = cached_load_phone_groups()
+    whitelist = load_whitelist()
+    groups = load_phone_groups()
     upload_log = load_upload_logs()
 
     phones = []
@@ -1377,94 +1358,70 @@ def index():
             elif uid not in whitelist:
                 error = "❌ 该 ID 不在名单内，请联系管理员"
             else:
-                try:
-                    # 获取用户当前状态（包含缓存机制）
-                    record = status.get(uid, {"count": 0, "last": 0})
+                user_assignments = get_user_assignments(uid)
+                last_assignment = user_assignments[-1] if user_assignments else None
 
-                    # 检查领取限制
-                    if record["count"] >= MAX_TIMES:
-                        error = f"❌ 已达到最大领取次数({MAX_TIMES}次)"
-                        # 显示用户之前领取过的号码（如果有）
-                        if "index" in record and record["index"] < len(groups):
-                            phones = groups[record["index"]]
+                if len(user_assignments) >= MAX_TIMES:
+                    new_whitelist = [id for id in whitelist if id != uid]
+                    save_whitelist(new_whitelist)
+                    error = "❌ 已达到最大领取次数，请联系管理员"
+                    if last_assignment and last_assignment["group_index"] < len(groups):
+                        phones = groups[last_assignment["group_index"]]
 
-                    elif (now - record["last"]) < INTERVAL_SECONDS:
-                        wait_min = (INTERVAL_SECONDS - (now - record["last"])) // 60
-                        error = f"⏱ 需等待 {wait_min} 分钟后再领取"
+                elif (
+                    last_assignment
+                    and (now - last_assignment["assign_time"].timestamp())
+                    < INTERVAL_SECONDS
+                ):
+                    wait_min = int(
+                        (
+                            INTERVAL_SECONDS
+                            - (now - last_assignment["assign_time"].timestamp())
+                        )
+                        / 60
+                    )
+                    error = f"⏱ 请在 {wait_min} 分钟后再领取"
+                    if last_assignment["group_index"] < len(groups):
+                        phones = groups[last_assignment["group_index"]]
 
+                else:
+                    all_used_indices = get_all_assigned_indices()
+                    blacklist = load_blacklist()
+
+                    for i, group in enumerate(groups):
+                        if i not in all_used_indices and not any(
+                            phone in blacklist for phone in group
+                        ):
+                            phones = group
+                            add_user_assignment(uid, i)
+                            break
                     else:
-                        # 加载黑名单（带缓存）
-                        blacklist = load_blacklist()  # 返回Set类型
+                        error = "❌ 资料已发放完，请联系管理员"
 
-                        # 寻找可用号码组
-                        assigned_indices = {
-                            u["index"]
-                            for u in status.values()
-                            if "index" in u and u["index"] is not None
-                        }
-
-                        for i, group in enumerate(groups):
-                            # 关键检查：1.未分配过 2.不含黑名单号码
-                            if i not in assigned_indices and not any(
-                                p in blacklist for p in group
-                            ):
-
-                                phones = group
-                                new_status = {
-                                    "count": record["count"] + 1,
-                                    "last": now,
-                                    "index": i,  # 记录分配的组索引
-                                }
-                                save_user_status(uid, new_status)
-                                break
-                        else:
-                            error = "❌ 当前号码库正在更新中"
-
-                except Exception as e:
-                    print(f"领取失败: {str(e)}")
-                    error = "⚠️ 系统错误，请稍后重试"
-
-        # 修改 / 路由中的上传验证部分（约第 1010 行开始）
         elif action == "upload":
             raw_data = request.form.get("phones", "").strip()
             if not uid or not raw_data:
                 upload_msg = "❌ ID 和资料不能为空"
             else:
                 all_phones = [p.strip() for p in raw_data.splitlines() if p.strip()]
-                now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                user_assignments = get_user_assignments(uid)
 
-                user_status = status.get(uid, {})
-                if "index" not in user_status:
+                if not user_assignments:
                     upload_msg = "❌ 您尚未领取任何资料"
                 else:
-                    # 获取用户所有历史领取的组（包括当前的和之前领取的）
-                    user_indices = set()
+                    user_phones = set()
+                    for assignment in user_assignments:
+                        group_idx = assignment["group_index"]
+                        if group_idx < len(groups):
+                            user_phones.update(groups[group_idx])
 
-                    # 1. 添加当前索引
-                    if "index" in user_status and user_status["index"] is not None:
-                        user_indices.add(user_status["index"])
-
-                    # 2. 从上传记录中查找历史领取的组
-                    user_logs = upload_log.get(uid, [])
-                    for log in user_logs:
-                        phone = log.get("phone")
-                        for i, group in enumerate(groups):
-                            if phone in group:
-                                user_indices.add(i)
-                                break
-
-                    # 检查所有上传的号码是否在用户领取过的任何组中
                     invalid_phones = []
                     valid_phones = []
 
                     for phone in all_phones:
-                        found = False
-                        for i in user_indices:
-                            if i < len(groups) and phone in groups[i]:
-                                found = True
-                                valid_phones.append(phone)
-                                break
-                        if not found:
+                        if phone in user_phones:
+                            valid_phones.append(phone)
+                        else:
                             invalid_phones.append(phone)
 
                     if invalid_phones:
@@ -1472,7 +1429,7 @@ def index():
                     else:
                         for phone in valid_phones:
                             add_upload_log(uid, phone)
-                        upload_msg = f"✅ 成功上传 {len(valid_phones)} 条，将在24小时内审核成功后发放奖励至云顶app"
+                        upload_msg = f"✅ 成功上传 {len(valid_phones)} 条，将在24小时内审核自动到账"
                         upload_success = True
 
     return render_template_string(
@@ -1486,23 +1443,15 @@ def index():
 
 @app.route("/get_remaining_phones")
 def get_remaining_phones():
-    # 获取所有组
     groups = load_phone_groups()
     if not groups:
         return jsonify({"phones": []})
 
-    # 获取已分配组索引
-    status = load_user_status()
-    assigned_indices = {
-        v["index"] for v in status.values() if "index" in v and v["index"] is not None
-    }
-
-    # 收集未分配组的号码
+    assigned_indices = get_all_assigned_indices()
     remaining_phones = []
     for i, group in enumerate(groups):
         if i not in assigned_indices:
             remaining_phones.extend(group)
-
     return jsonify({"phones": remaining_phones})
 
 
