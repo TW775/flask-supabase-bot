@@ -66,6 +66,32 @@ def to_epoch(v):
     return None
 
 
+def parse_assign_time(val):
+    """把 Supabase 取回的 assign_time 转为 datetime（带 tz）"""
+    if isinstance(val, datetime):
+        # 如果没有 tz，默认按 UTC 补上
+        return val if val.tzinfo else val.replace(tzinfo=timezone.utc)
+    if isinstance(val, (int, float)):
+        return datetime.fromtimestamp(val, tz=timezone.utc)
+    if isinstance(val, str):
+        s = val.strip()
+        # 兼容 '...Z' 结尾
+        if s.endswith("Z"):
+            s = s[:-1] + "+00:00"
+        try:
+            return datetime.fromisoformat(s)
+        except Exception:
+            # 兜底你项目里其他可能的格式
+            try:
+                return datetime.strptime(s, "%Y-%m-%d %H:%M:%S").replace(
+                    tzinfo=timezone.utc
+                )
+            except Exception:
+                # 实在不行就返回当前时间，避免崩
+                return datetime.now(timezone.utc)
+    return datetime.now(timezone.utc)
+
+
 def get_taken_phones():
     """
     全局已占用号码集合：
@@ -109,9 +135,12 @@ def get_all_assigned_indices():
 
 
 def add_user_assignment(uid, group_id):
-    """添加新的分配记录（把时间直接写入 epoch）"""
+    """添加新的分配记录（assign_time 写入 ISO8601 UTC 字符串）"""
+    now_iso = datetime.now(
+        pytz.UTC
+    ).isoformat()  # e.g. '2025-08-12T15:06:45.123456+00:00'
     supabase.table("user_assignments").insert(
-        {"uid": uid, "group_id": group_id, "assign_time": time.time()}
+        {"uid": uid, "group_id": group_id, "assign_time": now_iso}
     ).execute()
 
 
@@ -1408,20 +1437,16 @@ def index():
 
                 else:
                     # 时间间隔判断（兼容 None/str/datetime）
-                    last_epoch = to_epoch(
-                        last_assignment.get("assign_time") if last_assignment else None
-                    )
-                    if (last_epoch is not None) and (
-                        (now - last_epoch) < INTERVAL_SECONDS
-                    ):
-                        wait_min = int((INTERVAL_SECONDS - (now - last_epoch)) / 60)
-                        if wait_min < 1:
-                            wait_min = 1
+                    assign_dt = parse_assign_time(last_assignment["assign_time"])
+                    elapsed_seconds = (
+                        datetime.now(timezone.utc) - assign_dt
+                    ).total_seconds()
+                    if elapsed_seconds < INTERVAL_SECONDS:
+                        wait_min = int((INTERVAL_SECONDS - elapsed_seconds) / 60)
                         error = f"⏱ 请在 {wait_min} 分钟后再领取"
-                        if last_assignment and last_assignment["group_id"] < len(
-                            groups
-                        ):
+                        if last_assignment["group_id"] < len(groups):
                             phones = groups[last_assignment["group_id"]]
+
                     else:
                         # 选择可用组：1) 未被分配过的组索引；2) 该组所有号码都未在历史上传/黑名单出现
                         all_used_indices = get_all_assigned_indices()
