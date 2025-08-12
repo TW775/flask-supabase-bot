@@ -9,7 +9,7 @@ from flask import (
     session,
 )
 import json, os, time
-from datetime import datetime
+from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
 from supabase import create_client, Client
 from flask import jsonify
@@ -47,6 +47,47 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 # ===== Supabase 工具函数 =====
+def to_epoch(v):
+    """把可能是 None/float/int/str/datetime 的时间安全地转成 epoch 秒"""
+    if v is None:
+        return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    if isinstance(v, str):
+        try:
+            s = v.replace("Z", "+00:00") if v.endswith("Z") else v
+            return datetime.fromisoformat(s).timestamp()
+        except Exception:
+            return None
+    if isinstance(v, datetime):
+        if v.tzinfo is None:
+            v = v.replace(tzinfo=timezone.utc)
+        return v.timestamp()
+    return None
+
+
+def get_taken_phones():
+    """
+    全局已占用号码集合：
+    - upload_logs 中已上传的所有 phone
+    - blacklist 黑名单
+    """
+    taken = set()
+    try:
+        r1 = supabase.table("upload_logs").select("phone").execute()
+        taken.update({row["phone"] for row in (r1.data or []) if row.get("phone")})
+    except Exception as e:
+        print("读取 upload_logs 失败：", e)
+
+    try:
+        r2 = supabase.table("blacklist").select("phone").execute()
+        taken.update({row["phone"] for row in (r2.data or []) if row.get("phone")})
+    except Exception as e:
+        print("读取 blacklist 失败：", e)
+
+    return taken
+
+
 def load_whitelist():
     response = supabase.table("whitelist").select("*").execute()
     return [item["id"] for item in response.data]
@@ -68,9 +109,9 @@ def get_all_assigned_indices():
 
 
 def add_user_assignment(uid, group_id):
-    """添加新的分配记录"""
+    """添加新的分配记录（把时间直接写入 epoch）"""
     supabase.table("user_assignments").insert(
-        {"uid": uid, "group_id": group_id}
+        {"uid": uid, "group_id": group_id, "assign_time": time.time()}
     ).execute()
 
 
@@ -135,24 +176,20 @@ def save_whitelist(ids):
 
 
 def add_upload_log(uid, phone):
-    # 检查是否已经上传过
+    # 全局去重：该手机号一旦出现过就不能再上传（无论哪个用户）
     existing = (
-        supabase.table("upload_logs")
-        .select("phone")
-        .eq("user_id", uid)
-        .eq("phone", phone)
-        .execute()
+        supabase.table("upload_logs").select("phone").eq("phone", phone).execute()
     )
     if existing.data:
-        print(f"已存在记录: {uid} - {phone}，跳过上传")
-        return False  # 返回 False 表示重复
+        print(f"已存在记录(全局): {phone}，跳过上传")
+        return False
 
     tz = pytz.timezone("Asia/Shanghai")
     china_time = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
 
     data = {"user_id": uid, "phone": phone, "upload_time": china_time}
     supabase.table("upload_logs").insert(data).execute()
-    return True  # 插入成功
+    return True
 
 
 def toggle_mark(phone):
@@ -1354,13 +1391,14 @@ def index():
 
         if action == "get":
             if not uid:
-                error = "请输入 ID"
+                error = "请输入 账号"
             elif uid not in whitelist:
-                error = "❌ 该 ID 不在名单内，请联系管理员"
+                error = "❌ 该 账号 不在名单内，请联系管理员"
             else:
                 user_assignments = get_user_assignments(uid)
                 last_assignment = user_assignments[-1] if user_assignments else None
 
+                # 领取次数上限
                 if len(user_assignments) >= MAX_TIMES:
                     new_whitelist = [id for id in whitelist if id != uid]
                     save_whitelist(new_whitelist)
@@ -1368,35 +1406,42 @@ def index():
                     if last_assignment and last_assignment["group_id"] < len(groups):
                         phones = groups[last_assignment["group_id"]]
 
-                elif (
-                    last_assignment
-                    and (now - last_assignment["assign_time"].timestamp())
-                    < INTERVAL_SECONDS
-                ):
-                    wait_min = int(
-                        (
-                            INTERVAL_SECONDS
-                            - (now - last_assignment["assign_time"].timestamp())
-                        )
-                        / 60
-                    )
-                    error = f"⏱ 请在 {wait_min} 分钟后再领取"
-                    if last_assignment["group_id"] < len(groups):
-                        phones = groups[last_assignment["group_id"]]
-
                 else:
-                    all_used_indices = get_all_assigned_indices()
-                    blacklist = load_blacklist()
-
-                    for i, group in enumerate(groups):
-                        if i not in all_used_indices and not any(
-                            phone in blacklist for phone in group
+                    # 时间间隔判断（兼容 None/str/datetime）
+                    last_epoch = to_epoch(
+                        last_assignment.get("assign_time") if last_assignment else None
+                    )
+                    if (last_epoch is not None) and (
+                        (now - last_epoch) < INTERVAL_SECONDS
+                    ):
+                        wait_min = int((INTERVAL_SECONDS - (now - last_epoch)) / 60)
+                        if wait_min < 1:
+                            wait_min = 1
+                        error = f"⏱ 请在 {wait_min} 分钟后再领取"
+                        if last_assignment and last_assignment["group_id"] < len(
+                            groups
                         ):
-                            phones = group
-                            add_user_assignment(uid, i)
-                            break
+                            phones = groups[last_assignment["group_id"]]
                     else:
-                        error = "❌ 资料已发放完，请联系管理员"
+                        # 选择可用组：1) 未被分配过的组索引；2) 该组所有号码都未在历史上传/黑名单出现
+                        all_used_indices = get_all_assigned_indices()
+                        taken = get_taken_phones()
+
+                        selected_idx = None
+                        selected_phones = None
+                        for i, group in enumerate(groups):
+                            if i in all_used_indices:
+                                continue
+                            if group and all((p not in taken) for p in group):
+                                selected_idx = i
+                                selected_phones = group
+                                break
+
+                        if selected_idx is None:
+                            error = "❌ 资料已发放完，请联系管理员"
+                        else:
+                            phones = selected_phones
+                            add_user_assignment(uid, selected_idx)
 
         elif action == "upload":
             raw_data = request.form.get("phones", "").strip()
@@ -1415,21 +1460,31 @@ def index():
                         if group_idx < len(groups):
                             user_phones.update(groups[group_idx])
 
+                            # 额外：历史全局去重（upload_logs + blacklist）
+                    taken_global = get_taken_phones()
+
                     invalid_phones = []
+                    duplicated_global = []
                     valid_phones = []
 
                     for phone in all_phones:
-                        if phone in user_phones:
-                            valid_phones.append(phone)
-                        else:
+                        if phone not in user_phones:
                             invalid_phones.append(phone)
+                        elif phone in taken_global:
+                            duplicated_global.append(phone)
+                        else:
+                            valid_phones.append(phone)
 
                     if invalid_phones:
                         upload_msg = f"❌ 以下号码不在您的分配组中: {', '.join(invalid_phones[:3])}{'...' if len(invalid_phones) > 3 else ''}"
+                    elif duplicated_global:
+                        upload_msg = f"❌ 以下号码已被历史占用/拉黑: {', '.join(duplicated_global[:3])}{'...' if len(duplicated_global) > 3 else ''}"
                     else:
+                        ok = 0
                         for phone in valid_phones:
-                            add_upload_log(uid, phone)
-                        upload_msg = f"✅ 成功上传 {len(valid_phones)} 条，将在24小时内审核自动到账"
+                            if add_upload_log(uid, phone):
+                                ok += 1
+                        upload_msg = f"✅ 成功上传 {ok} 条，将在24小时内审核自动到账"
                         upload_success = True
 
     return render_template_string(
