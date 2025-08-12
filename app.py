@@ -56,21 +56,21 @@ def get_user_assignments(uid):
     """获取用户所有分配记录"""
     response = supabase.table("user_assignments").select("*").eq("uid", uid).execute()
     return [
-        {"group_index": item["group_index"], "assign_time": item["assign_time"]}
+        {"group_id": item["group_id"], "assign_time": item["assign_time"]}
         for item in response.data
     ]
 
 
 def get_all_assigned_indices():
     """获取所有已分配的组索引"""
-    response = supabase.table("user_assignments").select("group_index").execute()
-    return {item["group_index"] for item in response.data}
+    response = supabase.table("user_assignments").select("group_id").execute()
+    return {item["group_id"] for item in response.data}
 
 
-def add_user_assignment(uid, group_index):
+def add_user_assignment(uid, group_id):
     """添加新的分配记录"""
     supabase.table("user_assignments").insert(
-        {"uid": uid, "group_index": group_index}
+        {"uid": uid, "group_id": group_id}
     ).execute()
 
 
@@ -1365,8 +1365,8 @@ def index():
                     new_whitelist = [id for id in whitelist if id != uid]
                     save_whitelist(new_whitelist)
                     error = "❌ 已达到最大领取次数，请联系管理员"
-                    if last_assignment and last_assignment["group_index"] < len(groups):
-                        phones = groups[last_assignment["group_index"]]
+                    if last_assignment and last_assignment["group_id"] < len(groups):
+                        phones = groups[last_assignment["group_id"]]
 
                 elif (
                     last_assignment
@@ -1381,8 +1381,8 @@ def index():
                         / 60
                     )
                     error = f"⏱ 请在 {wait_min} 分钟后再领取"
-                    if last_assignment["group_index"] < len(groups):
-                        phones = groups[last_assignment["group_index"]]
+                    if last_assignment["group_id"] < len(groups):
+                        phones = groups[last_assignment["group_id"]]
 
                 else:
                     all_used_indices = get_all_assigned_indices()
@@ -1411,7 +1411,7 @@ def index():
                 else:
                     user_phones = set()
                     for assignment in user_assignments:
-                        group_idx = assignment["group_index"]
+                        group_idx = assignment["group_id"]
                         if group_idx < len(groups):
                             user_phones.update(groups[group_idx])
 
