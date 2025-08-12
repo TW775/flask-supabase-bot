@@ -128,6 +128,19 @@ def get_user_assignments(uid):
     ]
 
 
+def get_last_assignment(uid: str):
+    res = (
+        supabase.table("user_assignments")
+        .select("*")
+        .eq("uid", uid)
+        .order("assign_time", desc=True)
+        .limit(1)
+        .execute()
+    )
+    data = getattr(res, "data", None) or []
+    return data[0] if data else None
+
+
 def get_all_assigned_indices():
     """获取所有已分配的组索引"""
     response = supabase.table("user_assignments").select("group_id").execute()
@@ -1437,15 +1450,20 @@ def index():
 
                 else:
                     # 时间间隔判断（兼容 None/str/datetime）
-                    assign_dt = parse_assign_time(last_assignment["assign_time"])
-                    elapsed_seconds = (
-                        datetime.now(timezone.utc) - assign_dt
-                    ).total_seconds()
-                    if elapsed_seconds < INTERVAL_SECONDS:
-                        wait_min = int((INTERVAL_SECONDS - elapsed_seconds) / 60)
-                        error = f"⏱ 请在 {wait_min} 分钟后再领取"
-                        if last_assignment["group_id"] < len(groups):
-                            phones = groups[last_assignment["group_id"]]
+                    last_assignment = get_last_assignment(uid)
+
+                    assign_dt = None
+                    if last_assignment and last_assignment.get("assign_time"):
+                        assign_dt = parse_assign_time(last_assignment["assign_time"])
+
+                    if assign_dt is not None:
+                        elapsed_seconds = (datetime.now(timezone.utc) - assign_dt).total_seconds()
+                        if elapsed_seconds < INTERVAL_SECONDS:
+                            wait_min = int((INTERVAL_SECONDS - elapsed_seconds) / 60)
+                            error = f"⏱ 请在 {wait_min} 分钟后再领取"
+                            if isinstance(last_assignment.get("group_id"), int) and last_assignment["group_id"] < len(groups):
+                                phones = groups[last_assignment["group_id"]]
+                            return render_template("index.html", error=error, phones=phones, ...)
 
                     else:
                         # 选择可用组：1) 未被分配过的组索引；2) 该组所有号码都未在历史上传/黑名单出现
