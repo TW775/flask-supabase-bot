@@ -37,7 +37,8 @@ print(
     f"SUPABASE_KEY: {SUPABASE_KEY and '*****' + SUPABASE_KEY[-4:] if SUPABASE_KEY else '未设置'}"
 )
 print(f"FLASK_SECRET_KEY: {app.secret_key and '*****' + app.secret_key[-4:]}")
-print(f"ADMIN_PASSWORD: {ADMIN_PASSWORD and '*****' + ADMIN_PASSWORD[-4]}")
+print(f"ADMIN_PASSWORD: {ADMIN_PASSWORD and '*****' + ADMIN_PASSWORD[-4:]}")
+
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     print("致命错误: SUPABASE_URL 或 SUPABASE_KEY 未设置!")
@@ -67,29 +68,25 @@ def to_epoch(v):
 
 
 def parse_assign_time(val):
-    """把 Supabase 取回的 assign_time 转为 datetime（带 tz）"""
+    """把 Supabase 取回的 assign_time 转为 datetime（带 tz）；失败返回 None"""
     if isinstance(val, datetime):
-        # 如果没有 tz，默认按 UTC 补上
         return val if val.tzinfo else val.replace(tzinfo=timezone.utc)
     if isinstance(val, (int, float)):
         return datetime.fromtimestamp(val, tz=timezone.utc)
     if isinstance(val, str):
         s = val.strip()
-        # 兼容 '...Z' 结尾
         if s.endswith("Z"):
             s = s[:-1] + "+00:00"
         try:
             return datetime.fromisoformat(s)
         except Exception:
-            # 兜底你项目里其他可能的格式
             try:
                 return datetime.strptime(s, "%Y-%m-%d %H:%M:%S").replace(
                     tzinfo=timezone.utc
                 )
             except Exception:
-                # 实在不行就返回当前时间，避免崩
-                return datetime.now(timezone.utc)
-    return datetime.now(timezone.utc)
+                return None
+    return None
 
 
 def get_taken_phones():
@@ -158,13 +155,17 @@ def add_user_assignment(uid, group_id):
 
 
 def load_phone_groups():
-    response = supabase.table("phone_groups").select("phones").execute()
+    response = (
+        supabase.table("phone_groups")
+        .select("group_id, phones")
+        .order("group_id")
+        .execute()
+    )
     print("📦 Supabase 数据:", response.data)
-
     groups = []
-    for item in response.data:
+    for item in response.data or []:
         phones = item.get("phones")
-        if phones:  # 防止空值
+        if phones:
             groups.append(phones)
     return groups
 
@@ -1438,35 +1439,43 @@ def index():
                 error = "❌ 该 账号 不在名单内，请联系管理员"
             else:
                 user_assignments = get_user_assignments(uid)
-                last_assignment = user_assignments[-1] if user_assignments else None
+                last_assignment = get_last_assignment(uid)
 
-                # 领取次数上限
+                # 次数上限
                 if len(user_assignments) >= MAX_TIMES:
+                    # 达上限：从白名单移除，并显示上一次的号码（如果能取到）
                     new_whitelist = [id for id in whitelist if id != uid]
                     save_whitelist(new_whitelist)
                     error = "❌ 已达到最大领取次数，请联系管理员"
-                    if last_assignment and last_assignment["group_id"] < len(groups):
-                        phones = groups[last_assignment["group_id"]]
-
+                    if last_assignment and isinstance(
+                        last_assignment.get("group_id"), int
+                    ):
+                        idx = last_assignment["group_id"]
+                        if 0 <= idx < len(groups):
+                            phones = groups[idx]
                 else:
-                    # 时间间隔判断（兼容 None/str/datetime）
-                    last_assignment = get_last_assignment(uid)
-
-                    assign_dt = None
+                    # 冷却判断（有上一次领取时间才判断）
+                    can_assign_new = True
                     if last_assignment and last_assignment.get("assign_time"):
                         assign_dt = parse_assign_time(last_assignment["assign_time"])
+                        if assign_dt is not None:
+                            elapsed_seconds = (
+                                datetime.now(timezone.utc) - assign_dt
+                            ).total_seconds()
+                            if elapsed_seconds < INTERVAL_SECONDS:
+                                can_assign_new = False
+                                wait_min = int(
+                                    (INTERVAL_SECONDS - elapsed_seconds) / 60
+                                )
+                                error = f"⏱ 请在 {wait_min} 分钟后再领取"
+                                # 展示上次号码
+                                if isinstance(last_assignment.get("group_id"), int):
+                                    idx = last_assignment["group_id"]
+                                    if 0 <= idx < len(groups):
+                                        phones = groups[idx]
 
-                    if assign_dt is not None:
-                        elapsed_seconds = (datetime.now(timezone.utc) - assign_dt).total_seconds()
-                        if elapsed_seconds < INTERVAL_SECONDS:
-                            wait_min = int((INTERVAL_SECONDS - elapsed_seconds) / 60)
-                            error = f"⏱ 请在 {wait_min} 分钟后再领取"
-                            if isinstance(last_assignment.get("group_id"), int) and last_assignment["group_id"] < len(groups):
-                                phones = groups[last_assignment["group_id"]]
-                            return render_template("index.html", error=error, phones=phones, ...)
-
-                    else:
-                        # 选择可用组：1) 未被分配过的组索引；2) 该组所有号码都未在历史上传/黑名单出现
+                    if can_assign_new:
+                        # 选择可用组：未被分配、且组内号码没有出现在 upload_logs/blacklist
                         all_used_indices = get_all_assigned_indices()
                         taken = get_taken_phones()
 
@@ -1482,6 +1491,13 @@ def index():
 
                         if selected_idx is None:
                             error = "❌ 资料已发放完，请联系管理员"
+                            # 如果有上一组，顺手显示一下
+                            if last_assignment and isinstance(
+                                last_assignment.get("group_id"), int
+                            ):
+                                idx = last_assignment["group_id"]
+                                if 0 <= idx < len(groups):
+                                    phones = groups[idx]
                         else:
                             phones = selected_phones
                             add_user_assignment(uid, selected_idx)
