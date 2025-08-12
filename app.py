@@ -1380,44 +1380,46 @@ def index():
                 try:
                     # 获取用户当前状态（包含缓存机制）
                     record = status.get(uid, {"count": 0, "last": 0})
-            
+
                     # 检查领取限制
                     if record["count"] >= MAX_TIMES:
                         error = f"❌ 已达到最大领取次数({MAX_TIMES}次)"
                         # 显示用户之前领取过的号码（如果有）
                         if "index" in record and record["index"] < len(groups):
                             phones = groups[record["index"]]
-            
+
                     elif (now - record["last"]) < INTERVAL_SECONDS:
-                        wait_min = int((INTERVAL_SECONDS - (now - record["last"])) // 60
+                        wait_min = (INTERVAL_SECONDS - (now - record["last"])) // 60
                         error = f"⏱ 需等待 {wait_min} 分钟后再领取"
-            
+
                     else:
                         # 加载黑名单（带缓存）
                         blacklist = load_blacklist()  # 返回Set类型
-                
+
                         # 寻找可用号码组
                         assigned_indices = {
-                            u["index"] for u in status.values() 
+                            u["index"]
+                            for u in status.values()
                             if "index" in u and u["index"] is not None
                         }
-                
+
                         for i, group in enumerate(groups):
                             # 关键检查：1.未分配过 2.不含黑名单号码
-                            if (i not in assigned_indices and 
-                                not any(p in blacklist for p in group)):
-                                
+                            if i not in assigned_indices and not any(
+                                p in blacklist for p in group
+                            ):
+
                                 phones = group
                                 new_status = {
                                     "count": record["count"] + 1,
                                     "last": now,
-                                    "index": i  # 记录分配的组索引
+                                    "index": i,  # 记录分配的组索引
                                 }
                                 save_user_status(uid, new_status)
                                 break
                         else:
                             error = "❌ 当前号码库正在更新中"
-                    
+
                 except Exception as e:
                     print(f"领取失败: {str(e)}")
                     error = "⚠️ 系统错误，请稍后重试"
